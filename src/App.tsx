@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import {
   ArrowLeft,
@@ -27,7 +27,8 @@ import {
   Wifi,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { categories, menuItems, restaurant } from "./data/demo";
+import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
+import { loadDemoRestaurant, submitFeedback, trackEvent } from "./lib/data";
 
 function Brand() {
   return (
@@ -43,6 +44,39 @@ function CustomerPage() {
   const [query, setQuery] = useState("");
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [wifiOpen, setWifiOpen] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [restaurant, setRestaurant] = useState({
+    ...fallbackRestaurant,
+    id: "11111111-1111-4111-8111-111111111111",
+    google_maps_url: "https://maps.google.com/?q=Addis+Ababa",
+    google_review_url: null as string | null,
+  });
+  const [categories, setCategories] = useState(fallbackCategories);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(fallbackMenuItems);
+
+  useEffect(() => {
+    let active = true;
+    loadDemoRestaurant()
+      .then((data) => {
+        if (!active || !data) return;
+        setRestaurant({
+          name: data.restaurant.name,
+          tagline: data.restaurant.tagline ?? fallbackRestaurant.tagline,
+          location: data.restaurant.address ?? fallbackRestaurant.location,
+          hours: fallbackRestaurant.hours,
+          currency: data.restaurant.currency,
+          id: data.restaurant.id,
+          google_maps_url: data.restaurant.google_maps_url ?? "https://maps.google.com/?q=Addis+Ababa",
+          google_review_url: data.restaurant.google_review_url,
+        });
+        setCategories(data.categories);
+        setMenuItems(data.items);
+      })
+      .catch(console.error);
+
+    trackEvent("page_view");
+    return () => { active = false; };
+  }, []);
 
   const items = useMemo(() => {
     return menuItems.filter((item) => {
@@ -73,22 +107,26 @@ function CustomerPage() {
             <span><strong>View Menu</strong><small>Browse food & drinks</small></span>
             <ChevronRight size={20} />
           </a>
-          <button className="action-card" onClick={() => alert("Demo: connect the restaurant's Google review link here.")}>
+          <button className="action-card" onClick={() => {
+            trackEvent("review_click");
+            if (restaurant.google_review_url) window.open(restaurant.google_review_url, "_blank", "noopener,noreferrer");
+            else alert("Demo restaurant: a real restaurant's Google Review link will open here.");
+          }}>
             <span className="action-icon"><Star size={22} /></span>
             <span><strong>Leave a Review</strong><small>Share your experience</small></span>
             <ChevronRight size={20} />
           </button>
-          <a className="action-card" href="https://maps.google.com/?q=Addis+Ababa" target="_blank" rel="noreferrer">
+          <a className="action-card" href={restaurant.google_maps_url} onClick={() => trackEvent("directions_click")} target="_blank" rel="noreferrer">
             <span className="action-icon"><MapPin size={22} /></span>
             <span><strong>Directions</strong><small>{restaurant.location}</small></span>
             <ChevronRight size={20} />
           </a>
-          <button className="action-card" onClick={() => setWifiOpen(true)}>
+          <button className="action-card" onClick={() => { trackEvent("wifi_click"); setWifiOpen(true); }}>
             <span className="action-icon"><Wifi size={22} /></span>
             <span><strong>Wi-Fi</strong><small>Get connection details</small></span>
             <ChevronRight size={20} />
           </button>
-          <button className="action-card" onClick={() => setFeedbackOpen(true)}>
+          <button className="action-card" onClick={() => { trackEvent("feedback_open"); setFeedbackOpen(true); }}>
             <span className="action-icon"><MessageSquareText size={22} /></span>
             <span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span>
             <ChevronRight size={20} />
@@ -156,8 +194,17 @@ function CustomerPage() {
             <span className="modal-icon"><MessageSquareText /></span>
             <h3>Private feedback</h3>
             <p>Your message goes to the restaurant, not to a public review page.</p>
-            <textarea placeholder="Tell us about your experience..." rows={5} />
-            <button onClick={() => { alert("Demo feedback captured. Supabase will store this in the live version."); setFeedbackOpen(false); }}>Send feedback</button>
+            <textarea value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5} />
+            <button onClick={async () => {
+              try {
+                await submitFeedback(feedbackText);
+                setFeedbackText("");
+                setFeedbackOpen(false);
+                alert("Thank you. Your feedback was sent privately.");
+              } catch (error) {
+                alert(error instanceof Error ? error.message : "Could not send feedback.");
+              }
+            }}>Send feedback</button>
           </div>
         </div>
       )}
@@ -229,7 +276,7 @@ function RestaurantOverview() {
       <div className="dash-grid">
         <div className="panel">
           <div className="panel-heading"><div><h2>Popular menu items</h2><p>Demo analytics</p></div><button>View report <ArrowRight size={15} /></button></div>
-          {menuItems.filter(i => i.popular).map((item, index) => (
+          {fallbackMenuItems.filter(i => i.popular).map((item, index) => (
             <div className="rank-row" key={item.id}>
               <span className="rank">{index + 1}</span><img src={item.image} alt="" />
               <div><strong>{item.name}</strong><small>{item.category}</small></div>
@@ -253,7 +300,7 @@ function MenuManager() {
     <div className="panel">
       <div className="panel-heading"><div><h2>Menu items</h2><p>Edit prices, availability and descriptions.</p></div><button className="primary-button"><Plus size={16} /> Add item</button></div>
       <div className="table-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Status</th><th /></tr></thead>
-      <tbody>{menuItems.map(item => <tr key={item.id}><td><div className="table-item"><img src={item.image} alt="" /><span><strong>{item.name}</strong><small>{item.description.slice(0, 42)}…</small></span></div></td><td>{item.category}</td><td>{item.price} ETB</td><td><span className="status"><Check size={13}/> Available</span></td><td><button className="tiny-button">Edit</button></td></tr>)}</tbody></table></div>
+      <tbody>{fallbackMenuItems.map(item => <tr key={item.id}><td><div className="table-item"><img src={item.image} alt="" /><span><strong>{item.name}</strong><small>{item.description.slice(0, 42)}…</small></span></div></td><td>{item.category}</td><td>{item.price} ETB</td><td><span className="status"><Check size={13}/> Available</span></td><td><button className="tiny-button">Edit</button></td></tr>)}</tbody></table></div>
     </div>
   );
 }
