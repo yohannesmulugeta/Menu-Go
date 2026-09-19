@@ -1,8 +1,6 @@
 import { supabase } from "./supabase";
 import type { MenuItem } from "../data/demo";
 
-export const DEMO_RESTAURANT_ID = "11111111-1111-4111-8111-111111111111";
-
 export type RestaurantRecord = {
   id: string;
   name: string;
@@ -13,39 +11,52 @@ export type RestaurantRecord = {
   google_review_url: string | null;
   phone: string | null;
   currency: string;
+  cover_image_url: string | null;
 };
 
-export async function loadDemoRestaurant() {
+export type WifiRecord = {
+  network_name: string | null;
+  password_hint: string | null;
+  is_visible: boolean;
+};
+
+export async function loadRestaurantBySlug(slug: string) {
   if (!supabase) return null;
 
   const { data: restaurant, error: restaurantError } = await supabase
     .from("restaurants")
-    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency")
-    .eq("slug", "sora-table")
+    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url")
+    .eq("slug", slug)
+    .eq("status", "active")
     .single();
 
   if (restaurantError) throw restaurantError;
 
-  const { data: categories, error: categoryError } = await supabase
-    .from("categories")
-    .select("id,name,sort_order")
-    .eq("restaurant_id", restaurant.id)
-    .eq("is_active", true)
-    .order("sort_order");
+  const [{ data: categories, error: categoryError }, { data: items, error: itemError }, { data: wifi }] =
+    await Promise.all([
+      supabase
+        .from("categories")
+        .select("id,name,sort_order")
+        .eq("restaurant_id", restaurant.id)
+        .eq("is_active", true)
+        .order("sort_order"),
+      supabase
+        .from("menu_items")
+        .select("id,name,description,price,image_url,is_popular,is_available,category_id,sort_order")
+        .eq("restaurant_id", restaurant.id)
+        .eq("is_available", true)
+        .order("sort_order"),
+      supabase
+        .from("wifi_details")
+        .select("network_name,password_hint,is_visible")
+        .eq("restaurant_id", restaurant.id)
+        .maybeSingle()
+    ]);
 
   if (categoryError) throw categoryError;
-
-  const { data: items, error: itemError } = await supabase
-    .from("menu_items")
-    .select("id,name,description,price,image_url,is_popular,is_available,category_id,sort_order")
-    .eq("restaurant_id", restaurant.id)
-    .eq("is_available", true)
-    .order("sort_order");
-
   if (itemError) throw itemError;
 
   const categoryMap = new Map((categories ?? []).map((c) => [c.id, c.name]));
-
   const mappedItems: MenuItem[] = (items ?? []).map((item) => ({
     id: item.id,
     name: item.name,
@@ -61,27 +72,32 @@ export async function loadDemoRestaurant() {
     restaurant: restaurant as RestaurantRecord,
     categories: ["Popular", ...(categories ?? []).map((c) => c.name)],
     items: mappedItems,
+    wifi: (wifi ?? null) as WifiRecord | null,
   };
 }
 
-export async function submitFeedback(message: string) {
+export async function submitFeedback(restaurantId: string, message: string) {
   if (!supabase) throw new Error("Database is not configured.");
   const clean = message.trim();
   if (!clean) throw new Error("Please enter your feedback.");
 
   const { error } = await supabase.from("feedback").insert({
-    restaurant_id: DEMO_RESTAURANT_ID,
+    restaurant_id: restaurantId,
     message: clean,
   });
 
   if (error) throw error;
-  await trackEvent("feedback_submit");
+  await trackEvent(restaurantId, "feedback_submit");
 }
 
-export async function trackEvent(eventType: string, metadata: Record<string, unknown> = {}) {
+export async function trackEvent(
+  restaurantId: string,
+  eventType: string,
+  metadata: Record<string, unknown> = {}
+) {
   if (!supabase) return;
   await supabase.from("analytics_events").insert({
-    restaurant_id: DEMO_RESTAURANT_ID,
+    restaurant_id: restaurantId,
     event_type: eventType,
     metadata,
   });
