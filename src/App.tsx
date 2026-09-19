@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight, BarChart3, Check, ChevronRight, Coffee, Eye, Heart, Image as ImageIcon,
   Instagram, LayoutDashboard, LogOut, MapPin, Menu as MenuIcon, MessageSquareText,
@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
-import { loadDemoRestaurant, submitFeedback, trackEvent } from "./lib/data";
+import { loadRestaurantBySlug, submitFeedback, trackEvent } from "./lib/data";
 import {
   claimOwnerSetup, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
   deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listCategories,
@@ -17,18 +17,21 @@ import {
   updateRestaurant, uploadMenuImage, type AdminCategory, type AdminMenuItem, type AdminRestaurant
 } from "./lib/admin";
 
-const DEMO_URL = "https://yohannesmulugeta.github.io/Menu-Go/#/demo";
+const publicMenuUrl = (slug: string) => `https://yohannesmulugeta.github.io/Menu-Go/#/r/${slug}`;
 
 function Brand() {
-  return <Link to="/demo" className="brand"><span className="brand-mark"><UtensilsCrossed size={18}/></span><span>Menu Go</span></Link>;
+  return <Link to="/r/sora-table" className="brand"><span className="brand-mark"><UtensilsCrossed size={18}/></span><span>Menu Go</span></Link>;
 }
 
 function CustomerPage() {
+  const { slug = "sora-table" } = useParams();
   const [category,setCategory]=useState("Popular");
   const [query,setQuery]=useState("");
   const [feedbackOpen,setFeedbackOpen]=useState(false);
   const [wifiOpen,setWifiOpen]=useState(false);
   const [feedbackText,setFeedbackText]=useState("");
+  const [wifi,setWifi]=useState<{network_name:string|null;password_hint:string|null;is_visible:boolean}|null>(null);
+  const [loadError,setLoadError]=useState("");
   const [restaurant,setRestaurant]=useState({
     ...fallbackRestaurant,id:"11111111-1111-4111-8111-111111111111",
     google_maps_url:"https://maps.google.com/?q=Addis+Ababa",google_review_url:null as string|null
@@ -38,38 +41,42 @@ function CustomerPage() {
 
   useEffect(()=>{
     let active=true;
-    loadDemoRestaurant().then(data=>{
+    setLoadError("");
+    loadRestaurantBySlug(slug).then(data=>{
       if(!active||!data)return;
       setRestaurant({
         name:data.restaurant.name,tagline:data.restaurant.tagline??fallbackRestaurant.tagline,
         location:data.restaurant.address??fallbackRestaurant.location,hours:fallbackRestaurant.hours,
         currency:data.restaurant.currency,id:data.restaurant.id,
         google_maps_url:data.restaurant.google_maps_url??"https://maps.google.com/?q=Addis+Ababa",
-        google_review_url:data.restaurant.google_review_url
+        google_review_url:data.restaurant.google_review_url,
+        cover_image_url:data.restaurant.cover_image_url
       });
-      setCategories(data.categories); setMenuItems(data.items);
-    }).catch(console.error);
-    trackEvent("page_view");
+      setCategories(data.categories); setMenuItems(data.items); setWifi(data.wifi);
+      trackEvent(data.restaurant.id,"page_view",{slug:data.restaurant.slug});
+    }).catch(()=>setLoadError("Restaurant not found or not available."));
     return()=>{active=false};
-  },[]);
+  },[slug]);
 
   const items=useMemo(()=>menuItems.filter(item=>{
     const matches=category==="Popular"?item.popular:item.category===category;
     return matches&&(item.name+" "+item.description).toLowerCase().includes(query.toLowerCase());
   }),[category,query,menuItems]);
 
+  if(loadError) return <div className="auth-page"><div className="auth-card"><Brand/><h1>Restaurant not found</h1><p className="auth-copy">{loadError}</p><Link className="primary-button auth-submit" to="/r/sora-table">Open demo restaurant</Link></div></div>;
+
   return <div className="customer-page">
-    <header className="hero"><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <strong>Menu Go</strong></span></div>
+    <header className="hero" style={restaurant.cover_image_url?{backgroundImage:`url(${restaurant.cover_image_url})`}:undefined}><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <strong>Menu Go</strong></span></div>
       <div className="hero-copy"><div className="restaurant-logo"><Coffee size={28}/></div><p className="eyebrow">DEMO RESTAURANT</p>
         <h1>{restaurant.name}</h1><p>{restaurant.tagline}</p><span className="open-pill"><span/> {restaurant.hours}</span></div>
     </header>
     <main className="customer-main">
       <section className="quick-actions">
-        <a className="action-card accent" href="#menu" onClick={()=>trackEvent("menu_view")}><span className="action-icon"><MenuIcon size={22}/></span><span><strong>View Menu</strong><small>Browse food & drinks</small></span><ChevronRight size={20}/></a>
-        <button className="action-card" onClick={()=>{trackEvent("review_click"); restaurant.google_review_url?window.open(restaurant.google_review_url,"_blank","noopener,noreferrer"):alert("Demo restaurant: add the real Google Review link in Settings.");}}><span className="action-icon"><Star size={22}/></span><span><strong>Leave a Review</strong><small>Share your experience</small></span><ChevronRight size={20}/></button>
-        <a className="action-card" href={restaurant.google_maps_url} onClick={()=>trackEvent("directions_click")} target="_blank" rel="noreferrer"><span className="action-icon"><MapPin size={22}/></span><span><strong>Directions</strong><small>{restaurant.location}</small></span><ChevronRight size={20}/></a>
-        <button className="action-card" onClick={()=>{trackEvent("wifi_click");setWifiOpen(true)}}><span className="action-icon"><Wifi size={22}/></span><span><strong>Wi-Fi</strong><small>Get connection details</small></span><ChevronRight size={20}/></button>
-        <button className="action-card" onClick={()=>{trackEvent("feedback_open");setFeedbackOpen(true)}}><span className="action-icon"><MessageSquareText size={22}/></span><span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span><ChevronRight size={20}/></button>
+        <a className="action-card accent" href="#menu" onClick={()=>trackEvent(restaurant.id,"menu_view")}><span className="action-icon"><MenuIcon size={22}/></span><span><strong>View Menu</strong><small>Browse food & drinks</small></span><ChevronRight size={20}/></a>
+        <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"review_click"); restaurant.google_review_url?window.open(restaurant.google_review_url,"_blank","noopener,noreferrer"):alert("Demo restaurant: add the real Google Review link in Settings.");}}><span className="action-icon"><Star size={22}/></span><span><strong>Leave a Review</strong><small>Share your experience</small></span><ChevronRight size={20}/></button>
+        <a className="action-card" href={restaurant.google_maps_url} onClick={()=>trackEvent(restaurant.id,"directions_click")} target="_blank" rel="noreferrer"><span className="action-icon"><MapPin size={22}/></span><span><strong>Directions</strong><small>{restaurant.location}</small></span><ChevronRight size={20}/></a>
+        <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"wifi_click");setWifiOpen(true)}}><span className="action-icon"><Wifi size={22}/></span><span><strong>Wi-Fi</strong><small>Get connection details</small></span><ChevronRight size={20}/></button>
+        <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"feedback_open");setFeedbackOpen(true)}}><span className="action-icon"><MessageSquareText size={22}/></span><span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span><ChevronRight size={20}/></button>
       </section>
       <section id="menu" className="menu-section">
         <div className="section-heading"><div><p className="eyebrow dark">MENU</p><h2>What are you having?</h2></div><span>{items.length} items</span></div>
@@ -80,8 +87,8 @@ function CustomerPage() {
       </section>
       <footer className="guest-footer"><Brand/><p>A simple digital guest experience for restaurants.</p><div><Instagram size={18}/><Phone size={18}/></div></footer>
     </main>
-    {wifiOpen&&<div className="modal-backdrop" onClick={()=>setWifiOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><Wifi/></span><h3>Restaurant Wi-Fi</h3><p>Sora Guest — ask staff for today's password.</p><button onClick={()=>setWifiOpen(false)}>Done</button></div></div>}
-    {feedbackOpen&&<div className="modal-backdrop" onClick={()=>setFeedbackOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><MessageSquareText/></span><h3>Private feedback</h3><p>Your message goes directly to the restaurant.</p><textarea value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5}/><button onClick={async()=>{try{await submitFeedback(feedbackText);setFeedbackText("");setFeedbackOpen(false);alert("Thank you. Your feedback was sent privately.");}catch(err){alert(err instanceof Error?err.message:"Could not send feedback.")}}}>Send feedback</button></div></div>}
+    {wifiOpen&&<div className="modal-backdrop" onClick={()=>setWifiOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><Wifi/></span><h3>Restaurant Wi-Fi</h3><p>{wifi?.is_visible ? `${wifi.network_name || "Guest Wi-Fi"} — ${wifi.password_hint || "Ask staff for the password"}` : "Ask restaurant staff for Wi-Fi details."}</p><button onClick={()=>setWifiOpen(false)}>Done</button></div></div>}
+    {feedbackOpen&&<div className="modal-backdrop" onClick={()=>setFeedbackOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><MessageSquareText/></span><h3>Private feedback</h3><p>Your message goes directly to the restaurant.</p><textarea value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5}/><button onClick={async()=>{try{await submitFeedback(restaurant.id,feedbackText);setFeedbackText("");setFeedbackOpen(false);alert("Thank you. Your feedback was sent privately.");}catch(err){alert(err instanceof Error?err.message:"Could not send feedback.")}}}>Send feedback</button></div></div>}
   </div>;
 }
 
@@ -175,24 +182,24 @@ function RestaurantDashboard(){
 
   const navItems:[AdminTab,any][]=[["Overview",LayoutDashboard],["Menu",MenuIcon],["Categories",UtensilsCrossed],["Feedback",MessageSquareText],["Analytics",BarChart3],["QR Codes",QrCode],["Settings",Settings]];
   return <div className="dashboard"><aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav><div className="sidebar-footer"><div className="avatar">{restaurant.name.slice(0,2).toUpperCase()}</div><span><strong>{restaurant.name}</strong><small>{role}</small></span></div></aside>
-    <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">RESTAURANT ADMIN</p><h1>{tab}</h1></div><div className="dash-header-actions"><Link to="/demo" className="ghost-button"><Eye size={17}/> View live menu</Link><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
-      {tab==="Overview"&&<RestaurantOverview analytics={analytics} items={items}/>}
+    <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">RESTAURANT ADMIN</p><h1>{tab}</h1></div><div className="dash-header-actions"><Link to={`/r/${restaurant.slug}`} className="ghost-button"><Eye size={17}/> View live menu</Link><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
+      {tab==="Overview"&&<RestaurantOverview analytics={analytics} items={items} slug={restaurant.slug}/>}
       {tab==="Menu"&&<MenuManager restaurantId={restaurant.id} items={items} categories={categories} onRefresh={refresh} onEdit={setEditor}/>}
       {tab==="Categories"&&<CategoryManager restaurantId={restaurant.id} categories={categories} onRefresh={refresh}/>}
       {tab==="Feedback"&&<FeedbackPanel rows={feedback} onResolve={async id=>{await resolveFeedback(id);refresh()}}/>}
       {tab==="Analytics"&&<AnalyticsPanel data={analytics}/>}
-      {tab==="QR Codes"&&<QrManager/>}
+      {tab==="QR Codes"&&<QrManager slug={restaurant.slug}/>} 
       {tab==="Settings"&&<RestaurantSettings restaurant={restaurant} onRefresh={refresh}/>}
     </section>
     {editor!==undefined&&<MenuItemEditor restaurantId={restaurant.id} categories={categories} item={editor} onClose={()=>setEditor(undefined)} onSaved={async()=>{setEditor(undefined);await refresh()}}/>}
   </div>;
 }
 
-function RestaurantOverview({analytics,items}:{analytics:Record<string,number>,items:AdminMenuItem[]}){
+function RestaurantOverview({analytics,items,slug}:{analytics:Record<string,number>,items:AdminMenuItem[],slug:string}){
   const stats=[["Menu views",analytics.menu_view??0,Eye],["QR scans",analytics.qr_scan??0,QrCode],["Review clicks",analytics.review_click??0,Star],["Feedback",analytics.feedback_submit??0,MessageSquareText]] as const;
   return <><div className="stats-grid">{stats.map(([label,value,Icon])=><div className="stat-card" key={label}><div className="stat-top"><span>{label}</span><Icon size={20}/></div><strong>{value}</strong><small>Live Supabase data</small></div>)}</div>
     <div className="dash-grid"><div className="panel"><div className="panel-heading"><div><h2>Popular menu items</h2><p>Items marked as popular</p></div></div>{items.filter(i=>i.is_popular).slice(0,5).map((item,index)=><div className="rank-row" key={item.id}><span className="rank">{index+1}</span><img src={item.image_url||fallbackMenuItems[0].image} alt=""/><div><strong>{item.name}</strong><small>{item.category?.name||"Uncategorized"}</small></div><span>{item.is_available?"Available":"Hidden"}</span></div>)}</div>
-    <div className="panel qr-mini"><div className="panel-heading"><div><h2>Your table QR</h2><p>One code, always current</p></div></div><div className="qr-wrap"><QRCodeSVG value={DEMO_URL} size={158}/></div><p>Menu changes appear instantly without replacing printed QR codes.</p></div></div></>;
+    <div className="panel qr-mini"><div className="panel-heading"><div><h2>Your table QR</h2><p>One code, always current</p></div></div><div className="qr-wrap"><QRCodeSVG value={publicMenuUrl(slug)} size={158}/></div><p>Menu changes appear instantly without replacing printed QR codes.</p></div></div></>;
 }
 
 function MenuManager({restaurantId,items,categories,onRefresh,onEdit}:{restaurantId:string,items:AdminMenuItem[],categories:AdminCategory[],onRefresh:()=>Promise<void>,onEdit:(i:AdminMenuItem|null)=>void}){
@@ -228,8 +235,9 @@ function AnalyticsPanel({data}:{data:Record<string,number>}){
   return <div className="stats-grid analytics-grid">{entries.map(([label,key])=><div className="stat-card" key={key}><div className="stat-top"><span>{label}</span><BarChart3 size={18}/></div><strong>{data[key]??0}</strong><small>Tracked events</small></div>)}</div>;
 }
 
-function QrManager(){
-  return <div className="panel centered-panel"><p className="eyebrow dark">PERMANENT QR</p><h2>One QR. Unlimited menu changes.</h2><p>Print this QR once. Menu updates do not require reprinting.</p><div className="large-qr"><QRCodeSVG value={DEMO_URL} size={230}/></div><p className="mono-url">{DEMO_URL}</p></div>;
+function QrManager({slug}:{slug:string}){
+  const url=publicMenuUrl(slug);
+  return <div className="panel centered-panel"><p className="eyebrow dark">PERMANENT QR</p><h2>One QR. Unlimited menu changes.</h2><p>Print this QR once. Menu updates do not require reprinting.</p><div className="large-qr"><QRCodeSVG value={url} size={230}/></div><p className="mono-url">{url}</p></div>;
 }
 
 function RestaurantSettings({restaurant,onRefresh}:{restaurant:AdminRestaurant,onRefresh:()=>Promise<void>}){
@@ -246,7 +254,7 @@ function PlatformDashboard(){
   return <div className="dashboard"><aside className="sidebar"><Brand/><nav><button className="active"><Store size={19}/><span>Restaurants</span></button><button><BarChart3 size={19}/><span>Analytics</span></button><button><Settings size={19}/><span>Settings</span></button></nav><div className="sidebar-footer"><div className="avatar">MG</div><span><strong>Menu Go</strong><small>Platform owner</small></span></div></aside>
     <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">PLATFORM ADMIN</p><h1>Restaurants</h1></div><div className="dash-header-actions"><button className="primary-button" onClick={()=>setOpen(true)}><Plus size={17}/> Add restaurant</button><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
       <div className="stats-grid"><div className="stat-card"><div className="stat-top"><span>Restaurants</span><Store size={20}/></div><strong>{restaurants.length}</strong><small>All tenants</small></div><div className="stat-card"><div className="stat-top"><span>Active</span><Check size={20}/></div><strong>{restaurants.filter(r=>r.status==="active").length}</strong><small>Currently live</small></div><div className="stat-card"><div className="stat-top"><span>Architecture</span><QrCode size={20}/></div><strong>Multi</strong><small>Multi-restaurant</small></div><div className="stat-card"><div className="stat-top"><span>Backend</span><BarChart3 size={20}/></div><strong>Live</strong><small>Supabase</small></div></div>
-      <div className="panel"><div className="panel-heading"><div><h2>Restaurant tenants</h2><p>Create restaurants and issue owner invite codes.</p></div></div>{loading?<div className="empty-state">Loading…</div>:restaurants.map(r=><div className="restaurant-row" key={r.id}><div className="restaurant-avatar"><Coffee/></div><div><strong>{r.name}</strong><small>/{r.slug} · {r.address||"No address yet"}</small></div><span className="status"><Check size={13}/> {r.status}</span><button className="tiny-button" onClick={async()=>{const result=await createRestaurantInvite(r.id,"admin");setInvite(result.invite_code)}}>New invite</button></div>)}</div>
+      <div className="panel"><div className="panel-heading"><div><h2>Restaurant tenants</h2><p>Create restaurants and issue owner invite codes.</p></div></div>{loading?<div className="empty-state">Loading…</div>:restaurants.map(r=><div className="restaurant-row" key={r.id}><div className="restaurant-avatar"><Coffee/></div><div><strong>{r.name}</strong><small>/{r.slug} · {r.address||"No address yet"}</small></div><span className="status"><Check size={13}/> {r.status}</span><Link className="tiny-button" to={`/r/${r.slug}`}><Eye size={14}/> View</Link><button className="tiny-button" onClick={async()=>{const result=await createRestaurantInvite(r.id,"admin");setInvite(result.invite_code)}}>New invite</button></div>)}</div>
     </section>
     {open&&<div className="modal-backdrop" onClick={()=>setOpen(false)}><div className="modal admin-modal" onClick={e=>e.stopPropagation()}><div className="modal-head"><div><p className="eyebrow dark">NEW TENANT</p><h3>Add restaurant</h3></div><button className="icon-button" onClick={()=>setOpen(false)}><X/></button></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Slug<input value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"-")})} placeholder="restaurant-name"/></label><label className="span-2">Tagline<input value={form.tagline} onChange={e=>setForm({...form,tagline:e.target.value})}/></label><label className="span-2">Address<input value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/></label></div><button className="primary-button auth-submit" onClick={async()=>{try{const result=await createRestaurantWithInvite(form);setInvite(result.invite_code);setOpen(false);setForm({name:"",slug:"",tagline:"",address:""});refresh()}catch(err){alert(err instanceof Error?err.message:"Could not create restaurant.")}}}>Create restaurant</button></div></div>}
     {invite&&<div className="modal-backdrop" onClick={()=>setInvite("")}><div className="modal invite-modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><QrCode/></span><h3>Restaurant invite created</h3><p>Give this one-time code to the restaurant admin. It expires in 14 days.</p><div className="invite-code">{invite}</div><button onClick={async()=>{await navigator.clipboard.writeText(invite);setInvite("")}}>Copy code & close</button></div></div>}
@@ -254,6 +262,6 @@ function PlatformDashboard(){
 }
 
 function App(){
-  return <Routes><Route path="/" element={<Navigate to="/demo" replace/>}/><Route path="/demo" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/demo" replace/>}/></Routes>;
+  return <Routes><Route path="/" element={<Navigate to="/r/addis-harvest" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/addis-harvest" replace/>}/></Routes>;
 }
 export default App;
