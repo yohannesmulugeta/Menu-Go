@@ -31,6 +31,12 @@ export type AdminRestaurant = {
   google_review_url: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
+  facebook_url: string | null;
+  youtube_url: string | null;
+  telegram_url: string | null;
+  whatsapp_url: string | null;
+  linkedin_url: string | null;
+  website_url: string | null;
   currency: string;
   status: string;
 };
