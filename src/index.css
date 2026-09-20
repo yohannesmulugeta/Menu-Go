@@ -245,3 +245,11 @@ td { padding:11px 8px; border-bottom:1px solid var(--line); }
   .restaurant-row{align-items:flex-start;flex-wrap:wrap}
   .restaurant-row .tiny-button{margin-left:54px}
 }
+
+
+.social-section{padding-top:34px}
+.social-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.social-link{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:13px 14px;font-size:13px;font-weight:700;transition:.18s ease}
+.social-link:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(42,31,20,.08);border-color:rgba(237,109,45,.26)}
+.social-link svg{color:var(--orange-dark);flex:0 0 auto}
+@media(min-width:720px){.social-links{grid-template-columns:repeat(4,minmax(0,1fr))}}
