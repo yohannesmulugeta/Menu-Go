@@ -12,6 +12,7 @@ export type RestaurantRecord = {
   phone: string | null;
   currency: string;
   cover_image_url: string | null;
+  logo_url: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
   facebook_url: string | null;
@@ -33,14 +34,14 @@ export async function loadRestaurantBySlug(slug: string) {
 
   const { data: restaurant, error: restaurantError } = await supabase
     .from("restaurants")
-    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
+    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url,logo_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
     .eq("slug", slug)
     .eq("status", "active")
     .single();
 
   if (restaurantError) throw restaurantError;
 
-  const [{ data: categories, error: categoryError }, { data: items, error: itemError }, { data: wifi }] =
+  const [{ data: categories, error: categoryError }, { data: items, error: itemError }, { data: hours }] =
     await Promise.all([
       supabase
         .from("categories")
@@ -55,10 +56,10 @@ export async function loadRestaurantBySlug(slug: string) {
         .eq("is_available", true)
         .order("sort_order"),
       supabase
-        .from("wifi_details")
-        .select("network_name,password_hint,is_visible")
+        .from("opening_hours")
+        .select("weekday,opens_at,closes_at,is_closed")
         .eq("restaurant_id", restaurant.id)
-        .maybeSingle()
+        .order("weekday")
     ]);
 
   if (categoryError) throw categoryError;
@@ -80,7 +81,7 @@ export async function loadRestaurantBySlug(slug: string) {
     restaurant: restaurant as RestaurantRecord,
     categories: ["Popular", ...(categories ?? []).map((c) => c.name)],
     items: mappedItems,
-    wifi: (wifi ?? null) as WifiRecord | null,
+    hours: hours ?? [],
   };
 }
 
