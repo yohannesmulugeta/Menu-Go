@@ -12,6 +12,14 @@ export type RestaurantRecord = {
   phone: string | null;
   currency: string;
   cover_image_url: string | null;
+  instagram_url: string | null;
+  tiktok_url: string | null;
+  facebook_url: string | null;
+  youtube_url: string | null;
+  telegram_url: string | null;
+  whatsapp_url: string | null;
+  linkedin_url: string | null;
+  website_url: string | null;
 };
 
 export type WifiRecord = {
@@ -25,7 +33,7 @@ export async function loadRestaurantBySlug(slug: string) {
 
   const { data: restaurant, error: restaurantError } = await supabase
     .from("restaurants")
-    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url")
+    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
     .eq("slug", slug)
     .eq("status", "active")
     .single();
