@@ -4,7 +4,7 @@ import {
   ArrowRight, BarChart3, Check, ChevronRight, Coffee, Eye, Heart, Image as ImageIcon,
   Facebook, Globe2, Instagram, LayoutDashboard, Linkedin, LogOut, MapPin, Menu as MenuIcon,
   MessageCircle, MessageSquareText, Music2, Pencil, Phone, Plus, QrCode, Search, Send,
-  Settings, Star, Store, Trash2, UtensilsCrossed, Wifi, X, Youtube
+  Settings, Star, Store, Trash2, UtensilsCrossed, X, Youtube
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
@@ -28,14 +28,13 @@ function CustomerPage() {
   const [category,setCategory]=useState("Popular");
   const [query,setQuery]=useState("");
   const [feedbackOpen,setFeedbackOpen]=useState(false);
-  const [wifiOpen,setWifiOpen]=useState(false);
   const [feedbackText,setFeedbackText]=useState("");
-  const [wifi,setWifi]=useState<{network_name:string|null;password_hint:string|null;is_visible:boolean}|null>(null);
   const [loadError,setLoadError]=useState("");
   const [restaurant,setRestaurant]=useState({
     ...fallbackRestaurant,id:"11111111-1111-4111-8111-111111111111",
     google_maps_url:"https://maps.google.com/?q=Addis+Ababa",google_review_url:null as string|null,
     cover_image_url:null as string|null,
+    logo_url:null as string|null,
     instagram_url:null as string|null,
     tiktok_url:null as string|null,
     facebook_url:null as string|null,
@@ -60,6 +59,7 @@ function CustomerPage() {
         google_maps_url:data.restaurant.google_maps_url??"https://maps.google.com/?q=Addis+Ababa",
         google_review_url:data.restaurant.google_review_url,
         cover_image_url:data.restaurant.cover_image_url,
+        logo_url:data.restaurant.logo_url,
         instagram_url:data.restaurant.instagram_url,
         tiktok_url:data.restaurant.tiktok_url,
         facebook_url:data.restaurant.facebook_url,
@@ -69,7 +69,16 @@ function CustomerPage() {
         linkedin_url:data.restaurant.linkedin_url,
         website_url:data.restaurant.website_url
       });
-      setCategories(data.categories); setMenuItems(data.items); setWifi(data.wifi);
+      setCategories(data.categories); setMenuItems(data.items);
+      const today=data.hours.find((h:any)=>h.weekday===new Date().getDay());
+      const pretty=(value:string|null)=>{
+        if(!value)return "";
+        const [hh,mm]=value.split(":").map(Number);
+        const suffix=hh>=12?"PM":"AM";
+        const h=hh%12||12;
+        return `${h}:${String(mm).padStart(2,"0")} ${suffix}`;
+      };
+      setRestaurant((prev:any)=>({...prev,hours:today?(today.is_closed?"Closed today":`Open today · ${pretty(today.opens_at)}–${pretty(today.closes_at)}`):prev.hours}));
       trackEvent(data.restaurant.id,"page_view",{slug:data.restaurant.slug});
     }).catch(()=>setLoadError("Restaurant not found or not available."));
     return()=>{active=false};
@@ -84,7 +93,7 @@ function CustomerPage() {
 
   return <div className="customer-page">
     <header className="hero" style={restaurant.cover_image_url?{backgroundImage:`url(${restaurant.cover_image_url})`}:undefined}><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <strong>Menu Go</strong></span></div>
-      <div className="hero-copy"><div className="restaurant-logo"><Coffee size={28}/></div><p className="eyebrow">DEMO RESTAURANT</p>
+      <div className="hero-copy"><div className="restaurant-logo">{restaurant.logo_url?<img src={restaurant.logo_url} alt={restaurant.name}/>:<Coffee size={28}/>}</div><p className="eyebrow">{slug==="abol-coffee"?"ABOL COFFEE · HAYAHULET":"DEMO RESTAURANT"}</p>
         <h1>{restaurant.name}</h1><p>{restaurant.tagline}</p><span className="open-pill"><span/> {restaurant.hours}</span></div>
     </header>
     <main className="customer-main">
@@ -92,20 +101,20 @@ function CustomerPage() {
         <a className="action-card accent" href="#menu" onClick={()=>trackEvent(restaurant.id,"menu_view")}><span className="action-icon"><MenuIcon size={22}/></span><span><strong>View Menu</strong><small>Browse food & drinks</small></span><ChevronRight size={20}/></a>
         <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"review_click"); restaurant.google_review_url?window.open(restaurant.google_review_url,"_blank","noopener,noreferrer"):alert("Demo restaurant: add the real Google Review link in Settings.");}}><span className="action-icon"><Star size={22}/></span><span><strong>Leave a Review</strong><small>Share your experience</small></span><ChevronRight size={20}/></button>
         <a className="action-card" href={restaurant.google_maps_url} onClick={()=>trackEvent(restaurant.id,"directions_click")} target="_blank" rel="noreferrer"><span className="action-icon"><MapPin size={22}/></span><span><strong>Directions</strong><small>{restaurant.location}</small></span><ChevronRight size={20}/></a>
-        <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"wifi_click");setWifiOpen(true)}}><span className="action-icon"><Wifi size={22}/></span><span><strong>Wi-Fi</strong><small>Get connection details</small></span><ChevronRight size={20}/></button>
+        {restaurant.phone&&<a className="action-card" href={`tel:${restaurant.phone}`}><span className="action-icon"><Phone size={22}/></span><span><strong>Call Us</strong><small>{restaurant.phone}</small></span><ChevronRight size={20}/></a>}
         <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"feedback_open");setFeedbackOpen(true)}}><span className="action-icon"><MessageSquareText size={22}/></span><span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span><ChevronRight size={20}/></button>
       </section>
       <SocialLinks restaurant={restaurant}/>
       <section id="menu" className="menu-section">
         <div className="section-heading"><div><p className="eyebrow dark">MENU</p><h2>What are you having?</h2></div><span>{items.length} items</span></div>
+        {slug==="abol-coffee"&&<p className="price-note">All prices include VAT & service charge.</p>}
         <div className="search-box"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search dishes, drinks..."/></div>
         <div className="category-scroll">{categories.map(item=><button key={item} className={item===category?"category active":"category"} onClick={()=>setCategory(item)}>{item}</button>)}</div>
-        <div className="menu-grid">{items.map(item=><article className="menu-item" key={item.id}><img src={item.image} alt="" loading="lazy"/><div className="menu-item-body"><div className="menu-item-title"><h3>{item.name}</h3>{item.popular&&<span><Heart size={13}/> Popular</span>}</div><p>{item.description}</p><strong>{item.price} {restaurant.currency}</strong></div></article>)}</div>
+        <div className="menu-grid">{items.map(item=><article className={item.image?"menu-item":"menu-item no-image"} key={item.id}>{item.image&&<img src={item.image} alt="" loading="lazy"/>}<div className="menu-item-body"><div className="menu-item-title"><h3>{item.name}</h3>{item.popular&&<span><Heart size={13}/> Popular</span>}</div><p>{item.description}</p><strong>{item.price} {restaurant.currency}</strong></div></article>)}</div>
         {items.length===0&&<div className="empty-state">No items match your search.</div>}
       </section>
       <footer className="guest-footer"><Brand/><p>A simple digital guest experience for restaurants.</p></footer>
     </main>
-    {wifiOpen&&<div className="modal-backdrop" onClick={()=>setWifiOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><Wifi/></span><h3>Restaurant Wi-Fi</h3><p>{wifi?.is_visible ? `${wifi.network_name || "Guest Wi-Fi"} — ${wifi.password_hint || "Ask staff for the password"}` : "Ask restaurant staff for Wi-Fi details."}</p><button onClick={()=>setWifiOpen(false)}>Done</button></div></div>}
     {feedbackOpen&&<div className="modal-backdrop" onClick={()=>setFeedbackOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><MessageSquareText/></span><h3>Private feedback</h3><p>Your message goes directly to the restaurant.</p><textarea value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5}/><button onClick={async()=>{try{await submitFeedback(restaurant.id,feedbackText);setFeedbackText("");setFeedbackOpen(false);alert("Thank you. Your feedback was sent privately.");}catch(err){alert(err instanceof Error?err.message:"Could not send feedback.")}}}>Send feedback</button></div></div>}
   </div>;
 }
@@ -302,6 +311,6 @@ function PlatformDashboard(){
 }
 
 function App(){
-  return <Routes><Route path="/" element={<Navigate to="/r/addis-harvest" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/addis-harvest" replace/>}/></Routes>;
+  return <Routes><Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/abol-coffee" replace/>}/></Routes>;
 }
 export default App;
