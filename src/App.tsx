@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight, BarChart3, Check, ChevronRight, Coffee, Eye, Heart, Image as ImageIcon,
-  Instagram, LayoutDashboard, LogOut, MapPin, Menu as MenuIcon, MessageSquareText,
-  Pencil, Phone, Plus, QrCode, Search, Settings, Star, Store, Trash2,
-  UtensilsCrossed, Wifi, X
+  Facebook, Globe2, Instagram, LayoutDashboard, Linkedin, LogOut, MapPin, Menu as MenuIcon,
+  MessageCircle, MessageSquareText, Music2, Pencil, Phone, Plus, QrCode, Search, Send,
+  Settings, Star, Store, Trash2, UtensilsCrossed, Wifi, X, Youtube
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
@@ -35,7 +35,15 @@ function CustomerPage() {
   const [restaurant,setRestaurant]=useState({
     ...fallbackRestaurant,id:"11111111-1111-4111-8111-111111111111",
     google_maps_url:"https://maps.google.com/?q=Addis+Ababa",google_review_url:null as string|null,
-    cover_image_url:null as string|null
+    cover_image_url:null as string|null,
+    instagram_url:null as string|null,
+    tiktok_url:null as string|null,
+    facebook_url:null as string|null,
+    youtube_url:null as string|null,
+    telegram_url:null as string|null,
+    whatsapp_url:null as string|null,
+    linkedin_url:null as string|null,
+    website_url:null as string|null
   });
   const [categories,setCategories]=useState(fallbackCategories);
   const [menuItems,setMenuItems]=useState<MenuItem[]>(fallbackMenuItems);
@@ -51,7 +59,15 @@ function CustomerPage() {
         currency:data.restaurant.currency,id:data.restaurant.id,
         google_maps_url:data.restaurant.google_maps_url??"https://maps.google.com/?q=Addis+Ababa",
         google_review_url:data.restaurant.google_review_url,
-        cover_image_url:data.restaurant.cover_image_url
+        cover_image_url:data.restaurant.cover_image_url,
+        instagram_url:data.restaurant.instagram_url,
+        tiktok_url:data.restaurant.tiktok_url,
+        facebook_url:data.restaurant.facebook_url,
+        youtube_url:data.restaurant.youtube_url,
+        telegram_url:data.restaurant.telegram_url,
+        whatsapp_url:data.restaurant.whatsapp_url,
+        linkedin_url:data.restaurant.linkedin_url,
+        website_url:data.restaurant.website_url
       });
       setCategories(data.categories); setMenuItems(data.items); setWifi(data.wifi);
       trackEvent(data.restaurant.id,"page_view",{slug:data.restaurant.slug});
@@ -79,6 +95,7 @@ function CustomerPage() {
         <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"wifi_click");setWifiOpen(true)}}><span className="action-icon"><Wifi size={22}/></span><span><strong>Wi-Fi</strong><small>Get connection details</small></span><ChevronRight size={20}/></button>
         <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"feedback_open");setFeedbackOpen(true)}}><span className="action-icon"><MessageSquareText size={22}/></span><span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span><ChevronRight size={20}/></button>
       </section>
+      <SocialLinks restaurant={restaurant}/>
       <section id="menu" className="menu-section">
         <div className="section-heading"><div><p className="eyebrow dark">MENU</p><h2>What are you having?</h2></div><span>{items.length} items</span></div>
         <div className="search-box"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search dishes, drinks..."/></div>
@@ -86,11 +103,33 @@ function CustomerPage() {
         <div className="menu-grid">{items.map(item=><article className="menu-item" key={item.id}><img src={item.image} alt="" loading="lazy"/><div className="menu-item-body"><div className="menu-item-title"><h3>{item.name}</h3>{item.popular&&<span><Heart size={13}/> Popular</span>}</div><p>{item.description}</p><strong>{item.price} {restaurant.currency}</strong></div></article>)}</div>
         {items.length===0&&<div className="empty-state">No items match your search.</div>}
       </section>
-      <footer className="guest-footer"><Brand/><p>A simple digital guest experience for restaurants.</p><div><Instagram size={18}/><Phone size={18}/></div></footer>
+      <footer className="guest-footer"><Brand/><p>A simple digital guest experience for restaurants.</p></footer>
     </main>
     {wifiOpen&&<div className="modal-backdrop" onClick={()=>setWifiOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><Wifi/></span><h3>Restaurant Wi-Fi</h3><p>{wifi?.is_visible ? `${wifi.network_name || "Guest Wi-Fi"} — ${wifi.password_hint || "Ask staff for the password"}` : "Ask restaurant staff for Wi-Fi details."}</p><button onClick={()=>setWifiOpen(false)}>Done</button></div></div>}
     {feedbackOpen&&<div className="modal-backdrop" onClick={()=>setFeedbackOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><MessageSquareText/></span><h3>Private feedback</h3><p>Your message goes directly to the restaurant.</p><textarea value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5}/><button onClick={async()=>{try{await submitFeedback(restaurant.id,feedbackText);setFeedbackText("");setFeedbackOpen(false);alert("Thank you. Your feedback was sent privately.");}catch(err){alert(err instanceof Error?err.message:"Could not send feedback.")}}}>Send feedback</button></div></div>}
   </div>;
+}
+
+function SocialLinks({restaurant}:{restaurant:any}){
+  const links=[
+    ["Instagram",restaurant.instagram_url,Instagram],
+    ["TikTok",restaurant.tiktok_url,Music2],
+    ["Facebook",restaurant.facebook_url,Facebook],
+    ["YouTube",restaurant.youtube_url,Youtube],
+    ["Telegram",restaurant.telegram_url,Send],
+    ["WhatsApp",restaurant.whatsapp_url,MessageCircle],
+    ["LinkedIn",restaurant.linkedin_url,Linkedin],
+    ["Website",restaurant.website_url,Globe2],
+  ].filter(([,url])=>Boolean(url));
+
+  if(links.length===0)return null;
+
+  return <section className="social-section">
+    <div className="section-heading"><div><p className="eyebrow dark">CONNECT</p><h2>Follow & contact us</h2></div></div>
+    <div className="social-links">
+      {links.map(([label,url,Icon]:any)=><a key={label} className="social-link" href={url} target="_blank" rel="noreferrer"><Icon size={18}/><span>{label}</span></a>)}
+    </div>
+  </section>;
 }
 
 function AuthPage(){
@@ -244,7 +283,7 @@ function QrManager({slug}:{slug:string}){
 function RestaurantSettings({restaurant,onRefresh}:{restaurant:AdminRestaurant,onRefresh:()=>Promise<void>}){
   const [form,setForm]=useState({...restaurant}); const [message,setMessage]=useState("");
   const set=(k:keyof AdminRestaurant,v:any)=>setForm(prev=>({...prev,[k]:v}));
-  return <div className="panel settings-panel"><div className="panel-heading"><div><h2>Restaurant profile</h2><p>These details feed the guest-facing page.</p></div></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>set("name",e.target.value)}/></label><label>Tagline<input value={form.tagline||""} onChange={e=>set("tagline",e.target.value)}/></label><label>Phone<input value={form.phone||""} onChange={e=>set("phone",e.target.value)}/></label><label>Address<input value={form.address||""} onChange={e=>set("address",e.target.value)}/></label><label className="span-2">Google Maps URL<input value={form.google_maps_url||""} onChange={e=>set("google_maps_url",e.target.value)}/></label><label className="span-2">Google Review URL<input value={form.google_review_url||""} onChange={e=>set("google_review_url",e.target.value)}/></label><label>Instagram URL<input value={form.instagram_url||""} onChange={e=>set("instagram_url",e.target.value)}/></label><label>TikTok URL<input value={form.tiktok_url||""} onChange={e=>set("tiktok_url",e.target.value)}/></label></div><button className="primary-button" onClick={async()=>{await updateRestaurant(restaurant.id,{name:form.name,tagline:form.tagline,phone:form.phone,address:form.address,google_maps_url:form.google_maps_url,google_review_url:form.google_review_url,instagram_url:form.instagram_url,tiktok_url:form.tiktok_url});setMessage("Saved.");onRefresh()}}>Save settings</button>{message&&<span className="saved-note">{message}</span>}</div>;
+  return <div className="panel settings-panel"><div className="panel-heading"><div><h2>Restaurant profile</h2><p>These details feed the guest-facing page.</p></div></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>set("name",e.target.value)}/></label><label>Tagline<input value={form.tagline||""} onChange={e=>set("tagline",e.target.value)}/></label><label>Phone<input value={form.phone||""} onChange={e=>set("phone",e.target.value)}/></label><label>Address<input value={form.address||""} onChange={e=>set("address",e.target.value)}/></label><label className="span-2">Google Maps URL<input value={form.google_maps_url||""} onChange={e=>set("google_maps_url",e.target.value)}/></label><label className="span-2">Google Review URL<input value={form.google_review_url||""} onChange={e=>set("google_review_url",e.target.value)}/></label><label>Instagram URL<input value={form.instagram_url||""} onChange={e=>set("instagram_url",e.target.value)}/></label><label>TikTok URL<input value={form.tiktok_url||""} onChange={e=>set("tiktok_url",e.target.value)}/></label><label>Facebook URL<input value={form.facebook_url||""} onChange={e=>set("facebook_url",e.target.value)}/></label><label>YouTube URL<input value={form.youtube_url||""} onChange={e=>set("youtube_url",e.target.value)}/></label><label>Telegram URL<input value={form.telegram_url||""} onChange={e=>set("telegram_url",e.target.value)}/></label><label>WhatsApp URL<input value={form.whatsapp_url||""} onChange={e=>set("whatsapp_url",e.target.value)}/></label><label>LinkedIn URL<input value={form.linkedin_url||""} onChange={e=>set("linkedin_url",e.target.value)}/></label><label>Website URL<input value={form.website_url||""} onChange={e=>set("website_url",e.target.value)}/></label></div><button className="primary-button" onClick={async()=>{await updateRestaurant(restaurant.id,{name:form.name,tagline:form.tagline,phone:form.phone,address:form.address,google_maps_url:form.google_maps_url,google_review_url:form.google_review_url,instagram_url:form.instagram_url,tiktok_url:form.tiktok_url,facebook_url:form.facebook_url,youtube_url:form.youtube_url,telegram_url:form.telegram_url,whatsapp_url:form.whatsapp_url,linkedin_url:form.linkedin_url,website_url:form.website_url});setMessage("Saved.");onRefresh()}}>Save settings</button>{message&&<span className="saved-note">{message}</span>}</div>;
 }
 
 function PlatformDashboard(){
