@@ -33,6 +33,7 @@ function CustomerPage() {
   const [loadError,setLoadError]=useState("");
   const [restaurant,setRestaurant]=useState({
     ...fallbackRestaurant,id:"11111111-1111-4111-8111-111111111111",
+    phone:null as string|null,
     google_maps_url:"https://maps.google.com/?q=Addis+Ababa",google_review_url:null as string|null,
     cover_image_url:null as string|null,
     logo_url:null as string|null,
