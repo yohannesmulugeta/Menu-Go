@@ -10,7 +10,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
 import { loadRestaurantBySlug, submitFeedback, trackEvent } from "./lib/data";
 import {
-  claimOwnerSetup, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
+  bootstrapPlatformAdmin, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
   deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listAuditLogs,
   listCategories, listFeedback, listMenuItems, listOpeningHours, listPlatformRestaurants,
   onAuthChange, redeemRestaurantInvite, requestPasswordReset, resolveFeedback, saveCategory, saveMenuItem,
@@ -154,7 +154,10 @@ function AuthPage(){
   async function submit(){
     setBusy(true);setMessage("");
     try{
-      await signIn(email.trim(),password);
+      const loginValue=email.trim().toLowerCase()==="abol"
+        ? "yohannesmulugeta084+abol@gmail.com"
+        : email.trim().toLowerCase();
+      await signIn(loginValue,password);
 
       const pendingInvite=localStorage.getItem("menugo_pending_invite");
       if(pendingInvite){
@@ -183,8 +186,8 @@ function AuthPage(){
     <Brand/>
     <p className="eyebrow dark">SECURE ACCESS</p>
     <h1>Sign in to Menu Go</h1>
-    <p className="auth-copy">Use the email and password connected to your Menu Go account.</p>
-    <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email"/></label>
+    <p className="auth-copy">Use your Menu Go email and password. Abol can also sign in with the username <strong>abol</strong>.</p>
+    <label>Email or username<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com or abol" autoComplete="username"/></label>
     <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" autoComplete="current-password"/></label>
     <button className="primary-button auth-submit" disabled={busy||!email||!password} onClick={submit}>{busy?"Signing in…":"Sign in"}</button>
     <Link className="auth-switch" to="/forgot-password">Forgot password?</Link>
@@ -355,28 +358,26 @@ function InviteConfirmPage(){
 
 function SetupPage(){
   const nav=useNavigate();
-  const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
-  const [setupCode,setSetupCode]=useState("");
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState("");
+  const adminEmail="yohannesmulugeta084@gmail.com";
 
   async function createAdmin(){
     if(password.length<8)return setMessage("Use at least 8 characters.");
-    if(!setupCode)return setMessage("Enter the Menu Go setup code.");
     setBusy(true);setMessage("");
-    localStorage.setItem("menugo_pending_setup",setupCode.trim().toUpperCase());
+    localStorage.setItem("menugo_pending_admin_bootstrap","1");
 
     try{
       const redirectTo=`${window.location.origin}${window.location.pathname}?page=setup-confirm`;
-      const result=await signUp(email.trim().toLowerCase(),password,redirectTo);
+      const result=await signUp(adminEmail,password,redirectTo);
       if(result.session){
-        await claimOwnerSetup(setupCode);
-        localStorage.removeItem("menugo_pending_setup");
+        await bootstrapPlatformAdmin();
+        localStorage.removeItem("menugo_pending_admin_bootstrap");
         nav("/platform");
         return;
       }
-      setMessage("Admin account created. Confirm the email, then Menu Go will finish the setup.");
+      setMessage("Admin account created. Check your email and confirm it. Menu Go will then finish Admin access automatically.");
     }catch(err){
       setMessage(err instanceof Error?err.message:"Could not create Menu Go Admin.");
     }finally{
@@ -386,11 +387,10 @@ function SetupPage(){
 
   return <div className="auth-page"><div className="auth-card">
     <Brand/><p className="eyebrow dark">ONE-TIME SETUP</p><h1>Create Menu Go Admin</h1>
-    <p className="auth-copy">This page is only for initial platform setup.</p>
-    <label>Admin email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></label>
+    <p className="auth-copy">This setup is locked to your verified Admin email.</p>
+    <label>Admin email<input type="email" value={adminEmail} disabled/></label>
     <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password"/></label>
-    <label>Setup code<input value={setupCode} onChange={e=>setSetupCode(e.target.value.toUpperCase())} placeholder="MGO-..."/></label>
-    <button className="primary-button auth-submit" disabled={busy||!email} onClick={createAdmin}>{busy?"Creating…":"Create Admin account"}</button>
+    <button className="primary-button auth-submit" disabled={busy||password.length<8} onClick={createAdmin}>{busy?"Creating…":"Create Admin account"}</button>
     {message&&<div className="auth-message">{message}</div>}
   </div></div>
 }
@@ -402,14 +402,14 @@ function SetupConfirmPage(){
     (async()=>{
       try{
         const session=await getSession();
-        const code=localStorage.getItem("menugo_pending_setup");
-        if(session&&code){
-          await claimOwnerSetup(code);
-          localStorage.removeItem("menugo_pending_setup");
+        const pending=localStorage.getItem("menugo_pending_admin_bootstrap");
+        if(session&&pending){
+          await bootstrapPlatformAdmin();
+          localStorage.removeItem("menugo_pending_admin_bootstrap");
           window.location.href=`${window.location.origin}${window.location.pathname}#/platform`;
           return;
         }
-        setMessage("Email confirmed. Sign in, then return to the one-time setup page if needed.");
+        setMessage("Email confirmed. Sign in with your Admin email and password.");
       }catch(err){
         setMessage(err instanceof Error?err.message:"Could not finish Admin setup.");
       }
