@@ -237,6 +237,9 @@ function AuthPage(){
     <Link className="auth-switch" to="/forgot-password">Forgot password?</Link>
     <p className="auth-help">Manager accounts are invitation-only. Contact your Menu Go administrator if you need access.</p>
     {message&&<div className="auth-message">{message}</div>}
+    {email.trim().toLowerCase()==="yohannesmulugeta084@gmail.com"&&message&&
+      <Link className="primary-button auth-submit" to="/setup">Create the Admin account first</Link>}
+    <small className="auth-build">Auth build 5</small>
   </div></div>
 }
 
