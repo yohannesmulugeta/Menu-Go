@@ -10,7 +10,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { categories as fallbackCategories, menuItems as fallbackMenuItems, restaurant as fallbackRestaurant, type MenuItem } from "./data/demo";
 import { loadRestaurantBySlug, submitFeedback, trackEvent } from "./lib/data";
 import {
-  bootstrapPlatformAdmin, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
+  bootstrapAbolManager, bootstrapPlatformAdmin, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
   deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listAuditLogs,
   listCategories, listFeedback, listMenuItems, listOpeningHours, listPlatformRestaurants,
   onAuthChange, redeemRestaurantInvite, requestPasswordReset, resolveFeedback, saveCategory, saveMenuItem,
@@ -153,10 +153,12 @@ function AuthPage(){
 
   async function submit(){
     setBusy(true);setMessage("");
+    const normalized=email.trim().toLowerCase();
+    const isAbol=normalized==="abol";
+    const loginValue=isAbol ? "yohannesmulugeta084+abol@gmail.com" : normalized;
+    const isInitialAdmin=loginValue==="yohannesmulugeta084@gmail.com";
+
     try{
-      const loginValue=email.trim().toLowerCase()==="abol"
-        ? "yohannesmulugeta084+abol@gmail.com"
-        : email.trim().toLowerCase();
       await signIn(loginValue,password);
 
       const pendingInvite=localStorage.getItem("menugo_pending_invite");
@@ -168,6 +170,19 @@ function AuthPage(){
         return;
       }
 
+      if(isInitialAdmin){
+        if(!(await isPlatformAdmin())) await bootstrapPlatformAdmin();
+        nav("/platform");
+        return;
+      }
+
+      if(isAbol || loginValue==="yohannesmulugeta084+abol@gmail.com"){
+        const mine=await getMyRestaurant();
+        if(!mine) await bootstrapAbolManager();
+        nav("/admin");
+        return;
+      }
+
       if(await isPlatformAdmin()){
         nav("/platform");
         return;
@@ -175,8 +190,37 @@ function AuthPage(){
 
       const mine=await getMyRestaurant();
       nav(mine?"/admin":"/no-access");
-    }catch(err){
-      setMessage(err instanceof Error?err.message:"Could not sign in.");
+    }catch(signInError){
+      if(isInitialAdmin || isAbol){
+        try{
+          const redirectTo=`${window.location.origin}${window.location.pathname}?page=${isInitialAdmin?"setup-confirm":"manager-confirm"}`;
+          if(isInitialAdmin)localStorage.setItem("menugo_pending_admin_bootstrap","1");
+          if(isAbol)localStorage.setItem("menugo_pending_abol_bootstrap","1");
+
+          const result=await signUp(loginValue,password,redirectTo);
+
+          if(result.session){
+            if(isInitialAdmin){
+              await bootstrapPlatformAdmin();
+              localStorage.removeItem("menugo_pending_admin_bootstrap");
+              nav("/platform");
+            }else{
+              await bootstrapAbolManager();
+              localStorage.removeItem("menugo_pending_abol_bootstrap");
+              nav("/admin");
+            }
+            return;
+          }
+
+          setMessage("Account created. Check your email and confirm it, then sign in again.");
+          return;
+        }catch(createError){
+          setMessage(createError instanceof Error?createError.message:"Could not create the account.");
+          return;
+        }
+      }
+
+      setMessage(signInError instanceof Error?signInError.message:"Could not sign in.");
     }finally{
       setBusy(false);
     }
@@ -186,10 +230,10 @@ function AuthPage(){
     <Brand/>
     <p className="eyebrow dark">SECURE ACCESS</p>
     <h1>Sign in to Menu Go</h1>
-    <p className="auth-copy">Use your Menu Go email and password. Abol can also sign in with the username <strong>abol</strong>.</p>
+    <p className="auth-copy">Use your Menu Go email and password. Abol can sign in with the username <strong>abol</strong>.</p>
     <label>Email or username<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com or abol" autoComplete="username"/></label>
     <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" autoComplete="current-password"/></label>
-    <button className="primary-button auth-submit" disabled={busy||!email||!password} onClick={submit}>{busy?"Signing in…":"Sign in"}</button>
+    <button className="primary-button auth-submit" disabled={busy||!email||!password} onClick={submit}>{busy?"Please wait…":"Sign in"}</button>
     <Link className="auth-switch" to="/forgot-password">Forgot password?</Link>
     <p className="auth-help">Manager accounts are invitation-only. Contact your Menu Go administrator if you need access.</p>
     {message&&<div className="auth-message">{message}</div>}
@@ -418,6 +462,34 @@ function SetupConfirmPage(){
 
   return <div className="auth-page"><div className="auth-card">
     <Brand/><p className="eyebrow dark">ADMIN SETUP</p><h1>Finalizing access</h1>
+    <div className="auth-message">{message}</div>
+    <a className="primary-button auth-submit" href={`${window.location.origin}${window.location.pathname}#/login`}>Continue to sign in</a>
+  </div></div>
+}
+
+function ManagerConfirmPage(){
+  const [message,setMessage]=useState("Finishing Abol Manager setup…");
+
+  useEffect(()=>{
+    (async()=>{
+      try{
+        const session=await getSession();
+        const pending=localStorage.getItem("menugo_pending_abol_bootstrap");
+        if(session&&pending){
+          await bootstrapAbolManager();
+          localStorage.removeItem("menugo_pending_abol_bootstrap");
+          window.location.href=`${window.location.origin}${window.location.pathname}#/admin`;
+          return;
+        }
+        setMessage("Email confirmed. Sign in with username abol and your password.");
+      }catch(err){
+        setMessage(err instanceof Error?err.message:"Could not finish Abol Manager setup.");
+      }
+    })();
+  },[]);
+
+  return <div className="auth-page"><div className="auth-card">
+    <Brand/><p className="eyebrow dark">MANAGER SETUP</p><h1>Finalizing access</h1>
     <div className="auth-message">{message}</div>
     <a className="primary-button auth-submit" href={`${window.location.origin}${window.location.pathname}#/login`}>Continue to sign in</a>
   </div></div>
@@ -856,6 +928,7 @@ function App(){
   if(specialPage==="reset-password")return <ResetPasswordPage/>;
   if(specialPage==="invite-confirm")return <InviteConfirmPage/>;
   if(specialPage==="setup-confirm")return <SetupConfirmPage/>;
+  if(specialPage==="manager-confirm")return <ManagerConfirmPage/>;
 
   return <Routes>
     <Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/>
