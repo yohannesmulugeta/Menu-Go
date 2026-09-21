@@ -21,6 +21,7 @@ const source = sourceFiles.map((path) => readFileSync(path, "utf8")).join("\n");
 const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 const workflow = readFileSync(join(root, ".github/workflows/pages.yml"), "utf8");
 const viteConfig = readFileSync(join(root, "vite.config.ts"), "utf8");
+const pagesFallback = readFileSync(join(root, "public/404.html"), "utf8");
 const migrations = readdirSync(join(root, "supabase/migrations")).filter((name) => name.endsWith(".sql"));
 
 assert(!/bootstrap_(platform_admin|abol_manager)/.test(source), "Temporary account bootstrap code remains in src.");
@@ -28,6 +29,7 @@ assert(!/yohannesmulugeta084/.test(source), "A personal bootstrap email remains 
 assert(!/service[_-]?role/i.test(source), "A service-role reference exists in browser source.");
 assert(source.includes('/r/abol-coffee'), "Abol Coffee is not the production default route.");
 assert(viteConfig.includes('base: "/Menu-Go/"'), "GitHub Pages base path is incorrect.");
+assert(pagesFallback.includes('location.replace("/Menu-Go/")'), "GitHub Pages SPA fallback is missing.");
 assert(workflow.includes("npm ci"), "Deployment does not use reproducible npm ci installs.");
 assert(workflow.includes("npm run check"), "Deployment does not run the production checks.");
 assert(migrations.length >= 15, "Supabase migration history is incomplete.");

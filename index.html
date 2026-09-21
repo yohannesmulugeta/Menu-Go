@@ -16,6 +16,19 @@
     <meta property="og:url" content="https://yohannesmulugeta.github.io/Menu-Go/" />
     <link rel="canonical" href="https://yohannesmulugeta.github.io/Menu-Go/" />
     <title>Menu Go</title>
+    <script>
+      // GitHub Pages has no rewrite rules. Restore the route saved by public/404.html
+      // before React Router starts so direct menu, manager, and platform links work.
+      try {
+        const menuGoRedirect = sessionStorage.getItem("menu-go-redirect");
+        if (menuGoRedirect?.startsWith("/Menu-Go/")) {
+          sessionStorage.removeItem("menu-go-redirect");
+          history.replaceState(null, "", menuGoRedirect);
+        }
+      } catch {
+        // Storage may be unavailable in strict privacy modes; the home page still works.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Opening Menu Go</title>
+    <script>
+      const route = `${location.pathname}${location.search}${location.hash}`;
+      try {
+        if (route.startsWith("/Menu-Go/")) {
+          sessionStorage.setItem("menu-go-redirect", route);
+        }
+      } catch {
+        // Continue to the safe home page when storage is unavailable.
+      }
+      location.replace("/Menu-Go/");
+    </script>
+  </head>
+  <body>
+    <p>Opening Menu Go…</p>
+  </body>
+</html>
