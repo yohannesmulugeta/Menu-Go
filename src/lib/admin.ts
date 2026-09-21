@@ -112,6 +112,13 @@ export async function bootstrapPlatformAdmin() {
   return data;
 }
 
+export async function bootstrapAbolManager() {
+  const client = requireSupabase();
+  const { data, error } = await client.rpc("bootstrap_abol_manager");
+  if (error) throw error;
+  return data;
+}
+
 export async function redeemRestaurantInvite(code: string) {
   const client = requireSupabase();
   const { data, error } = await client.rpc("redeem_restaurant_invite", { p_code: code.trim() });
