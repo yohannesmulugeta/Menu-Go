@@ -55,9 +55,26 @@ export async function signIn(email: string, password: string) {
   return data;
 }
 
-export async function signUp(email: string, password: string) {
+export async function signUp(email: string, password: string, emailRedirectTo?: string) {
   const client = requireSupabase();
-  const { data, error } = await client.auth.signUp({ email, password });
+  const { data, error } = await client.auth.signUp({
+    email,
+    password,
+    options: emailRedirectTo ? { emailRedirectTo } : undefined,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function requestPasswordReset(email: string, redirectTo: string) {
+  const client = requireSupabase();
+  const { error } = await client.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+  if (error) throw error;
+}
+
+export async function updatePassword(password: string) {
+  const client = requireSupabase();
+  const { data, error } = await client.auth.updateUser({ password });
   if (error) throw error;
   return data;
 }
@@ -306,13 +323,22 @@ export async function createRestaurantWithInvite(input: {
   return data as { restaurant_id: string; slug: string; invite_code: string };
 }
 
-export async function createRestaurantInvite(restaurantId: string) {
+export async function createRestaurantInvite(restaurantId: string, email?: string) {
   const client = requireSupabase();
+  if (email) {
+    const { data, error } = await client.rpc("create_restaurant_email_invite", {
+      p_restaurant_id: restaurantId,
+      p_email: email.trim().toLowerCase(),
+    });
+    if (error) throw error;
+    return data as { invite_code: string; email: string; expires_in_days: number };
+  }
+
   const { data, error } = await client.rpc("create_restaurant_invite", {
     p_restaurant_id: restaurantId,
   });
   if (error) throw error;
-  return data as { invite_code: string; expires_in_days: number };
+  return data as { invite_code: string; expires_in_days: number; email?: string };
 }
 
 export async function listOpeningHours(restaurantId: string) {
