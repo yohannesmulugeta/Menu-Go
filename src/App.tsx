@@ -11,10 +11,11 @@ import { categories as fallbackCategories, menuItems as fallbackMenuItems, resta
 import { loadRestaurantBySlug, submitFeedback, trackEvent } from "./lib/data";
 import {
   claimOwnerSetup, createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
-  deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listCategories,
-  listFeedback, listMenuItems, listPlatformRestaurants, onAuthChange, redeemRestaurantInvite,
-  resolveFeedback, saveCategory, saveMenuItem, signIn, signOut, signUp, toggleMenuItem,
-  updateRestaurant, uploadMenuImage, type AdminCategory, type AdminMenuItem, type AdminRestaurant
+  deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listAuditLogs,
+  listCategories, listFeedback, listMenuItems, listOpeningHours, listPlatformRestaurants,
+  onAuthChange, redeemRestaurantInvite, resolveFeedback, saveCategory, saveMenuItem,
+  saveOpeningHours, signIn, signOut, signUp, toggleMenuItem, updateRestaurant,
+  uploadMenuImage, uploadRestaurantAsset, type AdminCategory, type AdminMenuItem, type AdminRestaurant
 } from "./lib/admin";
 
 const publicMenuUrl = (slug: string) => `https://yohannesmulugeta.github.io/Menu-Go/#/r/${slug}`;
@@ -169,8 +170,8 @@ function AuthPage(){
     try{
       const session=await getSession();
       if(!session) throw new Error("Sign in first, then redeem the code.");
-      if(type==="owner"){await claimOwnerSetup(setupCode);setMessage("Menu Go owner access activated.");nav("/platform");}
-      else {await redeemRestaurantInvite(inviteCode);setMessage("Restaurant access activated.");nav("/admin");}
+      if(type==="owner"){await claimOwnerSetup(setupCode);setMessage("Menu Go Admin access activated.");nav("/platform");}
+      else {await redeemRestaurantInvite(inviteCode);setMessage("Restaurant Manager access activated.");nav("/admin");}
     }catch(err){setMessage(err instanceof Error?err.message:"Could not redeem code.");}
     finally{setBusy(false)}
   }
@@ -181,10 +182,10 @@ function AuthPage(){
     <button className="primary-button auth-submit" disabled={busy} onClick={submit}>{busy?"Please wait…":mode==="signin"?"Sign in":"Create account"}</button>
     <button className="auth-switch" onClick={()=>setMode(mode==="signin"?"signup":"signin")}>{mode==="signin"?"Need an account? Create one":"Already have an account? Sign in"}</button>
     <div className="auth-divider">ACCESS CODE</div>
-    <label>Menu Go owner setup code<input value={setupCode} onChange={e=>setSetupCode(e.target.value.toUpperCase())} placeholder="MGO-..."/></label>
-    <button className="secondary-button auth-submit" disabled={busy} onClick={()=>claim("owner")}>Activate platform owner</button>
-    <label>Restaurant invite code<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} placeholder="MG-..."/></label>
-    <button className="ghost-button auth-submit" disabled={busy} onClick={()=>claim("invite")}>Join a restaurant</button>
+    <label>Menu Go Admin setup code<input value={setupCode} onChange={e=>setSetupCode(e.target.value.toUpperCase())} placeholder="MGO-..."/></label>
+    <button className="secondary-button auth-submit" disabled={busy} onClick={()=>claim("owner")}>Activate Menu Go Admin</button>
+    <label>Restaurant manager invite code<input value={inviteCode} onChange={e=>setInviteCode(e.target.value.toUpperCase())} placeholder="MG-..."/></label>
+    <button className="ghost-button auth-submit" disabled={busy} onClick={()=>claim("invite")}>Activate Manager Access</button>
     {message&&<div className="auth-message">{message}</div>}
   </div></div>
 }
@@ -200,10 +201,11 @@ function Protected({platform=false}:{platform?:boolean}){
   return platform?<PlatformDashboard/>:<RestaurantDashboard/>;
 }
 
-type AdminTab="Overview"|"Menu"|"Categories"|"Feedback"|"Analytics"|"QR Codes"|"Settings";
+type AdminTab="Overview"|"Menu"|"Categories"|"Hours"|"Feedback"|"Analytics"|"Activity"|"QR Codes"|"Settings";
 
 function RestaurantDashboard(){
   const nav=useNavigate();
+  const { restaurantId: requestedRestaurantId } = useParams();
   const [tab,setTab]=useState<AdminTab>("Overview");
   const [restaurant,setRestaurant]=useState<AdminRestaurant|null>(null);
   const [role,setRole]=useState("");
@@ -211,32 +213,47 @@ function RestaurantDashboard(){
   const [categories,setCategories]=useState<AdminCategory[]>([]);
   const [feedback,setFeedback]=useState<any[]>([]);
   const [analytics,setAnalytics]=useState<Record<string,number>>({});
+  const [hours,setHours]=useState<any[]>([]);
+  const [audit,setAudit]=useState<any[]>([]);
   const [loading,setLoading]=useState(true);
   const [editor,setEditor]=useState<AdminMenuItem|null|undefined>(undefined);
 
   async function refresh(){
     setLoading(true);
     try{
-      const mine=await getMyRestaurant();
+      const mine=await getMyRestaurant(requestedRestaurantId);
       if(!mine){setRestaurant(null);return}
       setRestaurant(mine.restaurant);setRole(mine.role);
-      const [c,m,f,a]=await Promise.all([listCategories(mine.restaurant.id),listMenuItems(mine.restaurant.id),listFeedback(mine.restaurant.id),getAnalytics(mine.restaurant.id)]);
-      setCategories(c);setItems(m);setFeedback(f);setAnalytics(a);
+      const [c,m,f,a,h,l]=await Promise.all([
+        listCategories(mine.restaurant.id),
+        listMenuItems(mine.restaurant.id),
+        listFeedback(mine.restaurant.id),
+        getAnalytics(mine.restaurant.id),
+        listOpeningHours(mine.restaurant.id),
+        listAuditLogs(mine.restaurant.id)
+      ]);
+      setCategories(c);setItems(m);setFeedback(f);setAnalytics(a);setHours(h);setAudit(l);
     }finally{setLoading(false)}
   }
-  useEffect(()=>{refresh()},[]);
+  useEffect(()=>{refresh()},[requestedRestaurantId]);
 
   if(loading) return <div className="screen-loader">Loading restaurant dashboard…</div>;
   if(!restaurant) return <div className="auth-page"><div className="auth-card"><Brand/><h1>No restaurant assigned yet</h1><p className="auth-copy">Ask the Menu Go platform owner for a restaurant invite code, then redeem it on the login page.</p><Link className="primary-button auth-submit" to="/login">Enter invite code</Link></div></div>;
 
-  const navItems:[AdminTab,any][]=[["Overview",LayoutDashboard],["Menu",MenuIcon],["Categories",UtensilsCrossed],["Feedback",MessageSquareText],["Analytics",BarChart3],["QR Codes",QrCode],["Settings",Settings]];
-  return <div className="dashboard"><aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav><div className="sidebar-footer"><div className="avatar">{restaurant.name.slice(0,2).toUpperCase()}</div><span><strong>{restaurant.name}</strong><small>{role}</small></span></div></aside>
+  const navItems:[AdminTab,any][]=[
+    ["Overview",LayoutDashboard],["Menu",MenuIcon],["Categories",UtensilsCrossed],
+    ["Hours",Settings],["Feedback",MessageSquareText],["Analytics",BarChart3],
+    ["Activity",Eye],["QR Codes",QrCode],["Settings",Settings]
+  ];
+  return <div className="dashboard"><aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav><div className="sidebar-footer"><div className="avatar">{restaurant.name.slice(0,2).toUpperCase()}</div><span><strong>{restaurant.name}</strong><small>{role==="platform_admin"?"Menu Go Admin":"Restaurant Manager"}</small></span></div></aside>
     <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">RESTAURANT ADMIN</p><h1>{tab}</h1></div><div className="dash-header-actions"><Link to={`/r/${restaurant.slug}`} className="ghost-button"><Eye size={17}/> View live menu</Link><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
       {tab==="Overview"&&<RestaurantOverview analytics={analytics} items={items} slug={restaurant.slug}/>}
       {tab==="Menu"&&<MenuManager restaurantId={restaurant.id} items={items} categories={categories} onRefresh={refresh} onEdit={setEditor}/>}
       {tab==="Categories"&&<CategoryManager restaurantId={restaurant.id} categories={categories} onRefresh={refresh}/>}
+      {tab==="Hours"&&<HoursManager restaurantId={restaurant.id} rows={hours} onRefresh={refresh}/>}
       {tab==="Feedback"&&<FeedbackPanel rows={feedback} onResolve={async id=>{await resolveFeedback(id);refresh()}}/>}
       {tab==="Analytics"&&<AnalyticsPanel data={analytics}/>}
+      {tab==="Activity"&&<ActivityPanel rows={audit}/>}
       {tab==="QR Codes"&&<QrManager slug={restaurant.slug}/>} 
       {tab==="Settings"&&<RestaurantSettings restaurant={restaurant} onRefresh={refresh}/>}
     </section>
@@ -280,8 +297,57 @@ function FeedbackPanel({rows,onResolve}:{rows:any[],onResolve:(id:string)=>void}
 }
 
 function AnalyticsPanel({data}:{data:Record<string,number>}){
-  const entries=[["Page views","page_view"],["Menu opens","menu_view"],["QR scans","qr_scan"],["Review clicks","review_click"],["Directions clicks","directions_click"],["Wi-Fi clicks","wifi_click"],["Feedback opens","feedback_open"],["Feedback sent","feedback_submit"]];
+  const entries=[["Page views","page_view"],["Menu opens","menu_view"],["QR scans","qr_scan"],["Review clicks","review_click"],["Directions clicks","directions_click"],["Feedback opens","feedback_open"],["Feedback sent","feedback_submit"]];
   return <div className="stats-grid analytics-grid">{entries.map(([label,key])=><div className="stat-card" key={key}><div className="stat-top"><span>{label}</span><BarChart3 size={18}/></div><strong>{data[key]??0}</strong><small>Tracked events</small></div>)}</div>;
+}
+
+
+function HoursManager({restaurantId,rows,onRefresh}:{restaurantId:string,rows:any[],onRefresh:()=>Promise<void>}){
+  const labels=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const initial=labels.map((_,weekday)=>{
+    const found=rows.find(r=>r.weekday===weekday);
+    return found??{weekday,opens_at:"07:00",closes_at:"21:00",is_closed:false};
+  });
+  const [form,setForm]=useState(initial);
+  useEffect(()=>setForm(labels.map((_,weekday)=>rows.find(r=>r.weekday===weekday)??{weekday,opens_at:"07:00",closes_at:"21:00",is_closed:false})),[rows]);
+
+  const change=(weekday:number,key:string,value:any)=>setForm(prev=>prev.map(r=>r.weekday===weekday?{...r,[key]:value}:r));
+  return <div className="panel settings-panel">
+    <div className="panel-heading"><div><h2>Opening hours</h2><p>These hours appear on the public restaurant page.</p></div></div>
+    <div className="hours-list">{form.map(row=><div className="hours-row" key={row.weekday}>
+      <strong>{labels[row.weekday]}</strong>
+      <label className="check-label"><input type="checkbox" checked={row.is_closed} onChange={e=>change(row.weekday,"is_closed",e.target.checked)}/> Closed</label>
+      <input type="time" disabled={row.is_closed} value={(row.opens_at||"07:00").slice(0,5)} onChange={e=>change(row.weekday,"opens_at",e.target.value)}/>
+      <span>to</span>
+      <input type="time" disabled={row.is_closed} value={(row.closes_at||"21:00").slice(0,5)} onChange={e=>change(row.weekday,"closes_at",e.target.value)}/>
+    </div>)}</div>
+    <button className="primary-button" onClick={async()=>{await saveOpeningHours(restaurantId,form.map(r=>({weekday:r.weekday,opens_at:r.is_closed?null:r.opens_at,closes_at:r.is_closed?null:r.closes_at,is_closed:r.is_closed})));await onRefresh()}}>Save hours</button>
+  </div>;
+}
+
+function ActivityPanel({rows}:{rows:any[]}){
+  const label=(row:any)=>{
+    const data=row.new_data||row.old_data||{};
+    if(row.entity_type==="menu_items") return data.name||"Menu item";
+    if(row.entity_type==="categories") return data.name||"Category";
+    if(row.entity_type==="restaurants") return data.name||"Restaurant";
+    if(row.entity_type==="opening_hours") return `Opening hours · day ${data.weekday??""}`;
+    return row.entity_type;
+  };
+  const detail=(row:any)=>{
+    if(row.action==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.price!==row.new_data.price)
+      return `Price: ${row.old_data.price} ETB → ${row.new_data.price} ETB`;
+    if(row.action==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.is_available!==row.new_data.is_available)
+      return row.new_data.is_available?"Marked available":"Marked unavailable";
+    return row.action.charAt(0).toUpperCase()+row.action.slice(1);
+  };
+  return <div className="panel">
+    <div className="panel-heading"><div><h2>Activity log</h2><p>Recent restaurant changes for accountability.</p></div></div>
+    {rows.length===0?<div className="empty-state">No activity recorded yet.</div>:rows.map(row=><div className="activity-row" key={row.id}>
+      <div><strong>{label(row)}</strong><small>{detail(row)}</small></div>
+      <span>{new Date(row.created_at).toLocaleString()}</span>
+    </div>)}
+  </div>;
 }
 
 function QrManager({slug}:{slug:string}){
@@ -290,27 +356,72 @@ function QrManager({slug}:{slug:string}){
 }
 
 function RestaurantSettings({restaurant,onRefresh}:{restaurant:AdminRestaurant,onRefresh:()=>Promise<void>}){
-  const [form,setForm]=useState({...restaurant}); const [message,setMessage]=useState("");
+  const [form,setForm]=useState({...restaurant});
+  const [message,setMessage]=useState("");
+  const [busy,setBusy]=useState(false);
   const set=(k:keyof AdminRestaurant,v:any)=>setForm(prev=>({...prev,[k]:v}));
-  return <div className="panel settings-panel"><div className="panel-heading"><div><h2>Restaurant profile</h2><p>These details feed the guest-facing page.</p></div></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>set("name",e.target.value)}/></label><label>Tagline<input value={form.tagline||""} onChange={e=>set("tagline",e.target.value)}/></label><label>Phone<input value={form.phone||""} onChange={e=>set("phone",e.target.value)}/></label><label>Address<input value={form.address||""} onChange={e=>set("address",e.target.value)}/></label><label className="span-2">Google Maps URL<input value={form.google_maps_url||""} onChange={e=>set("google_maps_url",e.target.value)}/></label><label className="span-2">Google Review URL<input value={form.google_review_url||""} onChange={e=>set("google_review_url",e.target.value)}/></label><label>Instagram URL<input value={form.instagram_url||""} onChange={e=>set("instagram_url",e.target.value)}/></label><label>TikTok URL<input value={form.tiktok_url||""} onChange={e=>set("tiktok_url",e.target.value)}/></label><label>Facebook URL<input value={form.facebook_url||""} onChange={e=>set("facebook_url",e.target.value)}/></label><label>YouTube URL<input value={form.youtube_url||""} onChange={e=>set("youtube_url",e.target.value)}/></label><label>Telegram URL<input value={form.telegram_url||""} onChange={e=>set("telegram_url",e.target.value)}/></label><label>WhatsApp URL<input value={form.whatsapp_url||""} onChange={e=>set("whatsapp_url",e.target.value)}/></label><label>LinkedIn URL<input value={form.linkedin_url||""} onChange={e=>set("linkedin_url",e.target.value)}/></label><label>Website URL<input value={form.website_url||""} onChange={e=>set("website_url",e.target.value)}/></label></div><button className="primary-button" onClick={async()=>{await updateRestaurant(restaurant.id,{name:form.name,tagline:form.tagline,phone:form.phone,address:form.address,google_maps_url:form.google_maps_url,google_review_url:form.google_review_url,instagram_url:form.instagram_url,tiktok_url:form.tiktok_url,facebook_url:form.facebook_url,youtube_url:form.youtube_url,telegram_url:form.telegram_url,whatsapp_url:form.whatsapp_url,linkedin_url:form.linkedin_url,website_url:form.website_url});setMessage("Saved.");onRefresh()}}>Save settings</button>{message&&<span className="saved-note">{message}</span>}</div>;
+
+  async function upload(kind:"logo"|"cover",file?:File){
+    if(!file)return;
+    setBusy(true);setMessage("");
+    try{
+      const url=await uploadRestaurantAsset(restaurant.id,file,kind);
+      set(kind==="logo"?"logo_url":"cover_image_url",url);
+      setMessage(`${kind==="logo"?"Logo":"Cover image"} uploaded. Save settings to publish it.`);
+    }catch(err){setMessage(err instanceof Error?err.message:"Upload failed.");}
+    finally{setBusy(false)}
+  }
+
+  return <div className="panel settings-panel">
+    <div className="panel-heading"><div><h2>Restaurant profile</h2><p>Managers can maintain the public restaurant page. The permanent link is controlled by Menu Go Admin.</p></div></div>
+    <div className="asset-grid">
+      <label className="asset-upload"><strong>Restaurant logo</strong>{form.logo_url&&<img src={form.logo_url} alt="Logo preview"/>}<input type="file" accept="image/*" disabled={busy} onChange={e=>upload("logo",e.target.files?.[0])}/></label>
+      <label className="asset-upload cover-upload"><strong>Cover image</strong>{form.cover_image_url&&<img src={form.cover_image_url} alt="Cover preview"/>}<input type="file" accept="image/*" disabled={busy} onChange={e=>upload("cover",e.target.files?.[0])}/></label>
+    </div>
+    <div className="form-grid">
+      <label>Name<input value={form.name} onChange={e=>set("name",e.target.value)}/></label>
+      <label>Tagline<input value={form.tagline||""} onChange={e=>set("tagline",e.target.value)}/></label>
+      <label>Phone<input value={form.phone||""} onChange={e=>set("phone",e.target.value)}/></label>
+      <label>Address<input value={form.address||""} onChange={e=>set("address",e.target.value)}/></label>
+      <label className="span-2">Google Maps URL<input value={form.google_maps_url||""} onChange={e=>set("google_maps_url",e.target.value)}/></label>
+      <label className="span-2">Google Review URL<input value={form.google_review_url||""} onChange={e=>set("google_review_url",e.target.value)}/></label>
+      <label>Instagram URL<input value={form.instagram_url||""} onChange={e=>set("instagram_url",e.target.value)}/></label>
+      <label>TikTok URL<input value={form.tiktok_url||""} onChange={e=>set("tiktok_url",e.target.value)}/></label>
+      <label>Facebook URL<input value={form.facebook_url||""} onChange={e=>set("facebook_url",e.target.value)}/></label>
+      <label>YouTube URL<input value={form.youtube_url||""} onChange={e=>set("youtube_url",e.target.value)}/></label>
+      <label>Telegram URL<input value={form.telegram_url||""} onChange={e=>set("telegram_url",e.target.value)}/></label>
+      <label>WhatsApp URL<input value={form.whatsapp_url||""} onChange={e=>set("whatsapp_url",e.target.value)}/></label>
+      <label>LinkedIn URL<input value={form.linkedin_url||""} onChange={e=>set("linkedin_url",e.target.value)}/></label>
+      <label>Website URL<input value={form.website_url||""} onChange={e=>set("website_url",e.target.value)}/></label>
+    </div>
+    <button className="primary-button" disabled={busy} onClick={async()=>{await updateRestaurant(restaurant.id,{
+      name:form.name,tagline:form.tagline,phone:form.phone,address:form.address,
+      google_maps_url:form.google_maps_url,google_review_url:form.google_review_url,
+      instagram_url:form.instagram_url,tiktok_url:form.tiktok_url,facebook_url:form.facebook_url,
+      youtube_url:form.youtube_url,telegram_url:form.telegram_url,whatsapp_url:form.whatsapp_url,
+      linkedin_url:form.linkedin_url,website_url:form.website_url,logo_url:form.logo_url,
+      cover_image_url:form.cover_image_url
+    });setMessage("Saved.");onRefresh()}}>Save settings</button>
+    {message&&<span className="saved-note">{message}</span>}
+  </div>;
 }
 
 function PlatformDashboard(){
   const nav=useNavigate(); const [restaurants,setRestaurants]=useState<any[]>([]); const [loading,setLoading]=useState(true);
-  const [open,setOpen]=useState(false); const [invite,setInvite]=useState(""); const [form,setForm]=useState({name:"",slug:"",tagline:"",address:""});
+  const [open,setOpen]=useState(false); const [invite,setInvite]=useState(""); const [inviteUrl,setInviteUrl]=useState(""); const [form,setForm]=useState({name:"",slug:"",tagline:"",address:""});
   async function refresh(){setLoading(true);try{setRestaurants(await listPlatformRestaurants())}finally{setLoading(false)}}
   useEffect(()=>{refresh()},[]);
   return <div className="dashboard"><aside className="sidebar"><Brand/><nav><button className="active"><Store size={19}/><span>Restaurants</span></button><button><BarChart3 size={19}/><span>Analytics</span></button><button><Settings size={19}/><span>Settings</span></button></nav><div className="sidebar-footer"><div className="avatar">MG</div><span><strong>Menu Go</strong><small>Platform owner</small></span></div></aside>
     <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">PLATFORM ADMIN</p><h1>Restaurants</h1></div><div className="dash-header-actions"><button className="primary-button" onClick={()=>setOpen(true)}><Plus size={17}/> Add restaurant</button><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
       <div className="stats-grid"><div className="stat-card"><div className="stat-top"><span>Restaurants</span><Store size={20}/></div><strong>{restaurants.length}</strong><small>All tenants</small></div><div className="stat-card"><div className="stat-top"><span>Active</span><Check size={20}/></div><strong>{restaurants.filter(r=>r.status==="active").length}</strong><small>Currently live</small></div><div className="stat-card"><div className="stat-top"><span>Architecture</span><QrCode size={20}/></div><strong>Multi</strong><small>Multi-restaurant</small></div><div className="stat-card"><div className="stat-top"><span>Backend</span><BarChart3 size={20}/></div><strong>Live</strong><small>Supabase</small></div></div>
-      <div className="panel"><div className="panel-heading"><div><h2>Restaurant tenants</h2><p>Create restaurants and issue owner invite codes.</p></div></div>{loading?<div className="empty-state">Loading…</div>:restaurants.map(r=><div className="restaurant-row" key={r.id}><div className="restaurant-avatar"><Coffee/></div><div><strong>{r.name}</strong><small>/{r.slug} · {r.address||"No address yet"}</small></div><span className="status"><Check size={13}/> {r.status}</span><Link className="tiny-button" to={`/r/${r.slug}`}><Eye size={14}/> View</Link><button className="tiny-button" onClick={async()=>{const result=await createRestaurantInvite(r.id,"admin");setInvite(result.invite_code)}}>New invite</button></div>)}</div>
+      <div className="panel"><div className="panel-heading"><div><h2>Restaurant tenants</h2><p>Create restaurants and issue owner invite codes.</p></div></div>{loading?<div className="empty-state">Loading…</div>:restaurants.map(r=><div className="restaurant-row" key={r.id}><div className="restaurant-avatar"><Coffee/></div><div><strong>{r.name}</strong><small>/{r.slug} · {r.address||"No address yet"}</small></div><span className="status"><Check size={13}/> {r.status}</span><Link className="tiny-button" to={`/r/${r.slug}`}><Eye size={14}/> Public</Link><Link className="tiny-button" to={`/admin/${r.id}`}><Settings size={14}/> Manage</Link><button className="tiny-button" onClick={async()=>{const result=await createRestaurantInvite(r.id);setInvite(result.invite_code);setInviteUrl(publicMenuUrl(r.slug))}}>Manager invite</button></div>)}</div>
     </section>
-    {open&&<div className="modal-backdrop" onClick={()=>setOpen(false)}><div className="modal admin-modal" onClick={e=>e.stopPropagation()}><div className="modal-head"><div><p className="eyebrow dark">NEW TENANT</p><h3>Add restaurant</h3></div><button className="icon-button" onClick={()=>setOpen(false)}><X/></button></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Slug<input value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"-")})} placeholder="restaurant-name"/></label><label className="span-2">Tagline<input value={form.tagline} onChange={e=>setForm({...form,tagline:e.target.value})}/></label><label className="span-2">Address<input value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/></label></div><button className="primary-button auth-submit" onClick={async()=>{try{const result=await createRestaurantWithInvite(form);setInvite(result.invite_code);setOpen(false);setForm({name:"",slug:"",tagline:"",address:""});refresh()}catch(err){alert(err instanceof Error?err.message:"Could not create restaurant.")}}}>Create restaurant</button></div></div>}
-    {invite&&<div className="modal-backdrop" onClick={()=>setInvite("")}><div className="modal invite-modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><QrCode/></span><h3>Restaurant invite created</h3><p>Give this one-time code to the restaurant admin. It expires in 14 days.</p><div className="invite-code">{invite}</div><button onClick={async()=>{await navigator.clipboard.writeText(invite);setInvite("")}}>Copy code & close</button></div></div>}
+    {open&&<div className="modal-backdrop" onClick={()=>setOpen(false)}><div className="modal admin-modal" onClick={e=>e.stopPropagation()}><div className="modal-head"><div><p className="eyebrow dark">NEW TENANT</p><h3>Add restaurant</h3></div><button className="icon-button" onClick={()=>setOpen(false)}><X/></button></div><div className="form-grid"><label>Name<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Slug<input value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"-")})} placeholder="restaurant-name"/></label><label className="span-2">Tagline<input value={form.tagline} onChange={e=>setForm({...form,tagline:e.target.value})}/></label><label className="span-2">Address<input value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/></label></div><button className="primary-button auth-submit" onClick={async()=>{try{const result=await createRestaurantWithInvite(form);setInvite(result.invite_code);setInviteUrl(publicMenuUrl(result.slug));setOpen(false);setForm({name:"",slug:"",tagline:"",address:""});refresh()}catch(err){alert(err instanceof Error?err.message:"Could not create restaurant.")}}}>Create restaurant</button></div></div>}
+    {invite&&<div className="modal-backdrop" onClick={()=>setInvite("")}><div className="modal invite-modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><QrCode/></span><h3>Restaurant invite created</h3><p>Give this one-time code to the Restaurant Manager. It expires in 14 days.</p><div className="invite-code">{invite}</div>{inviteUrl&&<><p className="mono-url">{inviteUrl}</p><p>This permanent public link is created automatically. The manager can update the menu without changing the link or QR.</p></>}<button onClick={async()=>{await navigator.clipboard.writeText(invite);setInvite("");setInviteUrl("")}}>Copy manager code & close</button></div></div>}
   </div>;
 }
 
 function App(){
-  return <Routes><Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/abol-coffee" replace/>}/></Routes>;
+  return <Routes><Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/admin/:restaurantId" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/abol-coffee" replace/>}/></Routes>;
 }
 export default App;
