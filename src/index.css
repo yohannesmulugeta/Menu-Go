@@ -263,3 +263,26 @@ td { padding:11px 8px; border-bottom:1px solid var(--line); }
 .price-note{margin:8px 0 14px;color:var(--muted);font-size:12px}
 .menu-item.no-image{grid-template-columns:1fr;min-height:112px}
 .menu-item.no-image .menu-item-body{padding:17px}
+
+
+/* Manager hours, assets and audit log */
+.hours-list{display:grid;gap:8px;margin:18px 0 22px}
+.hours-row{display:grid;grid-template-columns:120px 100px 1fr 28px 1fr;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#fcfaf6}
+.hours-row input[type="time"]{border:1px solid var(--line);background:white;border-radius:10px;padding:9px 10px;color:var(--ink)}
+.hours-row>span{text-align:center;color:var(--muted);font-size:11px}
+.activity-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0;border-top:1px solid var(--line)}
+.activity-row>div{display:flex;flex-direction:column;gap:4px}
+.activity-row strong{font-size:12px}
+.activity-row small,.activity-row>span{color:var(--muted);font-size:10px}
+.asset-grid{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin:18px 0 4px}
+.asset-upload{min-height:160px;border:1px dashed rgba(24,23,19,.2);background:#fbf9f4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.asset-upload img{width:100%;height:95px;object-fit:contain;background:white;border-radius:11px;border:1px solid var(--line)}
+.asset-upload.cover-upload img{object-fit:cover}
+.asset-upload input{font-size:11px}
+@media(max-width:720px){
+  .hours-row{grid-template-columns:1fr 100px;gap:8px}
+  .hours-row input[type="time"]{width:100%}
+  .hours-row>span{display:none}
+  .activity-row{align-items:flex-start;flex-direction:column;gap:5px}
+  .asset-grid{grid-template-columns:1fr}
+}
