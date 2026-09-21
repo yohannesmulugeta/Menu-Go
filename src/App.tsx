@@ -153,6 +153,17 @@ function AuthPage(){
   async function submit(){
     setBusy(true);setMessage("");
     try{
+      const normalized=email.trim().toLowerCase();
+      if(mode==="signin" && normalized==="admin@menugo.test" && password==="MenuGoAdmin2026!"){
+        sessionStorage.setItem("menugo_preview_role","admin");
+        nav("/preview/platform");
+        return;
+      }
+      if(mode==="signin" && normalized==="abol.manager@menugo.test" && password==="AbolManager2026!"){
+        sessionStorage.setItem("menugo_preview_role","manager");
+        nav("/preview/manager");
+        return;
+      }
       if(mode==="signin") await signIn(email,password);
       else {
         const result=await signUp(email,password);
@@ -189,6 +200,102 @@ function AuthPage(){
     <button className="ghost-button auth-submit" disabled={busy} onClick={()=>claim("invite")}>Activate Manager Access</button>
     {message&&<div className="auth-message">{message}</div>}
   </div></div>
+}
+
+
+function PreviewGate({role,children}:{role:"admin"|"manager",children:React.ReactNode}){
+  const allowed=sessionStorage.getItem("menugo_preview_role")===role;
+  if(!allowed)return <Navigate to="/login" replace/>;
+  return <>{children}</>;
+}
+
+function PreviewPlatformDashboard(){
+  const nav=useNavigate();
+  const restaurants=[
+    {name:"Abol Coffee",slug:"abol-coffee",status:"active",address:"22 Mazoria, Addis Ababa"},
+    {name:"Addis Harvest",slug:"addis-harvest",status:"active",address:"Bole, Addis Ababa — Demo"},
+    {name:"Sora Table",slug:"sora-table",status:"active",address:"Demo restaurant"}
+  ];
+  return <div className="dashboard">
+    <aside className="sidebar"><Brand/><nav>
+      <button className="active"><Store size={19}/><span>Restaurants</span></button>
+      <button><BarChart3 size={19}/><span>Analytics</span></button>
+      <button><Settings size={19}/><span>Settings</span></button>
+    </nav><div className="sidebar-footer"><div className="avatar">MG</div><span><strong>Menu Go</strong><small>Admin Preview</small></span></div></aside>
+    <section className="dashboard-content">
+      <header className="dash-header"><div><p className="eyebrow dark">MENU GO ADMIN · PREVIEW</p><h1>Restaurants</h1></div>
+        <div className="dash-header-actions"><button className="primary-button" onClick={()=>alert("Preview mode: restaurant creation is disabled.")}><Plus size={17}/> Add restaurant</button>
+        <button className="ghost-button" onClick={()=>{sessionStorage.removeItem("menugo_preview_role");nav("/login")}}><LogOut size={17}/> Exit preview</button></div>
+      </header>
+      <div className="preview-banner">Preview access — you can inspect the Admin experience, but changes are disabled.</div>
+      <div className="stats-grid">
+        <div className="stat-card"><div className="stat-top"><span>Restaurants</span><Store size={20}/></div><strong>{restaurants.length}</strong><small>Platform tenants</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Active</span><Check size={20}/></div><strong>{restaurants.length}</strong><small>Currently live</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Managers</span><Settings size={20}/></div><strong>1+</strong><small>Per restaurant</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Public access</span><QrCode size={20}/></div><strong>QR</strong><small>No customer login</small></div>
+      </div>
+      <div className="panel"><div className="panel-heading"><div><h2>Restaurant tenants</h2><p>Admin controls every restaurant and manager assignment.</p></div></div>
+        {restaurants.map(r=><div className="restaurant-row" key={r.slug}>
+          <div className="restaurant-avatar"><Coffee/></div><div><strong>{r.name}</strong><small>/{r.slug} · {r.address}</small></div>
+          <span className="status"><Check size={13}/> {r.status}</span>
+          <Link className="tiny-button" to={`/r/${r.slug}`}><Eye size={14}/> Public</Link>
+          {r.slug==="abol-coffee"?<Link className="tiny-button" to="/preview/manager"><Settings size={14}/> Manage</Link>:<button className="tiny-button" onClick={()=>alert("Preview mode")}>Manage</button>}
+        </div>)}
+      </div>
+    </section>
+  </div>;
+}
+
+function PreviewManagerDashboard(){
+  const nav=useNavigate();
+  const [tab,setTab]=useState<AdminTab>("Overview");
+  const [restaurant,setRestaurant]=useState<any>(null);
+  const [items,setItems]=useState<MenuItem[]>([]);
+  const [categories,setCategories]=useState<string[]>([]);
+  const [hours,setHours]=useState<any[]>([]);
+  useEffect(()=>{
+    loadRestaurantBySlug("abol-coffee").then(data=>{
+      if(!data)return;
+      setRestaurant(data.restaurant);setItems(data.items);setCategories(data.categories);setHours(data.hours);
+    });
+  },[]);
+  const navItems:[AdminTab,any][]=[
+    ["Overview",LayoutDashboard],["Menu",MenuIcon],["Categories",UtensilsCrossed],
+    ["Hours",Settings],["Feedback",MessageSquareText],["Analytics",BarChart3],
+    ["Activity",Eye],["QR Codes",QrCode],["Settings",Settings]
+  ];
+  if(!restaurant)return <div className="screen-loader">Loading Abol Coffee preview…</div>;
+  return <div className="dashboard">
+    <aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav>
+      <div className="sidebar-footer"><div className="avatar">AC</div><span><strong>Abol Coffee</strong><small>Manager Preview</small></span></div></aside>
+    <section className="dashboard-content">
+      <header className="dash-header"><div><p className="eyebrow dark">RESTAURANT MANAGER · PREVIEW</p><h1>{tab}</h1></div>
+        <div className="dash-header-actions"><Link to="/r/abol-coffee" className="ghost-button"><Eye size={17}/> View live menu</Link>
+        <button className="ghost-button" onClick={()=>{sessionStorage.removeItem("menugo_preview_role");nav("/login")}}><LogOut size={17}/> Exit preview</button></div>
+      </header>
+      <div className="preview-banner">Preview access — this shows the Abol Coffee manager dashboard. Editing is disabled until a real manager account is created.</div>
+      {tab==="Overview"&&<><div className="stats-grid">
+        <div className="stat-card"><div className="stat-top"><span>Menu items</span><MenuIcon size={20}/></div><strong>{items.length}</strong><small>Live Abol menu</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Categories</span><UtensilsCrossed size={20}/></div><strong>{categories.length}</strong><small>Live categories</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Availability</span><Check size={20}/></div><strong>{items.length}</strong><small>Visible items</small></div>
+        <div className="stat-card"><div className="stat-top"><span>Public link</span><QrCode size={20}/></div><strong>Live</strong><small>/r/abol-coffee</small></div>
+      </div><div className="panel"><div className="panel-heading"><div><h2>Manager responsibilities</h2><p>Everything the restaurant manager can maintain.</p></div></div>
+        <div className="preview-feature-grid"><span>Menu & prices</span><span>Logo & cover</span><span>Categories</span><span>Opening hours</span><span>Availability</span><span>Feedback</span><span>Analytics</span><span>QR code</span></div>
+      </div></>}
+      {tab==="Menu"&&<div className="panel"><div className="panel-heading"><div><h2>Abol Coffee menu</h2><p>{items.length} live items. In the real manager account these can be edited.</p></div><button className="primary-button" onClick={()=>alert("Preview mode")}><Plus size={16}/> Add item</button></div>
+        {items.slice(0,18).map(i=><div className="preview-menu-row" key={i.id}><div><strong>{i.name}</strong><small>{i.category}</small></div><span>{i.price} ETB</span><button className="tiny-button" onClick={()=>alert("Preview mode")}>Edit</button></div>)}
+      </div>}
+      {tab==="Categories"&&<div className="panel"><div className="panel-heading"><div><h2>Categories</h2><p>Manager can organize the menu.</p></div></div>{categories.map(c=><div className="preview-menu-row" key={c}><strong>{c}</strong><button className="tiny-button" onClick={()=>alert("Preview mode")}>Edit</button></div>)}</div>}
+      {tab==="Hours"&&<div className="panel"><div className="panel-heading"><div><h2>Opening hours</h2><p>Editable in the real manager account.</p></div></div>{hours.map((h:any)=><div className="preview-menu-row" key={h.weekday}><strong>{["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][h.weekday]}</strong><span>{h.is_closed?"Closed":`${String(h.opens_at).slice(0,5)} – ${String(h.closes_at).slice(0,5)}`}</span></div>)}</div>}
+      {tab==="Feedback"&&<div className="panel centered-panel"><MessageSquareText size={32}/><h2>Private feedback</h2><p>Managers see customer feedback here and can mark it resolved.</p></div>}
+      {tab==="Analytics"&&<div className="stats-grid"><div className="stat-card"><span>Page views</span><strong>—</strong><small>Available after real sign-in</small></div><div className="stat-card"><span>Review clicks</span><strong>—</strong><small>Available after real sign-in</small></div><div className="stat-card"><span>Directions</span><strong>—</strong><small>Available after real sign-in</small></div></div>}
+      {tab==="Activity"&&<div className="panel centered-panel"><Eye size={32}/><h2>Activity log</h2><p>Real manager changes such as price edits and availability updates are recorded here.</p></div>}
+      {tab==="QR Codes"&&<div className="panel centered-panel"><p className="eyebrow dark">PERMANENT QR</p><h2>Abol Coffee</h2><div className="large-qr"><QRCodeSVG value={publicMenuUrl("abol-coffee")} size={230}/></div><p className="mono-url">{publicMenuUrl("abol-coffee")}</p></div>}
+      {tab==="Settings"&&<div className="panel settings-panel"><div className="panel-heading"><div><h2>Restaurant profile</h2><p>Logo, cover, contact details and social links are managed here.</p></div></div>
+        <div className="form-grid"><label>Name<input value={restaurant.name} disabled/></label><label>Tagline<input value={restaurant.tagline||""} disabled/></label><label>Phone<input value={restaurant.phone||""} disabled/></label><label>Address<input value={restaurant.address||""} disabled/></label></div>
+      </div>}
+    </section>
+  </div>;
 }
 
 function Protected({platform=false}:{platform?:boolean}){
@@ -423,6 +530,6 @@ function PlatformDashboard(){
 }
 
 function App(){
-  return <Routes><Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/admin" element={<Protected/>}/><Route path="/admin/:restaurantId" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/abol-coffee" replace/>}/></Routes>;
+  return <Routes><Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/><Route path="/demo" element={<Navigate to="/r/sora-table" replace/>}/><Route path="/r/:slug" element={<CustomerPage/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/preview/platform" element={<PreviewGate role="admin"><PreviewPlatformDashboard/></PreviewGate>}/><Route path="/preview/manager" element={<PreviewGate role="manager"><PreviewManagerDashboard/></PreviewGate>}/><Route path="/admin" element={<Protected/>}/><Route path="/admin/:restaurantId" element={<Protected/>}/><Route path="/platform" element={<Protected platform/>}/><Route path="*" element={<Navigate to="/r/abol-coffee" replace/>}/></Routes>;
 }
 export default App;
