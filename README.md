@@ -2,15 +2,16 @@
 
 Menu Go is a mobile-first digital guest experience for restaurants.
 
-## Current demo
+## Production routes
 
-The repository includes three demo views:
+The production application includes:
 
-- `#/demo` — guest-facing restaurant page and digital menu
-- `#/admin` — restaurant management dashboard
-- `#/platform` — Menu Go super-admin dashboard
+- `#/r/abol-coffee` — Abol Coffee guest page and digital menu
+- `#/admin` — authenticated restaurant management dashboard
+- `#/platform` — authenticated Menu Go platform-admin dashboard
+- `#/accept-invite` — email-bound manager account activation
 
-The first demo restaurant, **Sora Table**, is fictional and exists only to demonstrate the product.
+New restaurants are created as drafts and must be activated by the platform administrator.
 
 ## MVP direction
 
@@ -47,6 +48,13 @@ VITE_SUPABASE_PUBLISHABLE_KEY=
 
 Never commit service-role keys or private credentials.
 
+The full hosted migration history is stored in `supabase/migrations`. The public
+Abol Coffee menu is preserved in `supabase/seed.sql`; it contains no users,
+feedback, analytics, invitations, or credentials.
+
+Temporary first-user bootstrap RPCs have been removed. New restaurant managers
+must use an email-bound invitation created by the platform administrator.
+
 ## Development
 
 ```bash
@@ -60,6 +68,16 @@ npm run dev
 npm run build
 ```
 
+Run the complete production gate before deployment:
+
+```bash
+npm ci
+npm run check
+```
+
 The Vite base path is configured for:
 
 `https://yohannesmulugeta.github.io/Menu-Go/`
+
+See [`docs/PRODUCTION.md`](docs/PRODUCTION.md) for release checks and the few
+Supabase Dashboard settings that cannot be changed through database migrations.

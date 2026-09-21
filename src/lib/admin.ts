@@ -1,5 +1,26 @@
 import { supabase } from "./supabase";
 
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+
+function validateImage(file: File) {
+  if (file.size > 5 * 1024 * 1024) throw new Error("Image must be under 5 MB.");
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) throw new Error("Use a JPEG, PNG, WebP or AVIF image.");
+}
+
+function validateOptionalUrl(value: unknown, label: string) {
+  if (value === null || value === undefined || value === "") return;
+  if (typeof value !== "string") throw new Error(`${label} must be a valid URL.`);
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${label} must be a complete URL beginning with https:// or http://.`);
+  }
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    throw new Error(`${label} must use https:// or http://.`);
+  }
+}
+
 export type AdminMenuItem = {
   id: string;
   name: string;
@@ -98,27 +119,6 @@ export function onAuthChange(callback: () => void) {
   return () => data.subscription.unsubscribe();
 }
 
-export async function claimOwnerSetup(code: string) {
-  const client = requireSupabase();
-  const { data, error } = await client.rpc("claim_owner_setup", { p_code: code.trim() });
-  if (error) throw error;
-  return data;
-}
-
-export async function bootstrapPlatformAdmin() {
-  const client = requireSupabase();
-  const { data, error } = await client.rpc("bootstrap_platform_admin");
-  if (error) throw error;
-  return data;
-}
-
-export async function bootstrapAbolManager() {
-  const client = requireSupabase();
-  const { data, error } = await client.rpc("bootstrap_abol_manager");
-  if (error) throw error;
-  return data;
-}
-
 export async function redeemRestaurantInvite(code: string) {
   const client = requireSupabase();
   const { data, error } = await client.rpc("redeem_restaurant_invite", { p_code: code.trim() });
@@ -203,6 +203,8 @@ export async function saveMenuItem(restaurantId: string, item: {
   is_popular: boolean;
 }) {
   const client = requireSupabase();
+  if (!item.name.trim()) throw new Error("Menu item name is required.");
+  if (!Number.isFinite(item.price) || item.price < 0) throw new Error("Enter a valid non-negative price.");
   const payload = {
     restaurant_id: restaurantId,
     name: item.name.trim(),
@@ -237,6 +239,7 @@ export async function toggleMenuItem(itemId: string, isAvailable: boolean) {
 
 export async function saveCategory(restaurantId: string, name: string, id?: string) {
   const client = requireSupabase();
+  if (!name.trim()) throw new Error("Category name is required.");
   if (id) {
     const { error } = await client.from("categories").update({ name: name.trim() }).eq("id", id);
     if (error) throw error;
@@ -262,6 +265,9 @@ export async function deleteCategory(id: string) {
 
 export async function updateRestaurant(restaurantId: string, updates: Partial<AdminRestaurant>) {
   const client = requireSupabase();
+  for (const [key, value] of Object.entries(updates)) {
+    if (key.endsWith("_url")) validateOptionalUrl(value, key.replaceAll("_", " "));
+  }
   const { error } = await client.from("restaurants").update(updates).eq("id", restaurantId);
   if (error) throw error;
 }
@@ -298,7 +304,7 @@ export async function getAnalytics(restaurantId: string) {
 
 export async function uploadMenuImage(restaurantId: string, file: File) {
   const client = requireSupabase();
-  if (file.size > 5 * 1024 * 1024) throw new Error("Image must be under 5 MB.");
+  validateImage(file);
   const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
   const path = `${restaurantId}/${Date.now()}-${safe}`;
   const { error } = await client.storage.from("menu-images").upload(path, file, {
@@ -330,29 +336,23 @@ export async function createRestaurantWithInvite(input: {
   const { data, error } = await client.rpc("create_restaurant_with_invite", {
     p_name: input.name.trim(),
     p_slug: input.slug.trim(),
-    p_tagline: input.tagline?.trim() || null,
-    p_address: input.address?.trim() || null,
+    p_tagline: input.tagline?.trim() || undefined,
+    p_address: input.address?.trim() || undefined,
   });
   if (error) throw error;
-  return data as { restaurant_id: string; slug: string; invite_code: string };
+  return data as { restaurant_id: string; slug: string };
 }
 
-export async function createRestaurantInvite(restaurantId: string, email?: string) {
+export async function createRestaurantInvite(restaurantId: string, email: string) {
   const client = requireSupabase();
-  if (email) {
-    const { data, error } = await client.rpc("create_restaurant_email_invite", {
-      p_restaurant_id: restaurantId,
-      p_email: email.trim().toLowerCase(),
-    });
-    if (error) throw error;
-    return data as { invite_code: string; email: string; expires_in_days: number };
-  }
-
-  const { data, error } = await client.rpc("create_restaurant_invite", {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) throw new Error("Manager email is required.");
+  const { data, error } = await client.rpc("create_restaurant_email_invite", {
     p_restaurant_id: restaurantId,
+    p_email: normalizedEmail,
   });
   if (error) throw error;
-  return data as { invite_code: string; expires_in_days: number; email?: string };
+  return data as { invite_code: string; email: string; expires_in_days: number };
 }
 
 export async function listOpeningHours(restaurantId: string) {
@@ -394,7 +394,7 @@ export async function listAuditLogs(restaurantId: string) {
 
 export async function uploadRestaurantAsset(restaurantId: string, file: File, kind: "logo" | "cover") {
   const client = requireSupabase();
-  if (file.size > 5 * 1024 * 1024) throw new Error("Image must be under 5 MB.");
+  validateImage(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `${restaurantId}/${kind}-${Date.now()}.${ext}`;
   const { error } = await client.storage.from("restaurant-assets").upload(path, file, {

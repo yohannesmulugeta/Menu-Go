@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import type { MenuItem } from "../data/demo";
+import type { Json } from "./database.types";
 
 export type RestaurantRecord = {
   id: string;
@@ -71,7 +72,7 @@ export async function loadRestaurantBySlug(slug: string) {
     name: item.name,
     description: item.description ?? "",
     price: Number(item.price),
-    category: categoryMap.get(item.category_id) ?? "Other",
+    category: categoryMap.get(item.category_id ?? "") ?? "Other",
     image: item.image_url ?? "",
     popular: item.is_popular,
     available: item.is_available,
@@ -89,6 +90,7 @@ export async function submitFeedback(restaurantId: string, message: string) {
   if (!supabase) throw new Error("Database is not configured.");
   const clean = message.trim();
   if (!clean) throw new Error("Please enter your feedback.");
+  if (clean.length > 3000) throw new Error("Feedback must be 3,000 characters or fewer.");
 
   const { error } = await supabase.from("feedback").insert({
     restaurant_id: restaurantId,
@@ -102,7 +104,7 @@ export async function submitFeedback(restaurantId: string, message: string) {
 export async function trackEvent(
   restaurantId: string,
   eventType: string,
-  metadata: Record<string, unknown> = {}
+  metadata: Json = {}
 ) {
   if (!supabase) return;
   await supabase.from("analytics_events").insert({
