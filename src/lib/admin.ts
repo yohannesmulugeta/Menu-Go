@@ -105,6 +105,13 @@ export async function claimOwnerSetup(code: string) {
   return data;
 }
 
+export async function bootstrapPlatformAdmin() {
+  const client = requireSupabase();
+  const { data, error } = await client.rpc("bootstrap_platform_admin");
+  if (error) throw error;
+  return data;
+}
+
 export async function redeemRestaurantInvite(code: string) {
   const client = requireSupabase();
   const { data, error } = await client.rpc("redeem_restaurant_invite", { p_code: code.trim() });
