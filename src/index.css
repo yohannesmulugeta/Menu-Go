@@ -299,3 +299,12 @@ td { padding:11px 8px; border-bottom:1px solid var(--line); }
   .preview-menu-row{grid-template-columns:minmax(0,1fr) auto}
   .preview-menu-row .tiny-button{grid-column:1/-1;justify-self:start}
 }
+
+/* Professional authentication */
+.auth-help{margin:14px 0 0;color:var(--muted);font-size:11px;line-height:1.55;text-align:center}
+.auth-switch{display:inline-flex;justify-content:center;width:100%;margin-top:12px;background:transparent;border:0;color:var(--orange-dark);font:inherit;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none}
+.invite-success{display:flex;align-items:center;gap:8px;padding:11px 12px;margin:12px 0;border-radius:12px;background:#eef8f0;color:#2e6c3a}
+.invite-link-text{word-break:break-all;text-align:left}
+.invite-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.invite-actions .primary-button,.invite-actions .ghost-button{flex:1;justify-content:center;text-align:center}
+@media(max-width:640px){.invite-actions{flex-direction:column}.invite-actions .primary-button,.invite-actions .ghost-button{width:100%}}
