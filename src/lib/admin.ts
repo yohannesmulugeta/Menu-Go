@@ -37,6 +37,8 @@ export type AdminRestaurant = {
   whatsapp_url: string | null;
   linkedin_url: string | null;
   website_url: string | null;
+  logo_url: string | null;
+  cover_image_url: string | null;
   currency: string;
   status: string;
 };
@@ -100,16 +102,27 @@ export async function isPlatformAdmin() {
   return (data?.length ?? 0) > 0;
 }
 
-export async function getMyRestaurant() {
+export async function getMyRestaurant(requestedRestaurantId?: string) {
   const client = requireSupabase();
   const { data: sessionData } = await client.auth.getSession();
   const uid = sessionData.session?.user.id;
   if (!uid) return null;
 
+  if (requestedRestaurantId && await isPlatformAdmin()) {
+    const { data: restaurant, error } = await client
+      .from("restaurants")
+      .select("*")
+      .eq("id", requestedRestaurantId)
+      .single();
+    if (error) throw error;
+    return { restaurant: restaurant as AdminRestaurant, role: "platform_admin" };
+  }
+
   const { data: membership, error: membershipError } = await client
     .from("restaurant_members")
     .select("restaurant_id,role")
     .eq("user_id", uid)
+    .eq("role", "manager")
     .limit(1)
     .maybeSingle();
 
@@ -123,7 +136,7 @@ export async function getMyRestaurant() {
     .single();
 
   if (restaurantError) throw restaurantError;
-  return { restaurant: restaurant as AdminRestaurant, role: membership.role as string };
+  return { restaurant: restaurant as AdminRestaurant, role: "restaurant_manager" };
 }
 
 export async function listCategories(restaurantId: string) {
@@ -293,12 +306,62 @@ export async function createRestaurantWithInvite(input: {
   return data as { restaurant_id: string; slug: string; invite_code: string };
 }
 
-export async function createRestaurantInvite(restaurantId: string, role = "admin") {
+export async function createRestaurantInvite(restaurantId: string) {
   const client = requireSupabase();
   const { data, error } = await client.rpc("create_restaurant_invite", {
     p_restaurant_id: restaurantId,
-    p_role: role,
   });
   if (error) throw error;
   return data as { invite_code: string; expires_in_days: number };
+}
+
+export async function listOpeningHours(restaurantId: string) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("opening_hours")
+    .select("id,weekday,opens_at,closes_at,is_closed")
+    .eq("restaurant_id", restaurantId)
+    .order("weekday");
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function saveOpeningHours(restaurantId: string, rows: Array<{
+  weekday: number;
+  opens_at: string | null;
+  closes_at: string | null;
+  is_closed: boolean;
+}>) {
+  const client = requireSupabase();
+  const payload = rows.map(row => ({ ...row, restaurant_id: restaurantId }));
+  const { error } = await client
+    .from("opening_hours")
+    .upsert(payload, { onConflict: "restaurant_id,weekday" });
+  if (error) throw error;
+}
+
+export async function listAuditLogs(restaurantId: string) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("audit_logs")
+    .select("id,action,entity_type,entity_id,old_data,new_data,created_at")
+    .eq("restaurant_id", restaurantId)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function uploadRestaurantAsset(restaurantId: string, file: File, kind: "logo" | "cover") {
+  const client = requireSupabase();
+  if (file.size > 5 * 1024 * 1024) throw new Error("Image must be under 5 MB.");
+  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const path = `${restaurantId}/${kind}-${Date.now()}.${ext}`;
+  const { error } = await client.storage.from("restaurant-assets").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) throw error;
+  const { data } = client.storage.from("restaurant-assets").getPublicUrl(path);
+  return data.publicUrl;
 }
