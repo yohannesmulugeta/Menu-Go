@@ -251,7 +251,7 @@ function ResetPasswordPage(){
     <Brand/><p className="eyebrow dark">NEW PASSWORD</p><h1>Choose a new password</h1>
     {ready==="loading"?<div className="auth-message">Checking reset link…</div>:ready==="no"?<>
       <p className="auth-copy">This reset link is invalid or has expired.</p>
-      <Link className="primary-button auth-submit" to="/forgot-password">Request another link</Link>
+      <a className="primary-button auth-submit" href={`${window.location.origin}${window.location.pathname}#/forgot-password`}>Request another link</a>
     </>:<>
       <label>New password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} autoComplete="new-password"/></label>
       <label>Confirm password<input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} autoComplete="new-password"/></label>
@@ -820,8 +820,8 @@ function PlatformDashboard(){
       <div className="form-grid">
         <label>Name<input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label>
         <label>Slug<input value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"-")})} placeholder="restaurant-name"/></label>
-        <label className="span-2">Tagline<input value={form.tagline} onChange={e=>setForm({...form,tagline:e.target.value)}/></label>
-        <label className="span-2">Address<input value={form.address} onChange={e=>setForm({...form,address:e.target.value)}/></label>
+        <label className="span-2">Tagline<input value={form.tagline} onChange={e=>setForm({...form,tagline:e.target.value})}/></label>
+        <label className="span-2">Address<input value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/></label>
       </div>
       <button className="primary-button auth-submit" onClick={async()=>{
         try{
