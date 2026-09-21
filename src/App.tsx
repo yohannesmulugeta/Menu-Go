@@ -57,7 +57,7 @@ function CustomerPage() {
       setRestaurant({
         name:data.restaurant.name,tagline:data.restaurant.tagline??fallbackRestaurant.tagline,
         location:data.restaurant.address??fallbackRestaurant.location,hours:fallbackRestaurant.hours,
-        currency:data.restaurant.currency,id:data.restaurant.id,
+        currency:data.restaurant.currency,id:data.restaurant.id,phone:data.restaurant.phone,
         google_maps_url:data.restaurant.google_maps_url??"https://maps.google.com/?q=Addis+Ababa",
         google_review_url:data.restaurant.google_review_url,
         cover_image_url:data.restaurant.cover_image_url,
