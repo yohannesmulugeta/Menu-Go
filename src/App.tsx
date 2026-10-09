@@ -34,7 +34,7 @@ function CustomerPage() {
   const [loading,setLoading]=useState(true);
   const [loadError,setLoadError]=useState("");
   const [restaurant,setRestaurant]=useState({
-    ...fallbackRestaurant,id:"11111111-1111-4111-8111-111111111111",
+    ...fallbackRestaurant,description:null as string|null,id:"11111111-1111-4111-8111-111111111111",
     phone:null as string|null,
     google_maps_url:"https://maps.google.com/?q=Addis+Ababa",google_review_url:null as string|null,
     cover_image_url:null as string|null,
@@ -60,7 +60,8 @@ function CustomerPage() {
       if(!data)throw new Error("Restaurant not found or not available.");
       setRestaurant({
         name:data.restaurant.name,tagline:data.restaurant.tagline??fallbackRestaurant.tagline,
-        location:data.restaurant.address??fallbackRestaurant.location,hours:fallbackRestaurant.hours,
+        location:data.restaurant.address??"Open location in Google Maps",hours:"",
+        description:data.restaurant.description,
         currency:data.restaurant.currency,id:data.restaurant.id,phone:data.restaurant.phone,
         google_maps_url:data.restaurant.google_maps_url??"https://maps.google.com/?q=Addis+Ababa",
         google_review_url:data.restaurant.google_review_url,
@@ -75,7 +76,7 @@ function CustomerPage() {
         linkedin_url:data.restaurant.linkedin_url,
         website_url:data.restaurant.website_url
       });
-      setCategories(data.categories); setMenuItems(data.items);
+      setCategories(data.categories); setCategory(data.categories[0]??""); setMenuItems(data.items);
       const today=data.hours.find((h:any)=>h.weekday===new Date().getDay());
       const pretty=(value:string|null)=>{
         if(!value)return "";
@@ -99,15 +100,15 @@ function CustomerPage() {
   if(loading) return <div className="screen-loader">Loading menu…</div>;
   if(loadError) return <div className="auth-page"><div className="auth-card"><Brand/><h1>Restaurant not found</h1><p className="auth-copy">{loadError}</p><Link className="primary-button auth-submit" to="/r/abol-coffee">Open Abol Coffee</Link></div></div>;
 
-  return <div className="customer-page">
+  return <div className={slug==="mokodo-pizza"?"customer-page mokodo-page":"customer-page"}>
     <header className="hero" style={restaurant.cover_image_url?{backgroundImage:`url(${restaurant.cover_image_url})`}:undefined}><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <strong>Menu Go</strong></span></div>
-      <div className="hero-copy"><div className="restaurant-logo">{restaurant.logo_url?<img src={restaurant.logo_url} alt={restaurant.name}/>:<Coffee size={28}/>}</div><p className="eyebrow">{slug==="abol-coffee"?"ABOL COFFEE · HAYAHULET":"DEMO RESTAURANT"}</p>
-        <h1>{restaurant.name}</h1><p>{restaurant.tagline}</p><span className="open-pill"><span/> {restaurant.hours}</span></div>
+      <div className="hero-copy"><div className="restaurant-logo">{restaurant.logo_url?<img src={restaurant.logo_url} alt={restaurant.name}/>:<Coffee size={28}/>}</div><p className="eyebrow">{slug==="abol-coffee"?"ABOL COFFEE · HAYAHULET":restaurant.name.toUpperCase()}</p>
+        <h1>{restaurant.name}</h1><p>{restaurant.tagline}</p>{restaurant.hours&&<span className="open-pill"><span/> {restaurant.hours}</span>}</div>
     </header>
     <main className="customer-main">
       <section className="quick-actions">
-        <a className="action-card accent" href="#menu" onClick={()=>trackEvent(restaurant.id,"menu_view")}><span className="action-icon"><MenuIcon size={22}/></span><span><strong>View Menu</strong><small>Browse food & drinks</small></span><ChevronRight size={20}/></a>
-        <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"review_click");if(restaurant.google_review_url){window.open(restaurant.google_review_url,"_blank","noopener,noreferrer")}else{alert("Add the Google Review link in restaurant Settings.")}}}><span className="action-icon"><Star size={22}/></span><span><strong>Leave a Review</strong><small>Share your experience</small></span><ChevronRight size={20}/></button>
+        <button className="action-card accent" onClick={()=>{document.getElementById("menu")?.scrollIntoView({behavior:"smooth"});trackEvent(restaurant.id,"menu_view")}}><span className="action-icon"><MenuIcon size={22}/></span><span><strong>View Menu</strong><small>Browse food & drinks</small></span><ChevronRight size={20}/></button>
+        {restaurant.google_review_url&&<button className="action-card" onClick={()=>{trackEvent(restaurant.id,"review_click");if(restaurant.google_review_url){window.open(restaurant.google_review_url,"_blank","noopener,noreferrer")}else{alert("Add the Google Review link in restaurant Settings.")}}}><span className="action-icon"><Star size={22}/></span><span><strong>Leave a Review</strong><small>Share your experience</small></span><ChevronRight size={20}/></button>}
         <a className="action-card" href={restaurant.google_maps_url} onClick={()=>trackEvent(restaurant.id,"directions_click")} target="_blank" rel="noreferrer"><span className="action-icon"><MapPin size={22}/></span><span><strong>Directions</strong><small>{restaurant.location}</small></span><ChevronRight size={20}/></a>
         {restaurant.phone&&<a className="action-card" href={`tel:${restaurant.phone}`}><span className="action-icon"><Phone size={22}/></span><span><strong>Call Us</strong><small>{restaurant.phone}</small></span><ChevronRight size={20}/></a>}
         <button className="action-card" onClick={()=>{trackEvent(restaurant.id,"feedback_open");setFeedbackOpen(true)}}><span className="action-icon"><MessageSquareText size={22}/></span><span><strong>Private Feedback</strong><small>Tell the restaurant directly</small></span><ChevronRight size={20}/></button>
@@ -116,11 +117,13 @@ function CustomerPage() {
       <section id="menu" className="menu-section">
         <div className="section-heading"><div><p className="eyebrow dark">MENU</p><h2>What are you having?</h2></div><span>{items.length} items</span></div>
         {slug==="abol-coffee"&&<p className="price-note">All prices include VAT & service charge.</p>}
-        <div className="search-box"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search dishes, drinks..."/></div>
+        {slug==="mokodo-pizza"&&<div className="mokodo-price-note"><strong>Prices in ETB</strong><p>15% VAT and 5% service charge are added to the listed prices.</p><p>Takeaway box: 130 ETB each. Mixed toppings: 50 ETB extra, added to the price of the higher-priced dish.</p></div>}
+        <div className="search-box"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} aria-label="Search menu items" placeholder="Search dishes, drinks..."/></div>
         <div className="category-scroll">{categories.map(item=><button key={item} className={item===category?"category active":"category"} onClick={()=>setCategory(item)}>{item}</button>)}</div>
-        <div className="menu-grid">{items.map(item=><article className={item.image?"menu-item":"menu-item no-image"} key={item.id}>{item.image&&<img src={item.image} alt="" loading="lazy"/>}<div className="menu-item-body"><div className="menu-item-title"><h3>{item.name}</h3>{item.popular&&<span><Heart size={13}/> Popular</span>}</div><p>{item.description}</p><strong>{item.price} {restaurant.currency}</strong></div></article>)}</div>
+        <div className="menu-grid">{items.map(item=><article className={item.image?"menu-item":"menu-item no-image"} key={item.id}>{item.image&&<img src={item.image} alt="" loading="lazy"/>}<div className="menu-item-body"><div className="menu-item-title"><h3>{item.name}</h3>{item.popular&&<span><Heart size={13}/> Popular</span>}</div><p>{item.description}</p><strong>{new Intl.NumberFormat("en-ET").format(item.price)} {restaurant.currency}</strong></div></article>)}</div>
         {items.length===0&&<div className="empty-state">No items match your search.</div>}
       </section>
+      {slug==="mokodo-pizza"&&restaurant.description&&<details className="restaurant-story"><summary>Our story · Chef Tesfaye</summary><p>{restaurant.description}</p></details>}
       <footer className="guest-footer"><Brand/><p>A simple digital guest experience for restaurants.</p></footer>
     </main>
     {feedbackOpen&&<div className="modal-backdrop" onClick={()=>setFeedbackOpen(false)}><div className="modal" onClick={e=>e.stopPropagation()}><span className="modal-icon"><MessageSquareText/></span><h3>Private feedback</h3><p>Your message goes directly to the restaurant.</p><textarea value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} placeholder="Tell us about your experience..." rows={5}/><button onClick={async()=>{try{await submitFeedback(restaurant.id,feedbackText);setFeedbackText("");setFeedbackOpen(false);alert("Thank you. Your feedback was sent privately.");}catch(err){alert(err instanceof Error?err.message:"Could not send feedback.")}}}>Send feedback</button></div></div>}

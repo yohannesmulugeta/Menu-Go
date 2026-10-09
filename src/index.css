@@ -264,6 +264,43 @@ td { padding:11px 8px; border-bottom:1px solid var(--line); }
 .menu-item.no-image{grid-template-columns:1fr;min-height:112px}
 .menu-item.no-image .menu-item-body{padding:17px}
 
+/* Mokodo's printed menu identity, scoped to its customer page. */
+.mokodo-page {
+  --ink: #173f31;
+  --muted: #5d685e;
+  --cream: #faf8f1;
+  --paper: #ffffff;
+  --orange: #bd2727;
+  --orange-dark: #a01e1e;
+  --line: rgba(23,63,49,.14);
+}
+.mokodo-page .hero {
+  min-height: 490px;
+  background: radial-gradient(ellipse at 85% 15%, #325943, transparent 60%), #173f31;
+}
+.mokodo-page .hero-gradient { background: linear-gradient(0deg,rgba(8,29,20,.35),transparent); }
+.mokodo-page .restaurant-logo {
+  width: 164px;
+  height: 142px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: none;
+  margin-bottom: 20px;
+}
+.mokodo-page .restaurant-logo img { padding: 12px; }
+.mokodo-page .hero h1 { font-family: "DM Sans",system-ui,sans-serif; font-size: 44px; line-height: 1.1; font-weight: 700; }
+.mokodo-page .action-card.accent { box-shadow: 0 8px 28px rgba(189,39,39,.15); }
+.mokodo-page .action-icon { background: rgba(189,39,39,.06); }
+.mokodo-page .accent .action-icon { background: rgba(255,255,255,.16); }
+.mokodo-page .menu-item p { display: block; overflow: visible; }
+.mokodo-page .menu-item-body > strong { color: var(--orange-dark); }
+.mokodo-price-note { margin: 16px 0; padding: 16px; background: #fff0ea; border: 1px solid #ecd3c7; border-radius: 14px; color: #71332b; font-size: 12px; line-height: 1.6; }
+.mokodo-price-note p { margin: 6px 0 0; }
+.restaurant-story { margin-top: 34px; border: 1px solid var(--line); padding: 18px; border-radius: 16px; background: var(--paper); }
+.restaurant-story summary { cursor: pointer; font-weight: 700; }
+.restaurant-story p { white-space: pre-line; color: var(--muted); line-height: 1.7; font-size: 14px; }
+.mokodo-page button:focus-visible, .mokodo-page a:focus-visible { outline: 3px solid var(--orange-dark); outline-offset: 3px; }
+
 
 /* Manager hours, assets and audit log */
 .hours-list{display:grid;gap:8px;margin:18px 0 22px}

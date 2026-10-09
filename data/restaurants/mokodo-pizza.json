@@ -1,0 +1,1033 @@
+{
+  "restaurant": {
+    "name": "Mokodo Pizza",
+    "slug": "mokodo-pizza",
+    "phone": "+251911439524",
+    "address": "Addis Ababa, Ethiopia",
+    "google_maps_url": "https://maps.app.goo.gl/KdqTuc21JQCUTevC9",
+    "tagline": "Italian pizza & focaccia sandwiches",
+    "currency": "ETB",
+    "timezone": "Africa/Addis_Ababa",
+    "logo_url": "https://yohannesmulugeta.github.io/Menu-Go/mokodo-logo.png",
+    "status": "active",
+    "description": "Meet Chef Tesfaye — A Culinary Journey Rooted in Passion\n\nBorn and raised in the vibrant heart of Addis Ababa, Chef Tesfaye — widely known by his nickname Mokodo — is the third child in his family. His culinary journey began just steps from his childhood home, where one of Addis Ababa’s most iconic pizzerias stood. A place that quickly became his second classroom.\n\nEvery afternoon after school, Tesfaye would linger outside, captivated by the rhythm of the kitchen and the artistry behind each pizza. His fascination grew into determination, and before long, he was invited behind the counter to learn the craft directly from seasoned pizzaiolos. That moment sparked a lifelong devotion to authentic Italian cuisine.\n\nOver the years, Chef Tesfaye has trained a new generation of chefs and introduced a wave of innovative brick-oven pizzerias across Ethiopia. In 2020, he proudly opened his first independently owned restaurant, a space that reflects his unwavering commitment to quality and tradition. Every dish is crafted with premium ingredients imported directly from Italy, honoring the flavors that first inspired him.\n\nNow, it’s your turn to taste the legacy. Welcome to Chef Tesfaye’s world, where passion meets perfection, one slice at a time."
+  },
+  "notes": {
+    "prices": "15% VAT and 5% service charge are added to the listed prices.",
+    "takeaway": "Takeaway box: 130 ETB each.",
+    "mixed_toppings": "Mixed toppings: 50 ETB extra, added to the price of the higher-priced dish.",
+    "sourcing": "Most toppings are imported from Italy; others are sourced locally.",
+    "source": "Transcribed from IMG_9829.jpeg–IMG_9841.jpeg. Spelling and punctuation normalized; ingredients and prices preserved."
+  },
+  "categories": [
+    {
+      "name": "Pizza",
+      "items": [
+        {
+          "name": "The Mokodo Special — A Meat Lover’s Dream",
+          "price": 2000,
+          "description": "Our signature pizza: Mokodo dough with tomato sauce, fresh mozzarella, prosciutto crudo, prosciutto cotto, salami, Parmigiano cheese and rucola (rocket salad).",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Margherita",
+          "price": 1150,
+          "description": "Plain with tomato sauce, topped with fresh mozzarella and basil.",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Margherita Buffalo",
+          "price": 1850,
+          "description": "Plain with tomato sauce, topped with buffalo mozzarella and basil.",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Marinara",
+          "price": 1100,
+          "description": "Tomato sauce topped with anchovies and garlic.",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Napoletana",
+          "price": 1500,
+          "description": "Tomato sauce topped with fresh mozzarella, anchovies and olives.",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Romana",
+          "price": 1470,
+          "description": "Tomato sauce topped with fresh mozzarella, capers and black olives.",
+          "source": "IMG_9832.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Regina",
+          "price": 1395,
+          "description": "Tomato sauce topped with fresh mozzarella, tomatoes and basil.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Manzo (Beef)",
+          "price": 1375,
+          "description": "Tomato sauce topped with fresh mozzarella, beef and olives.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 7,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pollo (Chicken)",
+          "price": 1400,
+          "description": "Tomato sauce topped with fresh mozzarella, chicken and mushrooms.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 8,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pancetta (Bacon)",
+          "price": 1500,
+          "description": "Tomato sauce topped with fresh mozzarella, pancetta, mushrooms and melanzane (eggplant).",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 9,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pancetta Pizza Bianca (White Pizza + Bacon)",
+          "price": 1550,
+          "description": "Fresh mozzarella, pancetta and Parmigiano; no tomato sauce.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 10,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Prosciutto — Crudo or Cotto",
+          "price": 1610,
+          "description": "Tomato sauce topped with fresh mozzarella and your choice of prosciutto crudo or prosciutto cotto. Please specify your choice.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 11,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Prosciutto Rucola",
+          "price": 1750,
+          "description": "Tomato sauce topped with fresh mozzarella, prosciutto crudo and rucola.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 12,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Prosciutto Rucola Parmigiano",
+          "price": 1800,
+          "description": "Tomato sauce topped with fresh mozzarella, prosciutto crudo, Parmigiano and rucola.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 13,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salami Piccante",
+          "price": 1580,
+          "description": "Tomato sauce topped with fresh mozzarella and spicy salami.",
+          "source": "IMG_9833.jpeg",
+          "sort_order": 14,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Al Carciofi",
+          "price": 1650,
+          "description": "Tomato sauce topped with fresh mozzarella and artichoke.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 15,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Al Mortadella",
+          "price": 1570,
+          "description": "Tomato sauce topped with fresh mozzarella and mortadella.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 16,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Quattro Stagioni",
+          "price": 1750,
+          "description": "Tomato sauce pizza topped with fresh mozzarella, prosciutto cotto, olives, mushrooms and artichoke.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 17,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Quattro Formaggi",
+          "price": 1610,
+          "description": "White or tomato sauce pizza with four cheeses: fresh mozzarella, Parmigiano, provolone and Gorgonzola.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 18,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Speciale di Norma",
+          "price": 1640,
+          "description": "The everyday special with tomato sauce, fresh mozzarella, tomatoes, prosciutto crudo and Parmigiano.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 19,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "La Capricciosa",
+          "price": 1750,
+          "description": "Tomato sauce topped with fresh mozzarella, mushrooms, prosciutto cotto and artichoke.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 20,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tonno (Tuna)",
+          "price": 1450,
+          "description": "Tomato sauce topped with fresh mozzarella, olives and tuna.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 21,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Vegetale (Vegetables)",
+          "price": 1450,
+          "description": "Tomato sauce topped with fresh mozzarella, zucchini, melanzane (eggplant) and olives.",
+          "source": "IMG_9834.jpeg",
+          "sort_order": 22,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Chef Special",
+          "price": 3000,
+          "description": "Choose with pork or without pork.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 23,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Local Mokodo Special",
+          "price": 1950,
+          "description": "Tomato sauce, fresh mozzarella, chicken, beef, tuna, olives, mushrooms, Parmigiano and rucola.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 24,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salmon Pizza",
+          "price": 2000,
+          "description": "Tomato sauce, fresh mozzarella, salmon, rucola and Parmigiano.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 25,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Turkey Pizza",
+          "price": 2000,
+          "description": "Tomato sauce, fresh mozzarella, turkey, rucola and Parmigiano.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 26,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Bresaola Pizza",
+          "price": 2000,
+          "description": "Tomato sauce, fresh mozzarella, bresaola, Parmigiano and rucola.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 27,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salsiccia (Sausage) — Bianca",
+          "price": 1820,
+          "description": "White pizza topped with fresh mozzarella, mushrooms and Italian sausages.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 28,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salsiccia (Sausage)",
+          "price": 1820,
+          "description": "Tomato sauce topped with fresh mozzarella, red onion and Italian sausages.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 29,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pesto Genovese",
+          "price": 1700,
+          "description": "White pizza with fresh mozzarella, pesto, black olives and Parmigiano.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 30,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Melanzane (Eggplant)",
+          "price": 1300,
+          "description": "Tomato sauce topped with fresh mozzarella, melanzane (eggplant) and basil.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 31,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pera (Pear) Gorgonzola",
+          "price": 1750,
+          "description": "An unconventional sweet-and-salty white pizza topped with fresh mozzarella, pears and Gorgonzola cheese.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 32,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Indian Pizza",
+          "price": 1330,
+          "description": "Tomato sauce topped with mozzarella, green pepper, fresh onion, garlic and black olives.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 33,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Newly Added Pizza",
+      "items": [
+        {
+          "name": "Salsiccia Spinach",
+          "price": 1900,
+          "description": "Fresh mozzarella, salsiccia and spinach.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Potato Salsiccia",
+          "price": 1820,
+          "description": "Fresh mozzarella, salsiccia and potato.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tartuffe Pizza",
+          "price": 1750,
+          "description": "Truffle pizza topped with fresh mozzarella, Tartuffe sauce, salami, buffalo cheese and rucola.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pizza Italian",
+          "price": 1850,
+          "description": "Tomato sauce pizza topped with fresh mozzarella, spinach, dried tomato and crudo.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pizza Rosa",
+          "price": 1800,
+          "description": "Tomato sauce mixed with mascarpone, topped with fresh Parmigiano cheese, cotto and onion.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Italian Mozzarella Margherita",
+          "price": 1850,
+          "description": "Tomato sauce topped with fresh Italian mozzarella and basil.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "High Protein Pizza",
+          "price": 1700,
+          "description": "Tomato sauce topped with fresh mozzarella, spinach, turkey and fresh egg.",
+          "source": "IMG_9837.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Half-Half Pizza",
+      "items": [
+        {
+          "name": "Chicken–Beef",
+          "price": 1600,
+          "description": "Half chicken, half beef.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Crudo–Cotto",
+          "price": 1800,
+          "description": "Half prosciutto crudo, half prosciutto cotto.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salami–Formaggi",
+          "price": 1800,
+          "description": "Half salami, half formaggi.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Formaggi–Chicken",
+          "price": 1750,
+          "description": "Half formaggi, half chicken.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salami–Chicken",
+          "price": 1800,
+          "description": "Half salami, half chicken.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pesto–Buffalo",
+          "price": 1900,
+          "description": "Half pesto, half buffalo.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tuna–Chicken",
+          "price": 1500,
+          "description": "Half tuna, half chicken.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tuna–Vegetables",
+          "price": 1350,
+          "description": "Half tuna, half vegetables.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 7,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pesto–Chicken",
+          "price": 1700,
+          "description": "Half pesto, half chicken.",
+          "source": "IMG_9835.jpeg",
+          "sort_order": 8,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Fasting Pizza",
+      "items": [
+        {
+          "name": "Vegetable — Fasting",
+          "price": 900,
+          "description": "Tomato sauce topped with zucchini, melanzane (eggplant) and olives.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tonno (Tuna) a Digiuno — Fasting",
+          "price": 1200,
+          "description": "Tomato sauce topped with mushrooms, olives and tuna.",
+          "source": "IMG_9836.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Starters",
+      "items": [
+        {
+          "name": "Antipasto Meat",
+          "price": 1550,
+          "description": "Prosciutto crudo, salami and mortadella.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Bresaola",
+          "price": 1550,
+          "description": "Parmigiano, rucola and bresaola.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Antipasto Cheese",
+          "price": 1670,
+          "description": "Parmigiano, Gorgonzola and buffalo mozzarella.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Burrata",
+          "price": 2000,
+          "description": "Focaccia bread, tomato sauce and burrata cheese.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Focaccia — Mokodo",
+          "price": 1550,
+          "description": "Prosciutto crudo, cherry tomatoes, Parmigiano and rucola.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Focaccia — Al Rosmarino",
+          "price": 709,
+          "description": "Rosemary.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Focaccia — Al Origano",
+          "price": 709,
+          "description": "Oregano.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Focaccia — Al Aglio",
+          "price": 709,
+          "description": "Garlic.",
+          "source": "IMG_9830.jpeg",
+          "sort_order": 7,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Sandwiches",
+      "items": [
+        {
+          "name": "Crudo",
+          "price": 2100,
+          "description": "Focaccia bread topped with stracciatella, burrata or fresh Italian mozzarella, crudo, dried tomato and rucola.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Cotto",
+          "price": 2100,
+          "description": "Focaccia bread topped with stracciatella, burrata or fresh Italian mozzarella, carciofi and cotto.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salami",
+          "price": 2100,
+          "description": "Focaccia bread topped with stracciatella, burrata or fresh Italian mozzarella, dried tomato and salami.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Mortadella",
+          "price": 2100,
+          "description": "Focaccia bread topped with stracciatella, burrata, pesto and pistachio.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Bresaola",
+          "price": 2200,
+          "description": "Focaccia bread, fresh Italian mozzarella, bresaola, rucola and basil.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salmon",
+          "price": 2200,
+          "description": "Focaccia bread, rucola and aceto balsamico.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Turkey",
+          "price": 2000,
+          "description": "Focaccia bread, turkey, aceto balsamico, dried tomato and rucola.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Vegetables",
+          "price": 1800,
+          "description": "Focaccia bread, eggplant, zucchini, peppers, aceto balsamico and rucola.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 7,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Truffle",
+          "price": 2200,
+          "description": "Focaccia bread, truffle sauce, buffalo, salami Milano and rucola.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 8,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Calzone",
+      "items": [
+        {
+          "name": "Calzone Classico con Ricotta",
+          "price": 1650,
+          "description": "Stuffed with ricotta cheese, prosciutto cotto and black pepper.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Calzone ai Funghi",
+          "price": 1650,
+          "description": "Tomato sauce, stuffed with fresh mozzarella, mushrooms and prosciutto cotto.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Calzone Dolce",
+          "price": 1500,
+          "description": "Stuffed with mascarpone, pear marmalade, cacao powder, Nutella and powdered sugar.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Dessert",
+      "items": [
+        {
+          "name": "Nutella Pizza",
+          "price": 1974,
+          "description": "Sweet pizza with a delicious hazelnut spread topping.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Children’s Menu",
+      "items": [
+        {
+          "name": "Mickey Mouse Pizza",
+          "price": 900,
+          "description": "Tomato sauce topped with mozzarella cheese.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Anbessa Pizza",
+          "price": 1400,
+          "description": "Tomato sauce topped with mozzarella cheese and chicken sausage.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Drinks",
+      "items": [
+        {
+          "name": "Still Water — ½ Liter",
+          "price": 80,
+          "description": "",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Still Water — 1 Liter",
+          "price": 100,
+          "description": "",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Ambo Soda Water",
+          "price": 130,
+          "description": "",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Soda Drinks",
+          "price": 120,
+          "description": "Coca-Cola, Sprite or Fanta, as available.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Sweet Soda Drinks (Plastic Soda)",
+          "price": 150,
+          "description": "Coca-Cola, Sprite or Fanta, as available.",
+          "source": "IMG_9839.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Extra Toppings",
+      "items": [
+        {
+          "name": "Mozzarella",
+          "price": 400,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Prosciutto Crudo",
+          "price": 550,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 1,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Prosciutto Cotto",
+          "price": 550,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 2,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Salami Piccante",
+          "price": 550,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 3,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Olives",
+          "price": 470,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 4,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pesto Sauce",
+          "price": 500,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 5,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Gorgonzola",
+          "price": 510,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 6,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Pancetta",
+          "price": 540,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 7,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Tuna",
+          "price": 455,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 8,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Nutella",
+          "price": 500,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 9,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Turkey",
+          "price": 550,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 10,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Chili Sauce",
+          "price": 250,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 11,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Buffalo Cheese",
+          "price": 600,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 12,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Chicken",
+          "price": 405,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 13,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Beef",
+          "price": 400,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 14,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Rucola or Basil",
+          "price": 300,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 15,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Anchovies",
+          "price": 500,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 16,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Cherry Tomatoes",
+          "price": 385,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 17,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Capers",
+          "price": 449,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 18,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Mushroom",
+          "price": 449,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 19,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Parmigiano",
+          "price": 520,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 20,
+          "is_popular": false,
+          "is_available": true
+        },
+        {
+          "name": "Italian Mozzarella",
+          "price": 700,
+          "description": "",
+          "source": "IMG_9838.jpeg",
+          "sort_order": 21,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    },
+    {
+      "name": "Takeaway",
+      "items": [
+        {
+          "name": "Takeaway Box",
+          "price": 130,
+          "description": "Price per box.",
+          "source": "IMG_9829.jpeg",
+          "sort_order": 0,
+          "is_popular": false,
+          "is_available": true
+        }
+      ]
+    }
+  ],
+  "needs_review": [
+    {
+      "category": "Extra Toppings",
+      "name": "Salsiccia Sausage",
+      "printed_prices": [
+        500,
+        550
+      ],
+      "source": "IMG_9838.jpeg",
+      "reason": "Listed twice with different prices; not imported until confirmed."
+    },
+    {
+      "category": "Extra Toppings",
+      "name": "Carciofi (Artichoke)",
+      "printed_prices": [
+        499,
+        500
+      ],
+      "source": "IMG_9838.jpeg",
+      "reason": "Listed twice with different prices; not imported until confirmed."
+    }
+  ]
+}

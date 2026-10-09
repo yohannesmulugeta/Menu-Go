@@ -7,6 +7,7 @@ export type RestaurantRecord = {
   name: string;
   slug: string;
   tagline: string | null;
+  description: string | null;
   address: string | null;
   google_maps_url: string | null;
   google_review_url: string | null;
@@ -35,7 +36,7 @@ export async function loadRestaurantBySlug(slug: string) {
 
   const { data: restaurant, error: restaurantError } = await supabase
     .from("restaurants")
-    .select("id,name,slug,tagline,address,google_maps_url,google_review_url,phone,currency,cover_image_url,logo_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
+    .select("id,name,slug,tagline,description,address,google_maps_url,google_review_url,phone,currency,cover_image_url,logo_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
     .eq("slug", slug)
     .eq("status", "active")
     .single();
@@ -80,7 +81,7 @@ export async function loadRestaurantBySlug(slug: string) {
 
   return {
     restaurant: restaurant as RestaurantRecord,
-    categories: ["Popular", ...(categories ?? []).map((c) => c.name)],
+    categories: [...(mappedItems.some((item) => item.popular) ? ["Popular"] : []), ...(categories ?? []).map((c) => c.name)],
     items: mappedItems,
     hours: hours ?? [],
   };
