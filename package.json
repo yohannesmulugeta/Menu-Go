@@ -4,15 +4,19 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "prebuild": "python scripts/restore-media.py",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "check:production": "node scripts/production-check.mjs",
-    "check": "npm run lint && npm run build && npm run check:production",
+    "test": "node --test tests/cloudflare.test.mjs",
+    "check": "npm run lint && npm test && npm run build && npm run check:production",
+    "build:worker": "wrangler deploy --dry-run --outdir dist --config cloudflare/wrangler.jsonc",
+    "deploy:cloudflare": "npm run build && wrangler deploy --config cloudflare/wrangler.jsonc",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.116.0",
+    "jose": "6.2.17",
     "lucide-react": "0.544.0",
     "qrcode.react": "4.2.0",
     "react": "19.3.0",
@@ -30,6 +34,7 @@
     "globals": "16.5.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.70.0",
-    "vite": "7.3.6"
+    "vite": "7.3.6",
+    "wrangler": "4.159.0"
   }
 }

@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { api, adminPath } from "./api";
 
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
@@ -10,6 +10,7 @@ function validateImage(file: File) {
 function validateOptionalUrl(value: unknown, label: string) {
   if (value === null || value === undefined || value === "") return;
   if (typeof value !== "string") throw new Error(`${label} must be a valid URL.`);
+  if (/^\/(media|migrated-media)\//.test(value)) return;
   let parsed: URL;
   try {
     parsed = new URL(value);
@@ -32,6 +33,7 @@ export type AdminMenuItem = {
   sort_order: number;
   category_id: string | null;
   category?: { name: string } | null;
+  version?: number;
 };
 
 export type AdminCategory = {
@@ -64,344 +66,73 @@ export type AdminRestaurant = {
   status: string;
 };
 
-export function requireSupabase() {
-  if (!supabase) throw new Error("Supabase is not configured.");
-  return supabase;
+type Session = {user:{id:string,email:string},platform_admin:boolean};
+const itemOwners = new Map<string,string>();
+const categoryOwners = new Map<string,string>();
+const feedbackOwners = new Map<string,string>();
+const itemVersions = new Map<string,number>();
+const owner = (map:Map<string,string>,id:string) => {
+  const restaurantId=map.get(id);
+  if(!restaurantId)throw new Error("Reload this dashboard before editing.");
+  return restaurantId;
+};
+export async function signIn() {
+  window.location.assign("/api/auth/login?returnTo="+encodeURIComponent("/#/login"));
 }
-
-export async function signIn(email: string, password: string) {
-  const client = requireSupabase();
-  const { data, error } = await client.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
-}
-
-export async function signUp(email: string, password: string, emailRedirectTo?: string) {
-  const client = requireSupabase();
-  const { data, error } = await client.auth.signUp({
-    email,
-    password,
-    options: emailRedirectTo ? { emailRedirectTo } : undefined,
-  });
-  if (error) throw error;
-  return data;
-}
-
-export async function requestPasswordReset(email: string, redirectTo: string) {
-  const client = requireSupabase();
-  const { error } = await client.auth.resetPasswordForEmail(email.trim(), { redirectTo });
-  if (error) throw error;
-}
-
-export async function updatePassword(password: string) {
-  const client = requireSupabase();
-  const { data, error } = await client.auth.updateUser({ password });
-  if (error) throw error;
-  return data;
-}
-
 export async function signOut() {
-  const client = requireSupabase();
-  const { error } = await client.auth.signOut();
-  if (error) throw error;
+  itemOwners.clear();categoryOwners.clear();feedbackOwners.clear();itemVersions.clear();
+  window.location.assign("/cdn-cgi/access/logout");
 }
-
-export async function getSession() {
-  const client = requireSupabase();
-  const { data, error } = await client.auth.getSession();
-  if (error) throw error;
-  return data.session;
+export async function getSession(){return api<Session|null>("/api/session");}
+export function onAuthChange(callback:()=>void) {
+  window.addEventListener("focus",callback);
+  window.addEventListener("pageshow",callback);
+  return ()=>{window.removeEventListener("focus",callback);window.removeEventListener("pageshow",callback);};
 }
-
-export function onAuthChange(callback: () => void) {
-  const client = requireSupabase();
-  const { data } = client.auth.onAuthStateChange(() => callback());
-  return () => data.subscription.unsubscribe();
+export async function isPlatformAdmin(){return Boolean((await getSession())?.platform_admin);}
+export async function getMyRestaurant(requestedRestaurantId?:string){
+  return api<{restaurant:AdminRestaurant,role:string}|null>("/api/admin/my-restaurant"+(requestedRestaurantId?"?restaurant_id="+encodeURIComponent(requestedRestaurantId):""));
 }
-
-export async function redeemRestaurantInvite(code: string) {
-  const client = requireSupabase();
-  const { data, error } = await client.rpc("redeem_restaurant_invite", { p_code: code.trim() });
-  if (error) throw error;
-  return data;
+export async function redeemRestaurantInvite(code:string){return api("/api/invites/redeem","POST",{code});}
+export async function listCategories(restaurantId:string){
+  const rows=await api<AdminCategory[]>(adminPath(restaurantId,"categories"));
+  rows.forEach(c=>categoryOwners.set(c.id,restaurantId));return rows;
 }
-
-export async function isPlatformAdmin() {
-  const client = requireSupabase();
-  const { data, error } = await client.from("platform_admins").select("user_id").limit(1);
-  if (error) return false;
-  return (data?.length ?? 0) > 0;
+export async function listMenuItems(restaurantId:string){
+  const rows=await api<AdminMenuItem[]>(adminPath(restaurantId,"items"));
+  rows.forEach(i=>{itemOwners.set(i.id,restaurantId);itemVersions.set(i.id,i.version || 1);});return rows;
 }
-
-export async function getMyRestaurant(requestedRestaurantId?: string) {
-  const client = requireSupabase();
-  const { data: sessionData } = await client.auth.getSession();
-  const uid = sessionData.session?.user.id;
-  if (!uid) return null;
-
-  if (requestedRestaurantId && await isPlatformAdmin()) {
-    const { data: restaurant, error } = await client
-      .from("restaurants")
-      .select("*")
-      .eq("id", requestedRestaurantId)
-      .single();
-    if (error) throw error;
-    return { restaurant: restaurant as AdminRestaurant, role: "platform_admin" };
-  }
-
-  const { data: membership, error: membershipError } = await client
-    .from("restaurant_members")
-    .select("restaurant_id,role")
-    .eq("user_id", uid)
-    .eq("role", "manager")
-    .limit(1)
-    .maybeSingle();
-
-  if (membershipError) throw membershipError;
-  if (!membership) return null;
-
-  const { data: restaurant, error: restaurantError } = await client
-    .from("restaurants")
-    .select("*")
-    .eq("id", membership.restaurant_id)
-    .single();
-
-  if (restaurantError) throw restaurantError;
-  return { restaurant: restaurant as AdminRestaurant, role: "restaurant_manager" };
+export async function saveMenuItem(restaurantId:string,item:{id?:string,name:string,description:string,price:number,category_id:string|null,image_url?:string|null,is_available:boolean,is_popular:boolean}){
+  return api(adminPath(restaurantId,"items",item.id),item.id?"PUT":"POST",{...item,...(item.id?{version:itemVersions.get(item.id)}:{})});
 }
-
-export async function listCategories(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("categories")
-    .select("id,name,sort_order,is_active")
-    .eq("restaurant_id", restaurantId)
-    .order("sort_order");
-  if (error) throw error;
-  return (data ?? []) as AdminCategory[];
+export async function deleteMenuItem(itemId:string){return api(adminPath(owner(itemOwners,itemId),"items",itemId),"DELETE");}
+export async function toggleMenuItem(itemId:string,isAvailable:boolean){return api(adminPath(owner(itemOwners,itemId),"items",itemId),"PATCH",{is_available:isAvailable});}
+export async function saveCategory(restaurantId:string,name:string,id?:string){return api(adminPath(restaurantId,"categories",id),id?"PUT":"POST",{name});}
+export async function deleteCategory(id:string){return api(adminPath(owner(categoryOwners,id),"categories",id),"DELETE");}
+export async function updateRestaurant(restaurantId:string,updates:Partial<AdminRestaurant>){
+  for(const [key,value] of Object.entries(updates))if(key.endsWith("_url"))validateOptionalUrl(value,key);
+  return api(adminPath(restaurantId),"PATCH",updates);
 }
-
-export async function listMenuItems(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("menu_items")
-    .select("id,name,description,price,image_url,is_available,is_popular,sort_order,category_id,category:categories(name)")
-    .eq("restaurant_id", restaurantId)
-    .order("sort_order");
-  if (error) throw error;
-  return (data ?? []).map((row: any) => ({ ...row, price: Number(row.price) })) as AdminMenuItem[];
+export async function listFeedback(restaurantId:string){
+  const rows=await api<any[]>(adminPath(restaurantId,"feedback"));rows.forEach(f=>feedbackOwners.set(f.id,restaurantId));return rows;
 }
-
-export async function saveMenuItem(restaurantId: string, item: {
-  id?: string;
-  name: string;
-  description: string;
-  price: number;
-  category_id: string | null;
-  image_url?: string | null;
-  is_available: boolean;
-  is_popular: boolean;
-}) {
-  const client = requireSupabase();
-  if (!item.name.trim()) throw new Error("Menu item name is required.");
-  if (!Number.isFinite(item.price) || item.price < 0) throw new Error("Enter a valid non-negative price.");
-  const payload = {
-    restaurant_id: restaurantId,
-    name: item.name.trim(),
-    description: item.description.trim() || null,
-    price: item.price,
-    category_id: item.category_id,
-    image_url: item.image_url || null,
-    is_available: item.is_available,
-    is_popular: item.is_popular,
-  };
-
-  if (item.id) {
-    const { error } = await client.from("menu_items").update(payload).eq("id", item.id);
-    if (error) throw error;
-  } else {
-    const { error } = await client.from("menu_items").insert(payload);
-    if (error) throw error;
-  }
+export async function resolveFeedback(id:string){return api(adminPath(owner(feedbackOwners,id),"feedback",id),"PATCH",{});}
+export async function getAnalytics(restaurantId:string){return api<Record<string,number>>(adminPath(restaurantId,"analytics"));}
+export async function listPlatformRestaurants(){return api<any[]>("/api/admin/restaurants");}
+export async function createRestaurantWithInvite(input:{name:string,slug:string,tagline?:string,address?:string}){
+  return api<{restaurant_id:string,slug:string}>("/api/admin/restaurants","POST",input);
 }
-
-export async function deleteMenuItem(itemId: string) {
-  const client = requireSupabase();
-  const { error } = await client.from("menu_items").delete().eq("id", itemId);
-  if (error) throw error;
+export async function createRestaurantInvite(restaurantId:string,email:string){
+  return api<{invite_code:string,email:string,expires_in_days:number}>(adminPath(restaurantId,"invites"),"POST",{email});
 }
-
-export async function toggleMenuItem(itemId: string, isAvailable: boolean) {
-  const client = requireSupabase();
-  const { error } = await client.from("menu_items").update({ is_available: isAvailable }).eq("id", itemId);
-  if (error) throw error;
-}
-
-export async function saveCategory(restaurantId: string, name: string, id?: string) {
-  const client = requireSupabase();
-  if (!name.trim()) throw new Error("Category name is required.");
-  if (id) {
-    const { error } = await client.from("categories").update({ name: name.trim() }).eq("id", id);
-    if (error) throw error;
-  } else {
-    const { data: countData } = await client
-      .from("categories")
-      .select("id")
-      .eq("restaurant_id", restaurantId);
-    const { error } = await client.from("categories").insert({
-      restaurant_id: restaurantId,
-      name: name.trim(),
-      sort_order: (countData?.length ?? 0) + 1,
-    });
-    if (error) throw error;
-  }
-}
-
-export async function deleteCategory(id: string) {
-  const client = requireSupabase();
-  const { error } = await client.from("categories").delete().eq("id", id);
-  if (error) throw error;
-}
-
-export async function updateRestaurant(restaurantId: string, updates: Partial<AdminRestaurant>) {
-  const client = requireSupabase();
-  for (const [key, value] of Object.entries(updates)) {
-    if (key.endsWith("_url")) validateOptionalUrl(value, key.replaceAll("_", " "));
-  }
-  const { error } = await client.from("restaurants").update(updates).eq("id", restaurantId);
-  if (error) throw error;
-}
-
-export async function listFeedback(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("feedback")
-    .select("id,message,rating,status,created_at")
-    .eq("restaurant_id", restaurantId)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function resolveFeedback(id: string) {
-  const client = requireSupabase();
-  const { error } = await client.from("feedback").update({ status: "resolved" }).eq("id", id);
-  if (error) throw error;
-}
-
-export async function getAnalytics(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("analytics_events")
-    .select("event_type")
-    .eq("restaurant_id", restaurantId);
-  if (error) throw error;
-  const rows = data ?? [];
-  const counts: Record<string, number> = {};
-  for (const row of rows) counts[row.event_type] = (counts[row.event_type] ?? 0) + 1;
-  return counts;
-}
-
-export async function uploadMenuImage(restaurantId: string, file: File) {
-  const client = requireSupabase();
+export async function listOpeningHours(restaurantId:string){return api<any[]>(adminPath(restaurantId,"hours"));}
+export async function saveOpeningHours(restaurantId:string,rows:Array<{weekday:number,opens_at:string|null,closes_at:string|null,is_closed:boolean}>){return api(adminPath(restaurantId,"hours"),"PUT",{rows});}
+export async function listAuditLogs(restaurantId:string){return api<any[]>(adminPath(restaurantId,"audit"));}
+async function upload(restaurantId:string,file:File){
   validateImage(file);
-  const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
-  const path = `${restaurantId}/${Date.now()}-${safe}`;
-  const { error } = await client.storage.from("menu-images").upload(path, file, {
-    cacheControl: "3600",
-    upsert: false,
-  });
-  if (error) throw error;
-  const { data } = client.storage.from("menu-images").getPublicUrl(path);
-  return data.publicUrl;
+  const response=await fetch(adminPath(restaurantId,"uploads"),{method:"POST",credentials:"same-origin",headers:{"Content-Type":file.type,"X-Menu-Request":"1"},body:file});
+  const data=await response.json();if(!response.ok)throw new Error(data.error || "Photo upload failed.");
+  return new URL(data.url,window.location.origin).href;
 }
-
-export async function listPlatformRestaurants() {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("restaurants")
-    .select("id,name,slug,tagline,address,status,created_at")
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function createRestaurantWithInvite(input: {
-  name: string;
-  slug: string;
-  tagline?: string;
-  address?: string;
-}) {
-  const client = requireSupabase();
-  const { data, error } = await client.rpc("create_restaurant_with_invite", {
-    p_name: input.name.trim(),
-    p_slug: input.slug.trim(),
-    p_tagline: input.tagline?.trim() || undefined,
-    p_address: input.address?.trim() || undefined,
-  });
-  if (error) throw error;
-  return data as { restaurant_id: string; slug: string };
-}
-
-export async function createRestaurantInvite(restaurantId: string, email: string) {
-  const client = requireSupabase();
-  const normalizedEmail = email.trim().toLowerCase();
-  if (!normalizedEmail) throw new Error("Manager email is required.");
-  const { data, error } = await client.rpc("create_restaurant_email_invite", {
-    p_restaurant_id: restaurantId,
-    p_email: normalizedEmail,
-  });
-  if (error) throw error;
-  return data as { invite_code: string; email: string; expires_in_days: number };
-}
-
-export async function listOpeningHours(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("opening_hours")
-    .select("id,weekday,opens_at,closes_at,is_closed")
-    .eq("restaurant_id", restaurantId)
-    .order("weekday");
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function saveOpeningHours(restaurantId: string, rows: Array<{
-  weekday: number;
-  opens_at: string | null;
-  closes_at: string | null;
-  is_closed: boolean;
-}>) {
-  const client = requireSupabase();
-  const payload = rows.map(row => ({ ...row, restaurant_id: restaurantId }));
-  const { error } = await client
-    .from("opening_hours")
-    .upsert(payload, { onConflict: "restaurant_id,weekday" });
-  if (error) throw error;
-}
-
-export async function listAuditLogs(restaurantId: string) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("audit_logs")
-    .select("id,action,entity_type,entity_id,old_data,new_data,created_at")
-    .eq("restaurant_id", restaurantId)
-    .order("created_at", { ascending: false })
-    .limit(100);
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function uploadRestaurantAsset(restaurantId: string, file: File, kind: "logo" | "cover") {
-  const client = requireSupabase();
-  validateImage(file);
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const path = `${restaurantId}/${kind}-${Date.now()}.${ext}`;
-  const { error } = await client.storage.from("restaurant-assets").upload(path, file, {
-    cacheControl: "3600",
-    upsert: false,
-  });
-  if (error) throw error;
-  const { data } = client.storage.from("restaurant-assets").getPublicUrl(path);
-  return data.publicUrl;
-}
+export async function uploadMenuImage(restaurantId:string,file:File){return upload(restaurantId,file);}
+export async function uploadRestaurantAsset(restaurantId:string,file:File,kind:"logo"|"cover"){void kind;return upload(restaurantId,file);}

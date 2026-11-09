@@ -13,12 +13,12 @@ import {
   createRestaurantInvite, createRestaurantWithInvite, deleteCategory,
   deleteMenuItem, getAnalytics, getMyRestaurant, getSession, isPlatformAdmin, listAuditLogs,
   listCategories, listFeedback, listMenuItems, listOpeningHours, listPlatformRestaurants,
-  onAuthChange, redeemRestaurantInvite, requestPasswordReset, resolveFeedback, saveCategory, saveMenuItem,
-  saveOpeningHours, signIn, signOut, signUp, toggleMenuItem, updatePassword, updateRestaurant,
+  onAuthChange, redeemRestaurantInvite, resolveFeedback, saveCategory, saveMenuItem,
+  saveOpeningHours, signIn, signOut, toggleMenuItem, updateRestaurant,
   uploadMenuImage, uploadRestaurantAsset, type AdminCategory, type AdminMenuItem, type AdminRestaurant
 } from "./lib/admin";
 
-const publicMenuUrl = (slug: string) => `https://yohannesmulugeta.github.io/Menu-Go/#/r/${slug}`;
+const publicMenuUrl = (slug: string) => `${import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin}/#/r/${slug}`;
 const WEEKDAY_LABELS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] as const;
 
 function Brand() {
@@ -155,214 +155,52 @@ function SocialLinks({restaurant}:{restaurant:any}){
 
 function AuthPage(){
   const nav=useNavigate();
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState("");
-
-  async function submit(){
-    setBusy(true);setMessage("");
-    const normalized=email.trim().toLowerCase();
-
-    try{
-      await signIn(normalized,password);
-
-      const pendingInvite=localStorage.getItem("menugo_pending_invite");
-      if(pendingInvite){
-        await redeemRestaurantInvite(pendingInvite);
-        localStorage.removeItem("menugo_pending_invite");
-        localStorage.removeItem("menugo_pending_invite_email");
-        nav("/admin");
-        return;
-      }
-
-      if(await isPlatformAdmin()){
-        nav("/platform");
-        return;
-      }
-
-      const mine=await getMyRestaurant();
-      nav(mine?"/admin":"/no-access");
-    }catch(signInError){
-      setMessage(signInError instanceof Error?signInError.message:"Could not sign in.");
-    }finally{
-      setBusy(false);
-    }
-  }
-
-  return <div className="auth-page"><div className="auth-card">
-    <Brand/>
-    <p className="eyebrow dark">SECURE ACCESS</p>
-    <h1>Sign in to Menu Go</h1>
-    <p className="auth-copy">Use the email address connected to your Menu Go invitation.</p>
-    <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email"/></label>
-    <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" autoComplete="current-password"/></label>
-    <button className="primary-button auth-submit" disabled={busy||!email||!password} onClick={submit}>{busy?"Please wait…":"Sign in"}</button>
-    <Link className="auth-switch" to="/forgot-password">Forgot password?</Link>
-    <p className="auth-help">Manager accounts are invitation-only. Contact your Menu Go administrator if you need access.</p>
-    {message&&<div className="auth-message">{message}</div>}
-    <small className="auth-build">Production access</small>
-  </div></div>
-}
-
-function ForgotPasswordPage(){
-  const [email,setEmail]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [message,setMessage]=useState("");
-
-  async function send(){
-    setBusy(true);setMessage("");
-    try{
-      const redirectTo=`${window.location.origin}${window.location.pathname}?page=reset-password`;
-      await requestPasswordReset(email,redirectTo);
-      setMessage("If an account exists for this email, a password reset link has been sent.");
-    }catch(err){
-      setMessage(err instanceof Error?err.message:"Could not send reset email.");
-    }finally{
-      setBusy(false);
-    }
-  }
-
-  return <div className="auth-page"><div className="auth-card">
-    <Brand/><p className="eyebrow dark">PASSWORD RECOVERY</p><h1>Reset your password</h1>
-    <p className="auth-copy">Enter your account email and we will send a secure reset link.</p>
-    <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email"/></label>
-    <button className="primary-button auth-submit" disabled={busy||!email} onClick={send}>{busy?"Sending…":"Send reset link"}</button>
-    <Link className="auth-switch" to="/login">Back to sign in</Link>
-    {message&&<div className="auth-message">{message}</div>}
-  </div></div>
-}
-
-function ResetPasswordPage(){
-  const [password,setPassword]=useState("");
-  const [confirm,setConfirm]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [ready,setReady]=useState<"loading"|"yes"|"no">("loading");
-  const [message,setMessage]=useState("");
-
   useEffect(()=>{
-    getSession().then(s=>setReady(s?"yes":"no")).catch(()=>setReady("no"));
-  },[]);
-
-  async function save(){
-    if(password.length<8)return setMessage("Use at least 8 characters.");
-    if(password!==confirm)return setMessage("Passwords do not match.");
-    setBusy(true);setMessage("");
-    try{
-      await updatePassword(password);
-      await signOut();
-      window.location.href=`${window.location.origin}${window.location.pathname}#/login`;
-    }catch(err){
-      setMessage(err instanceof Error?err.message:"Could not update password.");
-    }finally{
-      setBusy(false);
-    }
-  }
-
+    let active=true;
+    (async()=>{
+      try{
+        const session=await getSession();if(!session||!active)return;
+        const invite=localStorage.getItem("menugo_pending_invite");
+        if(invite){await redeemRestaurantInvite(invite);localStorage.removeItem("menugo_pending_invite");localStorage.removeItem("menugo_pending_invite_email");nav("/admin");return;}
+        if(session.platform_admin){nav("/platform");return;}
+        nav(await getMyRestaurant()?"/admin":"/no-access");
+      }catch(error){if(active)setMessage(error instanceof Error?error.message:"Could not verify your access.");}
+    })();return()=>{active=false};
+  },[nav]);
   return <div className="auth-page"><div className="auth-card">
-    <Brand/><p className="eyebrow dark">NEW PASSWORD</p><h1>Choose a new password</h1>
-    {ready==="loading"?<div className="auth-message">Checking reset link…</div>:ready==="no"?<>
-      <p className="auth-copy">This reset link is invalid or has expired.</p>
-      <a className="primary-button auth-submit" href={`${window.location.origin}${window.location.pathname}#/forgot-password`}>Request another link</a>
-    </>:<>
-      <label>New password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} autoComplete="new-password"/></label>
-      <label>Confirm password<input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} autoComplete="new-password"/></label>
-      <button className="primary-button auth-submit" disabled={busy} onClick={save}>{busy?"Saving…":"Update password"}</button>
-    </>}
+    <Brand/><p className="eyebrow dark">SECURE ACCESS</p><h1>Sign in to Menu Go</h1>
+    <p className="auth-copy">Verify your email with a one-time code. No password is needed.</p>
+    <button className="primary-button auth-submit" disabled={busy} onClick={()=>{setBusy(true);void signIn();}}>{busy?"Opening secure sign-in…":"Continue with email"}</button>
+    <p className="auth-help">Use your approved administrator or restaurant-manager email. Customers can view menus without signing in.</p>
     {message&&<div className="auth-message">{message}</div>}
-  </div></div>
+    <small className="auth-build">Secure email verification</small>
+  </div></div>;
 }
 
 function AcceptInvitePage(){
-  const nav=useNavigate();
-  const location=useLocation();
-  const params=new URLSearchParams(location.search);
-  const code=params.get("code")||"";
-  const invitedEmail=(params.get("email")||"").toLowerCase();
-
-  const [email,setEmail]=useState(invitedEmail);
-  const [password,setPassword]=useState("");
-  const [confirm,setConfirm]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [message,setMessage]=useState("");
-
-  function rememberInvite(){
-    if(code)localStorage.setItem("menugo_pending_invite",code);
-    if(email)localStorage.setItem("menugo_pending_invite_email",email.trim().toLowerCase());
-  }
-
-  async function createAccount(){
-    if(!code)return setMessage("This invitation link is incomplete.");
-    if(!email)return setMessage("Enter the invited email address.");
-    if(invitedEmail && email.trim().toLowerCase()!==invitedEmail)return setMessage("Use the email address this invitation was sent to.");
-    if(password.length<8)return setMessage("Use at least 8 characters for the password.");
-    if(password!==confirm)return setMessage("Passwords do not match.");
-
-    setBusy(true);setMessage("");rememberInvite();
+  const nav=useNavigate(),location=useLocation(),params=new URLSearchParams(location.search);
+  const code=params.get("code")||"",email=params.get("email")||"";
+  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
+  async function accept(){
+    setBusy(true);setMessage("");
     try{
-      const redirectTo=`${window.location.origin}${window.location.pathname}?page=invite-confirm`;
-      const result=await signUp(email.trim().toLowerCase(),password,redirectTo);
-
-      if(result.session){
-        await redeemRestaurantInvite(code);
-        localStorage.removeItem("menugo_pending_invite");
-        localStorage.removeItem("menugo_pending_invite_email");
-        nav("/admin");
-        return;
-      }
-
-      setMessage("Account created. Check your email to confirm it, then sign in. Your restaurant invitation will be applied automatically.");
-    }catch(err){
-      setMessage(err instanceof Error?err.message:"Could not create the manager account.");
-    }finally{
-      setBusy(false);
-    }
+      if(!code)throw new Error("This invitation link is incomplete.");
+      localStorage.setItem("menugo_pending_invite",code);localStorage.setItem("menugo_pending_invite_email",email);
+      const session=await getSession();
+      if(!session){await signIn();return;}
+      if(email&&session.user.email.toLowerCase()!==email.toLowerCase())throw new Error("Sign out and verify the email address shown in this invitation.");
+      await redeemRestaurantInvite(code);localStorage.removeItem("menugo_pending_invite");localStorage.removeItem("menugo_pending_invite_email");nav("/admin");
+    }catch(error){setMessage(error instanceof Error?error.message:"Could not accept your invitation.");setBusy(false);}
   }
-
-  function signInExisting(){
-    rememberInvite();
-    nav("/login");
-  }
-
-  return <div className="auth-page"><div className="auth-card">
-    <Brand/><p className="eyebrow dark">RESTAURANT INVITATION</p><h1>Join Menu Go</h1>
-    <p className="auth-copy">Create your manager account using the email address invited by Menu Go Admin.</p>
-    <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} disabled={Boolean(invitedEmail)} autoComplete="email"/></label>
-    <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password"/></label>
-    <label>Confirm password<input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} autoComplete="new-password"/></label>
-    <button className="primary-button auth-submit" disabled={busy} onClick={createAccount}>{busy?"Creating account…":"Create manager account"}</button>
-    <button className="auth-switch" onClick={signInExisting}>Already have an account? Sign in</button>
+  return <div className="auth-page"><div className="auth-card"><Brand/>
+    <p className="eyebrow dark">RESTAURANT INVITATION</p><h1>Join Menu Go</h1>
+    <p className="auth-copy">Verify {email||"your invited email address"} to activate your restaurant access.</p>
+    <button className="primary-button auth-submit" disabled={busy||!code} onClick={accept}>{busy?"Please wait…":"Verify email & accept invitation"}</button>
+    <button className="auth-switch" onClick={()=>void signOut()}>Sign out to use another email</button>
     {message&&<div className="auth-message">{message}</div>}
-  </div></div>
-}
-
-function InviteConfirmPage(){
-  const [message,setMessage]=useState("Confirming your invitation…");
-
-  useEffect(()=>{
-    (async()=>{
-      try{
-        const session=await getSession();
-        const code=localStorage.getItem("menugo_pending_invite");
-        if(session&&code){
-          await redeemRestaurantInvite(code);
-          localStorage.removeItem("menugo_pending_invite");
-          localStorage.removeItem("menugo_pending_invite_email");
-          window.location.href=`${window.location.origin}${window.location.pathname}#/admin`;
-          return;
-        }
-        setMessage("Email confirmed. Sign in to finish activating your restaurant access.");
-      }catch{
-        setMessage("Email confirmed. Sign in to finish activating your restaurant access.");
-      }
-    })();
-  },[]);
-
-  return <div className="auth-page"><div className="auth-card">
-    <Brand/><p className="eyebrow dark">EMAIL CONFIRMATION</p><h1>Almost finished</h1>
-    <div className="auth-message">{message}</div>
-    <a className="primary-button auth-submit" href={`${window.location.origin}${window.location.pathname}#/login`}>Continue to sign in</a>
-  </div></div>
+  </div></div>;
 }
 
 function NoAccessPage(){
@@ -472,7 +310,7 @@ function PreviewManagerDashboard(){
 function Protected({platform=false}:{platform?:boolean}){
   const [state,setState]=useState<"loading"|"ok"|"no">("loading");
   useEffect(()=>{
-    const check=async()=>{const s=await getSession(); if(!s)return setState("no"); if(platform){const ok=await isPlatformAdmin();setState(ok?"ok":"no")}else setState("ok")};
+    const check=async()=>{try{const s=await getSession(); if(!s)return setState("no"); if(platform){const ok=await isPlatformAdmin();setState(ok?"ok":"no")}else setState("ok")}catch{setState("no")}};
     check(); return onAuthChange(check);
   },[platform]);
   if(state==="loading") return <div className="screen-loader">Loading Menu Go…</div>;
@@ -542,7 +380,7 @@ function RestaurantDashboard(){
 
 function RestaurantOverview({analytics,items,slug}:{analytics:Record<string,number>,items:AdminMenuItem[],slug:string}){
   const stats=[["Menu views",analytics.menu_view??0,Eye],["QR scans",analytics.qr_scan??0,QrCode],["Review clicks",analytics.review_click??0,Star],["Feedback",analytics.feedback_submit??0,MessageSquareText]] as const;
-  return <><div className="stats-grid">{stats.map(([label,value,Icon])=><div className="stat-card" key={label}><div className="stat-top"><span>{label}</span><Icon size={20}/></div><strong>{value}</strong><small>Live Supabase data</small></div>)}</div>
+  return <><div className="stats-grid">{stats.map(([label,value,Icon])=><div className="stat-card" key={label}><div className="stat-top"><span>{label}</span><Icon size={20}/></div><strong>{value}</strong><small>Live menu data</small></div>)}</div>
     <div className="dash-grid"><div className="panel"><div className="panel-heading"><div><h2>Popular menu items</h2><p>Items marked as popular</p></div></div>{items.filter(i=>i.is_popular).slice(0,5).map((item,index)=><div className="rank-row" key={item.id}><span className="rank">{index+1}</span><img src={item.image_url||fallbackMenuItems[0].image} alt=""/><div><strong>{item.name}</strong><small>{item.category?.name||"Uncategorized"}</small></div><span>{item.is_available?"Available":"Hidden"}</span></div>)}</div>
     <div className="panel qr-mini"><div className="panel-heading"><div><h2>Your table QR</h2><p>One code, always current</p></div></div><div className="qr-wrap"><QRCodeSVG value={publicMenuUrl(slug)} size={158}/></div><p>Menu changes appear instantly without replacing printed QR codes.</p></div></div></>;
 }
@@ -613,9 +451,9 @@ function ActivityPanel({rows}:{rows:any[]}){
     return row.entity_type;
   };
   const detail=(row:any)=>{
-    if(row.action==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.price!==row.new_data.price)
+    if(row.action.toLowerCase()==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.price!==row.new_data.price)
       return `Price: ${row.old_data.price} ETB → ${row.new_data.price} ETB`;
-    if(row.action==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.is_available!==row.new_data.is_available)
+    if(row.action.toLowerCase()==="update"&&row.entity_type==="menu_items"&&row.old_data&&row.new_data&&row.old_data.is_available!==row.new_data.is_available)
       return row.new_data.is_available?"Marked available":"Marked unavailable";
     return row.action.charAt(0).toUpperCase()+row.action.slice(1);
   };
@@ -796,7 +634,7 @@ function PlatformDashboard(){
           <button className="primary-button" onClick={()=>navigator.clipboard.writeText(inviteLink)}>Copy invitation link</button>
           <a className="ghost-button" href={`mailto:${encodeURIComponent(inviteEmail)}?subject=${encodeURIComponent("You're invited to manage "+inviteRestaurant.name+" on Menu Go")}&body=${encodeURIComponent("You have been invited to manage "+inviteRestaurant.name+" on Menu Go. Open this secure invitation link to create your account:\n\n"+inviteLink+"\n\nThis invitation expires in 14 days.")}`}>Email invitation</a>
         </div>
-        <p className="auth-help">For now, “Email invitation” opens your email app with the message prepared. Automatic transactional email can be connected when Menu Go gets its production domain/SMTP.</p>
+        <p className="auth-help">For now, “Email invitation” opens your email app with the message prepared. Managers verify their email with a one-time code.</p>
       </>}
     </div></div>}
   </div>;
@@ -804,15 +642,15 @@ function PlatformDashboard(){
 
 function App(){
   const specialPage=new URLSearchParams(window.location.search).get("page");
-  if(specialPage==="reset-password")return <ResetPasswordPage/>;
-  if(specialPage==="invite-confirm")return <InviteConfirmPage/>;
+  if(specialPage==="reset-password")return <AuthPage/>;
+  if(specialPage==="invite-confirm")return <AuthPage/>;
 
   return <Routes>
     <Route path="/" element={<Navigate to="/r/abol-coffee" replace/>}/>
     <Route path="/demo" element={<Navigate to="/r/abol-coffee" replace/>}/>
     <Route path="/r/:slug" element={<CustomerPage/>}/>
     <Route path="/login" element={<AuthPage/>}/>
-    <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
+    <Route path="/forgot-password" element={<AuthPage/>}/>
     <Route path="/accept-invite" element={<AcceptInvitePage/>}/>
     <Route path="/no-access" element={<NoAccessPage/>}/>
     <Route path="/preview/platform" element={<PreviewGate role="admin"><PreviewPlatformDashboard/></PreviewGate>}/>

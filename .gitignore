@@ -4,3 +4,10 @@ dist
 .env.local
 .DS_Store
 *.tsbuildinfo
+.migration-private/
+.wrangler/
+cloudflare/dist/
+cloudflare/cloudflare/
+public/migrated-media/*
+!public/migrated-media/manifest.json
+public/fonts/*.woff2

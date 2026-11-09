@@ -1,7 +1,9 @@
-name: Deploy Menu Go to GitHub Pages
+name: Verify Cloudflare menu and update legacy QR redirects
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -19,19 +21,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      VITE_SUPABASE_URL: https://xwqdyffcbtvqdkrtxpsu.supabase.co
-      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_-C6BDtXOsGu7JBrMSMU8FQ_eZjcKBxs
+      VITE_PUBLIC_SITE_URL: https://menu.admakidigital.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Prepare legacy QR redirects
+        run: |
+          mkdir -p legacy-dist
+          cp cloudflare/legacy-redirect.html legacy-dist/index.html
+          cp cloudflare/legacy-redirect.html legacy-dist/404.html
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
-          path: dist
+          path: legacy-dist
       - id: deployment
         uses: actions/deploy-pages@v4
+        if: github.event_name != 'pull_request'
