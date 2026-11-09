@@ -1,0 +1,15 @@
+{
+  "name": "admaki-menu-d1-pilot",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-09",
+  "workers_dev": true,
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "admaki-menu-d1-pilot",
+    "database_id": "c9b9e2cc-1f4d-4548-a67e-63c3a5927ea2"
+  }],
+  "vars": {
+    "SUPABASE_URL": "https://xwqdyffcbtvqdkrtxpsu.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_-C6BDtXOsGu7JBrMSMU8FQ_eZjcKBxs"
+  }
+}
