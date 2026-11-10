@@ -22,7 +22,7 @@ const publicMenuUrl = (slug: string) => `https://yohannesmulugeta.github.io/Menu
 const WEEKDAY_LABELS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] as const;
 
 function Brand() {
-  return <Link to="/r/abol-coffee" className="brand"><span className="brand-mark"><UtensilsCrossed size={18}/></span><span>Menu Go</span></Link>;
+  return <Link to="/r/abol-coffee" className="brand" aria-label="ADMAKI Menu home"><img className="admaki-brand-primary" src={`${import.meta.env.BASE_URL}brand/admaki-menu.svg`} alt="ADMAKI Menu" /><img className="admaki-brand-white" src={`${import.meta.env.BASE_URL}brand/admaki-menu-white.svg`} alt="" aria-hidden="true" /></Link>;
 }
 
 function CustomerPage() {
@@ -101,7 +101,7 @@ function CustomerPage() {
   if(loadError) return <div className="auth-page"><div className="auth-card"><Brand/><h1>Restaurant not found</h1><p className="auth-copy">{loadError}</p><Link className="primary-button auth-submit" to="/r/abol-coffee">Open Abol Coffee</Link></div></div>;
 
   return <div className={slug==="mokodo-pizza"?"customer-page mokodo-page":"customer-page"}>
-    <header className="hero" style={restaurant.cover_image_url?{backgroundImage:`url(${restaurant.cover_image_url})`}:undefined}><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <strong>Menu Go</strong></span></div>
+    <header className="hero" style={restaurant.cover_image_url?{backgroundImage:`url(${restaurant.cover_image_url})`}:undefined}><div className="hero-gradient"/><div className="hero-top"><span className="powered">Powered by <a href="https://menu.admakidigital.com" target="_blank" rel="noopener noreferrer"><strong>ADMAKI Menu</strong></a></span></div>
       <div className="hero-copy"><div className="restaurant-logo">{restaurant.logo_url?<img src={restaurant.logo_url} alt={restaurant.name}/>:<Coffee size={28}/>}</div><p className="eyebrow">{slug==="abol-coffee"?"ABOL COFFEE · HAYAHULET":restaurant.name.toUpperCase()}</p>
         <h1>{restaurant.name}</h1><p>{restaurant.tagline}</p>{restaurant.hours&&<span className="open-pill"><span/> {restaurant.hours}</span>}</div>
     </header>
@@ -193,13 +193,13 @@ function AuthPage(){
   return <div className="auth-page"><div className="auth-card">
     <Brand/>
     <p className="eyebrow dark">SECURE ACCESS</p>
-    <h1>Sign in to Menu Go</h1>
-    <p className="auth-copy">Use the email address connected to your Menu Go invitation.</p>
+    <h1>Sign in to ADMAKI Menu</h1>
+    <p className="auth-copy">Use the email address connected to your ADMAKI Menu invitation.</p>
     <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email"/></label>
     <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" autoComplete="current-password"/></label>
     <button className="primary-button auth-submit" disabled={busy||!email||!password} onClick={submit}>{busy?"Please wait…":"Sign in"}</button>
     <Link className="auth-switch" to="/forgot-password">Forgot password?</Link>
-    <p className="auth-help">Manager accounts are invitation-only. Contact your Menu Go administrator if you need access.</p>
+    <p className="auth-help">Manager accounts are invitation-only. Contact your ADMAKI Menu administrator if you need access.</p>
     {message&&<div className="auth-message">{message}</div>}
     <small className="auth-build">Production access</small>
   </div></div>
@@ -325,8 +325,8 @@ function AcceptInvitePage(){
   }
 
   return <div className="auth-page"><div className="auth-card">
-    <Brand/><p className="eyebrow dark">RESTAURANT INVITATION</p><h1>Join Menu Go</h1>
-    <p className="auth-copy">Create your manager account using the email address invited by Menu Go Admin.</p>
+    <Brand/><p className="eyebrow dark">RESTAURANT INVITATION</p><h1>Join ADMAKI Menu</h1>
+    <p className="auth-copy">Create your manager account using the email address invited by ADMAKI Menu Admin.</p>
     <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} disabled={Boolean(invitedEmail)} autoComplete="email"/></label>
     <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password"/></label>
     <label>Confirm password<input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} autoComplete="new-password"/></label>
@@ -369,7 +369,7 @@ function NoAccessPage(){
   const nav=useNavigate();
   return <div className="auth-page"><div className="auth-card">
     <Brand/><p className="eyebrow dark">ACCESS REQUIRED</p><h1>No restaurant assigned</h1>
-    <p className="auth-copy">This email is signed in, but it does not have Menu Go Admin or Restaurant Manager access.</p>
+    <p className="auth-copy">This email is signed in, but it does not have ADMAKI Menu Admin or Restaurant Manager access.</p>
     <button className="primary-button auth-submit" onClick={async()=>{await signOut();nav("/login")}}>Sign out</button>
   </div></div>
 }
@@ -392,9 +392,9 @@ function PreviewPlatformDashboard(){
       <button className="active"><Store size={19}/><span>Restaurants</span></button>
       <button><BarChart3 size={19}/><span>Analytics</span></button>
       <button><Settings size={19}/><span>Settings</span></button>
-    </nav><div className="sidebar-footer"><div className="avatar">MG</div><span><strong>Menu Go</strong><small>Admin Preview</small></span></div></aside>
+    </nav><div className="sidebar-footer"><div className="avatar">AM</div><span><strong>ADMAKI Menu</strong><small>Admin Preview</small></span></div></aside>
     <section className="dashboard-content">
-      <header className="dash-header"><div><p className="eyebrow dark">MENU GO ADMIN · PREVIEW</p><h1>Restaurants</h1></div>
+      <header className="dash-header"><div><p className="eyebrow dark">ADMAKI MENU ADMIN · PREVIEW</p><h1>Restaurants</h1></div>
         <div className="dash-header-actions"><button className="primary-button" onClick={()=>alert("Preview mode: restaurant creation is disabled.")}><Plus size={17}/> Add restaurant</button>
         <button className="ghost-button" onClick={()=>{sessionStorage.removeItem("menugo_preview_role");nav("/login")}}><LogOut size={17}/> Exit preview</button></div>
       </header>
@@ -475,7 +475,7 @@ function Protected({platform=false}:{platform?:boolean}){
     const check=async()=>{const s=await getSession(); if(!s)return setState("no"); if(platform){const ok=await isPlatformAdmin();setState(ok?"ok":"no")}else setState("ok")};
     check(); return onAuthChange(check);
   },[platform]);
-  if(state==="loading") return <div className="screen-loader">Loading Menu Go…</div>;
+  if(state==="loading") return <div className="screen-loader">Loading ADMAKI Menu…</div>;
   if(state==="no") return <Navigate to="/login" replace/>;
   return platform?<PlatformDashboard/>:<RestaurantDashboard/>;
 }
@@ -517,14 +517,14 @@ function RestaurantDashboard(){
   useEffect(()=>{void refresh()},[refresh]);
 
   if(loading) return <div className="screen-loader">Loading restaurant dashboard…</div>;
-  if(!restaurant) return <div className="auth-page"><div className="auth-card"><Brand/><h1>No restaurant assigned yet</h1><p className="auth-copy">Ask the Menu Go platform owner to send an invitation to your email address.</p><Link className="primary-button auth-submit" to="/login">Return to sign in</Link></div></div>;
+  if(!restaurant) return <div className="auth-page"><div className="auth-card"><Brand/><h1>No restaurant assigned yet</h1><p className="auth-copy">Ask the ADMAKI Menu platform owner to send an invitation to your email address.</p><Link className="primary-button auth-submit" to="/login">Return to sign in</Link></div></div>;
 
   const navItems:[AdminTab,any][]=[
     ["Overview",LayoutDashboard],["Menu",MenuIcon],["Categories",UtensilsCrossed],
     ["Hours",Settings],["Feedback",MessageSquareText],["Analytics",BarChart3],
     ["Activity",Eye],["QR Codes",QrCode],["Settings",Settings]
   ];
-  return <div className="dashboard"><aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav><div className="sidebar-footer"><div className="avatar">{restaurant.name.slice(0,2).toUpperCase()}</div><span><strong>{restaurant.name}</strong><small>{role==="platform_admin"?"Menu Go Admin":"Restaurant Manager"}</small></span></div></aside>
+  return <div className="dashboard"><aside className="sidebar"><Brand/><nav>{navItems.map(([label,Icon])=><button key={label} className={tab===label?"active":""} onClick={()=>setTab(label)}><Icon size={19}/><span>{label}</span></button>)}</nav><div className="sidebar-footer"><div className="avatar">{restaurant.name.slice(0,2).toUpperCase()}</div><span><strong>{restaurant.name}</strong><small>{role==="platform_admin"?"ADMAKI Menu Admin":"Restaurant Manager"}</small></span></div></aside>
     <section className="dashboard-content"><header className="dash-header"><div><p className="eyebrow dark">RESTAURANT ADMIN</p><h1>{tab}</h1></div><div className="dash-header-actions"><Link to={`/r/${restaurant.slug}`} className="ghost-button"><Eye size={17}/> View live menu</Link><button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button></div></header>
       {tab==="Overview"&&<RestaurantOverview analytics={analytics} items={items} slug={restaurant.slug}/>}
       {tab==="Menu"&&<MenuManager items={items} onRefresh={refresh} onEdit={setEditor}/>}
@@ -651,7 +651,7 @@ function RestaurantSettings({restaurant,onRefresh}:{restaurant:AdminRestaurant,o
   }
 
   return <div className="panel settings-panel">
-    <div className="panel-heading"><div><h2>Restaurant profile</h2><p>Managers can maintain the public restaurant page. The permanent link is controlled by Menu Go Admin.</p></div></div>
+    <div className="panel-heading"><div><h2>Restaurant profile</h2><p>Managers can maintain the public restaurant page. The permanent link is controlled by ADMAKI Menu Admin.</p></div></div>
     <div className="asset-grid">
       <label className="asset-upload"><strong>Restaurant logo</strong>{form.logo_url&&<img src={form.logo_url} alt="Logo preview"/>}<input type="file" accept="image/*" disabled={busy} onChange={e=>upload("logo",e.target.files?.[0])}/></label>
       <label className="asset-upload cover-upload"><strong>Cover image</strong>{form.cover_image_url&&<img src={form.cover_image_url} alt="Cover preview"/>}<input type="file" accept="image/*" disabled={busy} onChange={e=>upload("cover",e.target.files?.[0])}/></label>
@@ -735,10 +735,10 @@ function PlatformDashboard(){
       <button className="active"><Store size={19}/><span>Restaurants</span></button>
       <button><BarChart3 size={19}/><span>Analytics</span></button>
       <button><Settings size={19}/><span>Settings</span></button>
-    </nav><div className="sidebar-footer"><div className="avatar">MG</div><span><strong>Menu Go</strong><small>Platform Admin</small></span></div></aside>
+    </nav><div className="sidebar-footer"><div className="avatar">AM</div><span><strong>ADMAKI Menu</strong><small>Platform Admin</small></span></div></aside>
 
     <section className="dashboard-content">
-      <header className="dash-header"><div><p className="eyebrow dark">MENU GO ADMIN</p><h1>Restaurants</h1></div>
+      <header className="dash-header"><div><p className="eyebrow dark">ADMAKI MENU ADMIN</p><h1>Restaurants</h1></div>
         <div className="dash-header-actions">
           <button className="primary-button" onClick={()=>setOpen(true)}><Plus size={17}/> Add restaurant</button>
           <button className="ghost-button" onClick={async()=>{await signOut();nav("/login")}}><LogOut size={17}/> Sign out</button>
@@ -786,7 +786,7 @@ function PlatformDashboard(){
     {inviteRestaurant&&<div className="modal-backdrop" onClick={()=>setInviteRestaurant(null)}><div className="modal invite-modal" onClick={e=>e.stopPropagation()}>
       <div className="modal-head"><div><p className="eyebrow dark">MANAGER ACCESS</p><h3>Invite {inviteRestaurant.name} manager</h3></div><button className="icon-button" onClick={()=>setInviteRestaurant(null)}><X/></button></div>
       {!inviteLink?<>
-        <p>Enter the manager's email. Menu Go will create a secure one-time invitation link valid for 14 days.</p>
+        <p>Enter the manager's email. ADMAKI Menu will create a secure one-time invitation link valid for 14 days.</p>
         <label>Manager email<input type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="manager@restaurant.com"/></label>
         <button className="primary-button auth-submit" disabled={inviteBusy||!inviteEmail} onClick={createManagerInvitation}>{inviteBusy?"Creating…":"Create invitation"}</button>
       </>:<>
@@ -794,9 +794,9 @@ function PlatformDashboard(){
         <p className="mono-url invite-link-text">{inviteLink}</p>
         <div className="invite-actions">
           <button className="primary-button" onClick={()=>navigator.clipboard.writeText(inviteLink)}>Copy invitation link</button>
-          <a className="ghost-button" href={`mailto:${encodeURIComponent(inviteEmail)}?subject=${encodeURIComponent("You're invited to manage "+inviteRestaurant.name+" on Menu Go")}&body=${encodeURIComponent("You have been invited to manage "+inviteRestaurant.name+" on Menu Go. Open this secure invitation link to create your account:\n\n"+inviteLink+"\n\nThis invitation expires in 14 days.")}`}>Email invitation</a>
+          <a className="ghost-button" href={`mailto:${encodeURIComponent(inviteEmail)}?subject=${encodeURIComponent("You're invited to manage "+inviteRestaurant.name+" on ADMAKI Menu")}&body=${encodeURIComponent("You have been invited to manage "+inviteRestaurant.name+" on ADMAKI Menu. Open this secure invitation link to create your account:\n\n"+inviteLink+"\n\nThis invitation expires in 14 days.")}`}>Email invitation</a>
         </div>
-        <p className="auth-help">For now, “Email invitation” opens your email app with the message prepared. Automatic transactional email can be connected when Menu Go gets its production domain/SMTP.</p>
+        <p className="auth-help">For now, “Email invitation” opens your email app with the message prepared. Automatic transactional email can be connected when ADMAKI Menu gets its production domain/SMTP.</p>
       </>}
     </div></div>}
   </div>;
