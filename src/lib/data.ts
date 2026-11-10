@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { api } from "./api";
 import type { MenuItem } from "../data/demo";
 import type { Json } from "./database.types";
 
@@ -32,85 +32,27 @@ export type WifiRecord = {
 };
 
 export async function loadRestaurantBySlug(slug: string) {
-  if (!supabase) return null;
-
-  const { data: restaurant, error: restaurantError } = await supabase
-    .from("restaurants")
-    .select("id,name,slug,tagline,description,address,google_maps_url,google_review_url,phone,currency,cover_image_url,logo_url,instagram_url,tiktok_url,facebook_url,youtube_url,telegram_url,whatsapp_url,linkedin_url,website_url")
-    .eq("slug", slug)
-    .eq("status", "active")
-    .single();
-
-  if (restaurantError) throw restaurantError;
-
-  const [{ data: categories, error: categoryError }, { data: items, error: itemError }, { data: hours }] =
-    await Promise.all([
-      supabase
-        .from("categories")
-        .select("id,name,sort_order")
-        .eq("restaurant_id", restaurant.id)
-        .eq("is_active", true)
-        .order("sort_order"),
-      supabase
-        .from("menu_items")
-        .select("id,name,description,price,image_url,is_popular,is_available,category_id,sort_order")
-        .eq("restaurant_id", restaurant.id)
-        .eq("is_available", true)
-        .order("sort_order"),
-      supabase
-        .from("opening_hours")
-        .select("weekday,opens_at,closes_at,is_closed")
-        .eq("restaurant_id", restaurant.id)
-        .order("weekday")
-    ]);
-
-  if (categoryError) throw categoryError;
-  if (itemError) throw itemError;
-
-  const categoryMap = new Map((categories ?? []).map((c) => [c.id, c.name]));
-  const mappedItems: MenuItem[] = (items ?? []).map((item) => ({
-    id: item.id,
-    name: item.name,
-    description: item.description ?? "",
-    price: Number(item.price),
-    category: categoryMap.get(item.category_id ?? "") ?? "Other",
-    image: item.image_url ?? "",
-    popular: item.is_popular,
-    available: item.is_available,
+  const data = await api<any>(`/api/restaurants/${encodeURIComponent(slug)}`);
+  const categoryMap = new Map<string,string>(data.categories.map((c:any) => [c.id,c.name]));
+  const items: MenuItem[] = data.items.map((item:any) => ({
+    id:item.id, name:item.name, description:item.description || "", price:Number(item.price),
+    category:categoryMap.get(item.category_id) || "Other", image:item.image_url || "",
+    popular:item.is_popular, available:item.is_available,
   }));
-
   return {
-    restaurant: restaurant as RestaurantRecord,
-    categories: [...(mappedItems.some((item) => item.popular) ? ["Popular"] : []), ...(categories ?? []).map((c) => c.name)],
-    items: mappedItems,
-    hours: hours ?? [],
+    restaurant:data.restaurant as RestaurantRecord,
+    categories:[...(items.some(i=>i.popular)?["Popular"]:[]), ...data.categories.map((c:any)=>c.name), ...(items.some(i=>i.category==="Other")?["Other"]:[])],
+    items, hours:data.hours,
   };
 }
 
-export async function submitFeedback(restaurantId: string, message: string) {
-  if (!supabase) throw new Error("Database is not configured.");
-  const clean = message.trim();
-  if (!clean) throw new Error("Please enter your feedback.");
-  if (clean.length > 3000) throw new Error("Feedback must be 3,000 characters or fewer.");
-
-  const { error } = await supabase.from("feedback").insert({
-    restaurant_id: restaurantId,
-    message: clean,
-  });
-
-  if (error) throw error;
-  await trackEvent(restaurantId, "feedback_submit");
+export async function submitFeedback(restaurantId:string,message:string) {
+  await api(`/api/restaurants/${encodeURIComponent(restaurantId)}/feedback`,"POST",{message});
+  await trackEvent(restaurantId,"feedback_submit");
 }
 
-export async function trackEvent(
-  restaurantId: string,
-  eventType: string,
-  metadata: Json = {}
-) {
-  if (!supabase) return;
-  await supabase.from("analytics_events").insert({
-    restaurant_id: restaurantId,
-    event_type: eventType,
-    metadata,
-  });
+export async function trackEvent(restaurantId:string,eventType:string,metadata:Json={}) {
+  // Analytics is best-effort and never blocks viewing a menu or sending feedback.
+  try { await api(`/api/restaurants/${encodeURIComponent(restaurantId)}/events`,"POST",{event_type:eventType,metadata}); }
+  catch { /* The menu remains usable if analytics is rate-limited or offline. */ }
 }
