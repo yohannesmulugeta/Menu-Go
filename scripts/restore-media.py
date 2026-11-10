@@ -11,7 +11,7 @@ root = Path(__file__).resolve().parent.parent
 directories = [root / 'public/migrated-media', root / 'public/fonts']
 entries = [(directory, name, metadata) for directory in directories
            for name, metadata in json.loads((directory / 'manifest.json').read_text()).items()]
-origin = os.environ.get('MENU_MEDIA_ORIGIN', 'https://menu.admakidigital.com').rstrip('/')
+origin = os.environ.get('MENU_MEDIA_ORIGIN', 'https://app.admakidigital.com').rstrip('/')
 if not origin.startswith('https://'):
     raise ValueError('MENU_MEDIA_ORIGIN must use HTTPS.')
 
