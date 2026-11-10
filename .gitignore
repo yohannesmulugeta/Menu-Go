@@ -11,3 +11,6 @@ cloudflare/cloudflare/
 public/migrated-media/*
 !public/migrated-media/manifest.json
 public/fonts/*.woff2
+
+!public/fonts/manrope-variable.woff2
+!public/fonts/noto-sans-ethiopic.woff2
