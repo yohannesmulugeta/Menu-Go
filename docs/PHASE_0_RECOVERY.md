@@ -56,3 +56,7 @@ The build intentionally has no deployment command. No new UI comparison, load te
 ## Next bounded step
 
 Prepare isolated staging D1/R2/Worker configuration and additive schema migrations. Preserve source snapshots. First implement a typed API/client compatibility layer against the recovered baseline before replacing compiled frontend behavior. Never point staging tests at production DB.
+
+## Subsequent recovery
+
+The editable frontend source was subsequently located on feat/cloudflare-full-migration and reconciled with the live bundle. See PHASE_1_STAGING.md for the reconstructed deltas, equivalence check and staging resource evidence. Historical limitations above describe the initial recovery snapshot.

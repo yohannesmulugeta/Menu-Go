@@ -30,3 +30,7 @@ The legacy email-verification Access app protects /api/auth on app, menu and wor
 Fonts and images retain their existing byte content. Font-license files available in the source repository are copied alongside captured fonts; upstream attribution/provenance for the additional hashed font files still needs review before a new distribution.
 
 See docs/PHASE_0_RECOVERY.md for the release boundary and remaining work.
+
+## Editable source and staging update
+
+The editable Cloudflare frontend has now been recovered in cloudflare/frontend and checked against the frozen runtime using binding-normalized JS comparison and exact stylesheet comparison. Separate health-only staging resources and additive schemas are ready. See docs/PHASE_1_STAGING.md. The earlier source-provenance limitation is resolved for the frontend; the bundled live backend and its special renderer adapters still need modular reconciliation.

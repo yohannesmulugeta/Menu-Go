@@ -16,3 +16,7 @@ jobs:
           node-version: 24
       - run: node scripts/check-cloudflare-baseline.mjs --test
       - run: node scripts/build-cloudflare-baseline.mjs
+      - run: npm ci --ignore-scripts
+      - run: npm run build:cloudflare-frontend
+      - run: npm run check:frontend-recovery
+      - run: npm run check:menu-platform

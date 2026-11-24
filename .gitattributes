@@ -1,2 +1,4 @@
 # Preserve byte-exact recovered bundles/assets, including original whitespace.
 cloudflare/baseline/** -whitespace -text
+cloudflare/frontend/src/** whitespace=-blank-at-eol
+cloudflare/platform/migrations/*.sql -whitespace

@@ -1,0 +1,22 @@
+{
+  "name": "admaki-menu-platform-staging",
+  "main": "platform/worker.mjs",
+  "compatibility_date": "2026-11-09",
+  "workers_dev": true,
+  "vars": {
+    "ENVIRONMENT": "admaki-menu-platform-staging"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "admaki-menu-platform-staging",
+      "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "admaki-menu-media-platform-staging"
+    }
+  ]
+}

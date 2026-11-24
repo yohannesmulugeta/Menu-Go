@@ -6,3 +6,4 @@ dist
 *.tsbuildinfo
 
 dist-cloudflare
+cloudflare/frontend/public

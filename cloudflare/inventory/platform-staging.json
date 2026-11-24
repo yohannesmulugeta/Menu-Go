@@ -1,0 +1,42 @@
+{
+  "phase": 1,
+  "worker": "admaki-menu-platform-staging",
+  "worker_version": "8a3ef9a5-6db2-47ef-a8ab-015d6ee0d44f",
+  "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+  "r2_bucket": "admaki-menu-media-platform-staging",
+  "migrations": [
+    {
+      "name": "0001_recovered_baseline.sql",
+      "sha256": "dc37bbfcf3693114645d90fc78feaa71dde88f58b93135a032baad163663832a"
+    },
+    {
+      "name": "0002_shared_platform.sql",
+      "sha256": "922b4eb76da09ce25663e127be6af165fbb7d2ea33ddf9f586fc049be75a650d"
+    },
+    {
+      "name": "0003_staging_fixtures.sql",
+      "sha256": "89ad4cc9b065083ddb0c33e7d7333f3738ff240b2baa386e0dd585c9ef82eaab"
+    }
+  ],
+  "health": {
+    "status": 200,
+    "health": {
+      "ok": true,
+      "environment": "staging",
+      "schema_migrations": 3,
+      "media_binding": true,
+      "authentication": "not enabled",
+      "public_menus": "not enabled"
+    },
+    "auth_status": 404,
+    "write_status": 405
+  },
+  "source_reference": {
+    "branch": "feat/cloudflare-full-migration",
+    "commit": "5f802d2528fea63c840f1ff80ee128512b12bae0",
+    "patch": "Restore public link routing, restaurant selector, dashboard loading errors and review-link help text",
+    "normalized_js_sha256": "b9e7bb56660c9647d5358028636d8faac4067aae145ddcc6919623e03a091533",
+    "css_sha256": "7291a026ec7f87807c6b22c6b7cf29b67d248da29ddd66bfd8d044465369aa56"
+  }
+}
