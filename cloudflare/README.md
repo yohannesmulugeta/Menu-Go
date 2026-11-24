@@ -21,7 +21,7 @@ The integration tests use synthetic data and do not contact production.
 
 ## Important boundaries
 
-The compiled Cloudflare frontend differs from src/App.tsx and src/lib/admin.ts in main. Its original editable TypeScript and build history have not been recovered. Frozen executable recovery is complete for the explicitly inventoried assets; editable-source reconciliation remains open. Do not replace the live frontend with a GitHub Pages build.
+The compiled Cloudflare frontend differs from src/App.tsx and src/lib/admin.ts in main. Its editable TypeScript has been recovered in cloudflare/frontend and verified against the frozen runtime by normalized JavaScript and exact CSS comparison. Frozen executable recovery covers the explicitly inventoried assets; special backend renderer reconciliation remains separate. Do not replace the live frontend with a GitHub Pages build.
 
 Do not deploy the recovered modules alone: core ASSETS, DB, router service binding, routes, custom domain and Access configuration must be considered together. No staging database or R2 bucket has been created in Phase 0.
 
@@ -38,3 +38,7 @@ The editable Cloudflare frontend has now been recovered in cloudflare/frontend a
 ## Shared authentication staging
 
 Staging now runs the shared username/password account shell, additive authentication schema and bounded cleanup schedule. Production login and public menus remain unchanged. See [Phase 2 authentication](../docs/PHASE_2_AUTHENTICATION.md) for the hashing decision, tested behavior and release boundary.
+
+## Shared feature settings staging
+
+Thirty feature settings, platform policy, validated restaurant drafts and server capability checks are deployed in isolated staging. See [Phase 3 features](../docs/PHASE_3_FEATURES.md). Existing live menus and login remain unchanged.

@@ -28,12 +28,12 @@ async function identity(db,s) {
   const result=await (admin?rows:rows.bind(s.user_id)).all();
   return {user_id:s.user_id,username:s.username,role:admin?'super_admin':'manager',must_change_password:!!s.must_change_password,restaurants:result.results};
 }
-async function requireSession(request,db,full=true) {
+export async function requireSession(request,db,full=true) {
   const s=await session(request,db);if(!s)fail(401,'Sign in to continue.');
   if(full&&s.must_change_password)fail(403,'Change your temporary password first.');
   return s;
 }
-async function requireAdmin(request,db,recent=false) {
+export async function requireAdmin(request,db,recent=false) {
   const s=await requireSession(request,db);
   if(!await db.prepare('SELECT 1 FROM platform_admins WHERE user_id=?').bind(s.user_id).first())fail(403,'Super-admin access is required.');
   if(recent&&(!s.reauthenticated_at||s.reauthenticated_at<now()-RECENT))fail(428,'Confirm your password before managing accounts.');

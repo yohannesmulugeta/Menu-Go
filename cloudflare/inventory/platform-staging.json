@@ -1,7 +1,7 @@
 {
-  "phase": 2,
+  "phase": 3,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "98f126d6-8269-4a63-b2e3-fcfd8eeda024",
+  "worker_version": "69bf68bb-d542-421f-b817-1d7d9c7ca405",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -21,6 +21,10 @@
     {
       "name": "0004_shared_auth.sql",
       "sha256": "8e22058794839354c17fe7c67b37d3fda06fa8f6fb964edb7d042a8bf276b9c5"
+    },
+    {
+      "name": "0005_feature_catalogue.sql",
+      "sha256": "152119e0b634c2e0e525e5504c6a9105a501a9d01679c1a62e31f5bdf6618e6a"
     }
   ],
   "health": {
@@ -28,7 +32,7 @@
     "health": {
       "ok": true,
       "environment": "staging",
-      "schema_migrations": 4,
+      "schema_migrations": 5,
       "media_binding": true,
       "authentication": "username/password",
       "public_menus": "not enabled"
@@ -63,6 +67,49 @@
       "legacy PBKDF2 import and scrypt upgrade with same user ID",
       "existing other-tenant denial"
     ],
+    "production_workers_unchanged": true
+  },
+  "worker_modules": {
+    "worker.mjs": "5dd26501fa8acf3567dcb36560da0ec491e2a5aeefb4e134da8b7012ff42f6c7",
+    "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+    "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+    "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+    "auth/http.mjs": "f413a94dfe535b221bffcbbdfb455dccc602f050865963f5fd6ebea88cd1add2",
+    "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+    "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+    "config/resolution.mjs": "c40e8f6dd1856b3f28427dc45c24beddd7e6d26c3da92e0a26a16e6a28a11101",
+    "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+    "config/service.mjs": "8c0cc9a345a5af1797626daae201aa17dd768bcf8d64443dd8e7a8f18fc2cb8d",
+    "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+    "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+    "web/page.mjs": "0bc68fb2b49ecada5d6d50842f5b2ffb5e6f475b3fc0ec7033890b10213f4810"
+  },
+  "feature_validation": {
+    "registry_count": 30,
+    "config_schema": 2,
+    "default_template": {
+      "id": "classic",
+      "version": 2
+    },
+    "preset": {
+      "id": "cafe",
+      "version": 2
+    },
+    "local_schema_auth_feature_checks": "passed",
+    "deployed_browser_checks": [
+      "mobile draft feature/contact/theme/VAT settings",
+      "hours off by default",
+      "Wi-Fi password omitted from projection",
+      "stale-save rejection",
+      "platform manager lock and forged-write denial",
+      "other-existing-tenant denial",
+      "permitted manager save",
+      "390px layout",
+      "feedback/events enable and platform emergency disable",
+      "retained inbox and aggregate history"
+    ],
+    "test_cleanup": "Restored draft settings and policies; disabled synthetic accounts; removed disposable publication tenant",
+    "existing_owner_credential_unchanged": true,
     "production_workers_unchanged": true
   }
 }
