@@ -1,7 +1,7 @@
 {
-  "phase": 1,
+  "phase": 2,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "8a3ef9a5-6db2-47ef-a8ab-015d6ee0d44f",
+  "worker_version": "98f126d6-8269-4a63-b2e3-fcfd8eeda024",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -17,6 +17,10 @@
     {
       "name": "0003_staging_fixtures.sql",
       "sha256": "89ad4cc9b065083ddb0c33e7d7333f3738ff240b2baa386e0dd585c9ef82eaab"
+    },
+    {
+      "name": "0004_shared_auth.sql",
+      "sha256": "8e22058794839354c17fe7c67b37d3fda06fa8f6fb964edb7d042a8bf276b9c5"
     }
   ],
   "health": {
@@ -24,13 +28,11 @@
     "health": {
       "ok": true,
       "environment": "staging",
-      "schema_migrations": 3,
+      "schema_migrations": 4,
       "media_binding": true,
-      "authentication": "not enabled",
+      "authentication": "username/password",
       "public_menus": "not enabled"
-    },
-    "auth_status": 404,
-    "write_status": 405
+    }
   },
   "source_reference": {
     "branch": "feat/cloudflare-full-migration",
@@ -38,5 +40,29 @@
     "patch": "Restore public link routing, restaurant selector, dashboard loading errors and review-link help text",
     "normalized_js_sha256": "b9e7bb56660c9647d5358028636d8faac4067aae145ddcc6919623e03a091533",
     "css_sha256": "7291a026ec7f87807c6b22c6b7cf29b67d248da29ddd66bfd8d044465369aa56"
+  },
+  "auth_validation": {
+    "hash": "scrypt-v1",
+    "scrypt": {
+      "N": 16384,
+      "r": 8,
+      "p": 5
+    },
+    "runtime_benchmark_request_ms": [
+      357,
+      194,
+      188
+    ],
+    "local_security_checks": "passed",
+    "deployed_browser_checks": [
+      "owner first-login change",
+      "manager create/change/login",
+      "role and tenant denials",
+      "reset and old-session revocation",
+      "390px layout without overflow",
+      "legacy PBKDF2 import and scrypt upgrade with same user ID",
+      "existing other-tenant denial"
+    ],
+    "production_workers_unchanged": true
   }
 }

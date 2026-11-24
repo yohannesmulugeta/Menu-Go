@@ -14,7 +14,8 @@
     "build:cloudflare-baseline": "node scripts/build-cloudflare-baseline.mjs",
     "build:cloudflare-frontend": "node scripts/build-cloudflare-frontend.mjs",
     "check:frontend-recovery": "node scripts/check-frontend-recovery.mjs",
-    "check:menu-platform": "node scripts/check-menu-platform.mjs"
+    "check:menu-platform": "node scripts/check-menu-platform.mjs",
+    "check:menu-auth": "node scripts/check-menu-auth.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",

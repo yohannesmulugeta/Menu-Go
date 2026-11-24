@@ -34,3 +34,7 @@ See docs/PHASE_0_RECOVERY.md for the release boundary and remaining work.
 ## Editable source and staging update
 
 The editable Cloudflare frontend has now been recovered in cloudflare/frontend and checked against the frozen runtime using binding-normalized JS comparison and exact stylesheet comparison. Separate health-only staging resources and additive schemas are ready. See docs/PHASE_1_STAGING.md. The earlier source-provenance limitation is resolved for the frontend; the bundled live backend and its special renderer adapters still need modular reconciliation.
+
+## Shared authentication staging
+
+Staging now runs the shared username/password account shell, additive authentication schema and bounded cleanup schedule. Production login and public menus remain unchanged. See [Phase 2 authentication](../docs/PHASE_2_AUTHENTICATION.md) for the hashing decision, tested behavior and release boundary.

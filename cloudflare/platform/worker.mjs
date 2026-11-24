@@ -1,16 +1,35 @@
-const EXPECTED_ENVIRONMENT="admaki-menu-platform-staging";
-function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","X-Robots-Tag":"noindex, nofollow"}});}
-export default {async fetch(request,env){
-  const url=new URL(request.url);
-  if(env.ENVIRONMENT!==EXPECTED_ENVIRONMENT)return json({error:"Environment is not configured."},503);
-  if(request.method!=="GET"&&request.method!=="HEAD")return json({error:"Staging bootstrap has no write API."},405);
-  if(!["/","/api/health"].includes(url.pathname))return json({error:"Not found."},404);
-  try{
-    const marker=await env.DB.prepare("SELECT name FROM platform_environment WHERE singleton=1").first();
-    if(marker?.name!==EXPECTED_ENVIRONMENT)return json({error:"Database environment mismatch."},503);
-    const schema=await env.DB.prepare("SELECT count(*) count FROM schema_migrations").first();
-    const result={ok:true,environment:"staging",schema_migrations:schema.count,media_binding:!!env.MEDIA,authentication:"not enabled",public_menus:"not enabled"};
-    if(request.method==="HEAD")return new Response(null,{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex, nofollow"}});
-    return json(result);
-  }catch{return json({error:"Staging database is not ready."},503);}
-}};
+import {authRoute,cleanupAuth} from './auth/service.mjs';
+import {response} from './auth/http.mjs';
+import {appPage} from './web/page.mjs';
+const EXPECTED_ENVIRONMENT='admaki-menu-platform-staging';
+async function environmentReady(env){
+  if(env.ENVIRONMENT!==EXPECTED_ENVIRONMENT)return false;
+  const marker=await env.DB.prepare('SELECT name FROM platform_environment WHERE singleton=1').first();
+  return marker?.name===EXPECTED_ENVIRONMENT;
+}
+export default {
+  async fetch(request,env){
+    try{
+      if(!await environmentReady(env))return response({error:'Environment is not configured.'},503);
+      const url=new URL(request.url);
+      if(url.protocol!=='https:')return response({error:'Use HTTPS.'},400);
+      if(url.pathname==='/api/health'){
+        if(!['GET','HEAD'].includes(request.method))return response({error:'Method not allowed.'},405,{Allow:'GET, HEAD'});
+        if(request.method==='HEAD')return new Response(null,{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});
+        const schema=await env.DB.prepare('SELECT count(*) count FROM schema_migrations').first();
+        return response({ok:true,environment:'staging',schema_migrations:schema.count,media_binding:!!env.MEDIA,authentication:'username/password',public_menus:'not enabled'});
+      }
+      if(url.pathname.startsWith('/api/'))return await authRoute(request,env)||response({error:'Not found.'},404);
+      if(['GET','HEAD'].includes(request.method)&&(/^\/(login|platform|manage(\/[^/]+)?|account\/password)?\/?$/.test(url.pathname))){
+        const page=appPage();return request.method==='HEAD'?new Response(null,{headers:page.headers}):page;
+      }
+      return response({error:'Not found.'},404);
+    }catch(error){
+      if(error.status)return response({error:error.message},error.status,error.status===429?{'Retry-After':'900'}:{});
+      // No exception messages, request bodies, cookies, credentials or SQL in logs/responses.
+      console.error('Menu staging request failed',{name:error.name||'Error'});
+      return response({error:'Unable to complete this request. Please try again.'},503);
+    }
+  },
+  async scheduled(_event,env){if(await environmentReady(env))await cleanupAuth(env.DB);}
+};
