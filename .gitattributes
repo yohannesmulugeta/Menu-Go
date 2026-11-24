@@ -1,0 +1,2 @@
+# Preserve byte-exact recovered bundles/assets, including original whitespace.
+cloudflare/baseline/** -whitespace -text

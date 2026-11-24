@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "check:production": "node scripts/production-check.mjs",
     "check": "npm run lint && npm run build && npm run check:production",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:cloudflare-baseline": "node scripts/check-cloudflare-baseline.mjs --test",
+    "build:cloudflare-baseline": "node scripts/build-cloudflare-baseline.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",

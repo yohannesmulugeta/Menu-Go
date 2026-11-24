@@ -1,0 +1,14 @@
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+const root = fileURLToPath(new URL("../", import.meta.url));
+const result = spawnSync(process.execPath, [join(root, "scripts/check-cloudflare-baseline.mjs")], {stdio:"inherit"});
+if(result.status !== 0) process.exit(result.status ?? 1);
+const output = join(root, "dist-cloudflare");
+mkdirSync(output, {recursive:true});
+for (const name of ["core", "router"]) cpSync(join(root,"cloudflare/baseline",name),join(output,name),{recursive:true});
+cpSync(join(root,"cloudflare/inventory/production.json"),join(output,"production-manifest.json"));
+const manifest = JSON.parse(readFileSync(join(output,"production-manifest.json"),"utf8"));
+writeFileSync(join(output,"README.txt"),"Recovered baseline build. No deployment is performed.\nCore: core/worker.js with ASSETS=core/assets and DB binding.\nRouter: router/router.js with DB and MENU_CORE bindings.\nProduction versions: "+manifest.workers.map(w=>w.version_id).join(", ")+"\nOriginal Cloudflare frontend TypeScript not recovered; the frozen executable assets are verified byte-for-byte.\n");
+console.log("Baseline written to dist-cloudflare; no remote resources changed.");
