@@ -3,6 +3,8 @@ import {response} from './auth/http.mjs';
 import {configRoute} from './config/service.mjs';
 import {publicCapabilityRoute,cleanupPublicLimits} from './config/capabilities.mjs';
 import {appPage} from './web/page.mjs';
+import {mediaRoute,attachmentRoute,cleanupMedia} from './media/service.mjs';
+import {previewRoute} from './templates/service.mjs';
 const EXPECTED_ENVIRONMENT='admaki-menu-platform-staging';
 async function environmentReady(env){
   if(env.ENVIRONMENT!==EXPECTED_ENVIRONMENT)return false;
@@ -21,7 +23,8 @@ export default {
         const schema=await env.DB.prepare('SELECT count(*) count FROM schema_migrations').first();
         return response({ok:true,environment:'staging',schema_migrations:schema.count,media_binding:!!env.MEDIA,authentication:'username/password',public_menus:'not enabled'});
       }
-      if(url.pathname.startsWith('/api/'))return await configRoute(request,env)||await publicCapabilityRoute(request,env)||await authRoute(request,env)||response({error:'Not found.'},404);
+      if(url.pathname.startsWith('/api/'))return await mediaRoute(request,env)||await attachmentRoute(request,env)||await configRoute(request,env)||await publicCapabilityRoute(request,env)||await authRoute(request,env)||response({error:'Not found.'},404);
+      const preview=await previewRoute(request,env);if(preview)return preview;
       if(['GET','HEAD'].includes(request.method)&&(/^\/(login|platform|manage(\/[^/]+)?|account\/password)?\/?$/.test(url.pathname))){
         const page=appPage();return request.method==='HEAD'?new Response(null,{headers:page.headers}):page;
       }
@@ -33,5 +36,5 @@ export default {
       return response({error:'Unable to complete this request. Please try again.'},503);
     }
   },
-  async scheduled(_event,env){if(await environmentReady(env)){await cleanupAuth(env.DB);await cleanupPublicLimits(env.DB);}}
+  async scheduled(_event,env){if(await environmentReady(env)){await cleanupAuth(env.DB);await cleanupPublicLimits(env.DB);if(env.MEDIA)await cleanupMedia(env.DB,env.MEDIA);}}
 };

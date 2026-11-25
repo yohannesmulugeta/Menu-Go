@@ -1,0 +1,186 @@
+{
+  "source_commit": "66a0d4ffc8e596ac731e55e2023bf2dc1faf2fa0",
+  "scope": "Inventory only; original production handlers remain unchanged. Not a new R2 alias endpoint.",
+  "static_assets": [
+    {
+      "path": "/assets/index-DXCKocGm.js",
+      "sha256": "ceda311fa1cc7701993728c04023aa4c9eed212ccd580edd1b2d7cd01cd7ce8b"
+    },
+    {
+      "path": "/assets/index-C3rCf-kA.css",
+      "sha256": "7291a026ec7f87807c6b22c6b7cf29b67d248da29ddd66bfd8d044465369aa56"
+    },
+    {
+      "path": "/fonts/3bfe4586eb9a33ecd5eacd05.woff2",
+      "sha256": "a5d38fe99f930275684999b462c7123faa063d9e44e73b4b241723d884aa0f49"
+    },
+    {
+      "path": "/fonts/713ca32c3c8b2ada804cf0e8.woff2",
+      "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
+    },
+    {
+      "path": "/fonts/edff4874961e8711e818aa27.woff2",
+      "sha256": "c108681cba6a9820bff52f4a1a4a1d9edf356b347bd79b7c61e916028e8a8b54"
+    },
+    {
+      "path": "/fonts/2f08df1456fc9116ea515263.woff2",
+      "sha256": "ef6446229b59773e671021650ef3882cf35806dae723ce047de87c0a6633039a"
+    },
+    {
+      "path": "/fonts/3cb6b7b1979e5dd25a9b1c65.woff2",
+      "sha256": "42898ad49a6b23f32b109243e1df596edf831015ed685f429e4dafbb181d599d"
+    },
+    {
+      "path": "/fonts/363014d7c907501d51b57721.woff2",
+      "sha256": "e0c764a8e9e1cce92163c55bac4b2ad6cd4cf8c696ce2289ab5c41565e65b7e2"
+    },
+    {
+      "path": "/fonts/manrope-variable.woff2",
+      "sha256": "a7a5ff84177f2987cb83e1b6222fe0e47b82e2afa5e4ddb0cbaf4463a911a10b"
+    },
+    {
+      "path": "/fonts/noto-sans-ethiopic.woff2",
+      "sha256": "994818883e261808049cb0d7c14f87d8bb2a5622d0845e1e65aa3faa5452fb45"
+    },
+    {
+      "path": "/brand/admaki-menu.svg",
+      "sha256": "75b84b5e4a4eb3ede660d11683927095fe7ec9a717f4d7d894feb5b6e209d434"
+    },
+    {
+      "path": "/brand/admaki-menu-white.svg",
+      "sha256": "857df5122b21a4ef87fa7e96a5dfc0a1a1c48fe916d53d79239d57d19f022d60"
+    },
+    {
+      "path": "/favicon.svg",
+      "sha256": "71e79b10d02bba69cdf4a207abcec7e3443e12c1e23aec3d1577ae5986a85815"
+    },
+    {
+      "path": "/brand/social-preview.png",
+      "sha256": "68ba3bac6735b9c9d35f3bd75f64c5bda9ec9f4f936e3fc7f7b1be53d7c7915e"
+    },
+    {
+      "path": "/migrated-media/05a39a42b7b357e3a3f92ca2.jpg",
+      "sha256": "3624777bbbac9b92c58b271f4f3933a9f65970be2ab8e7a45663c9f066adc094"
+    },
+    {
+      "path": "/migrated-media/070e2c15d6a12e55c1bef7db.jpg",
+      "sha256": "14dcbc310623cafdc5605c88c31a1fd159187024a7559b463c27f3e5cc7b8d5f"
+    },
+    {
+      "path": "/migrated-media/103017aeb3c331f80f90ed4f.jpg",
+      "sha256": "6938caa7aeaa2003c33e6b1de23b9001537cfd76ff6627dc31784b34683e9697"
+    },
+    {
+      "path": "/migrated-media/3aa897e100939e21d9742de4.webp",
+      "sha256": "79984450f6fd22bbf2cd4a50e28b05577be43a9904be474bdb906f29e3cdf69d"
+    },
+    {
+      "path": "/migrated-media/4326714fb6f923206a080b39.jpg",
+      "sha256": "ec01856f69f74a08f4394c1dce6bdb997d9c6556d447ffc279a81d40e4674327"
+    },
+    {
+      "path": "/migrated-media/441ba2889b45e597a292d645.jpg",
+      "sha256": "daadab2f4465803de181343af956b2809d60df04121d7215a0ebe1059c51e0d5"
+    },
+    {
+      "path": "/migrated-media/4ab9c85d7f333114f478edf3.jpg",
+      "sha256": "6acb3cc4715b25680467d8e9ddc991f12b38ec3c1592504c5ee102367cf5766d"
+    },
+    {
+      "path": "/migrated-media/5cbf00723b9f489d88b3999f.jpg",
+      "sha256": "998ebc663a8ffc15fda7079942a71743050baa0210bf0bce53463c965d3a89b0"
+    },
+    {
+      "path": "/migrated-media/5faf2589637c6408cc92ede9.jpg",
+      "sha256": "896aad26923d36096b40b401510f6c7441a86d14dbd5f2c644638d7e9364ed7d"
+    },
+    {
+      "path": "/migrated-media/64c0c41914127e8582676016.jpg",
+      "sha256": "f84d85b06b78799b4ece22e097f4afe0ee76653d43af36dfb5a4e5a89538ecd9"
+    },
+    {
+      "path": "/migrated-media/707c8e07a083d0f3cdc7fbf8.jpg",
+      "sha256": "5c031d746c0a2c190eef05745f9ea6e8e957f6fca1d142576a1aa356430a8c6b"
+    },
+    {
+      "path": "/migrated-media/732e963466ddbcbf2db0f6c6.jpg",
+      "sha256": "074b34faa9923cedb84db8532a0cb27f5cd6c566793fa8580afc969eed6383c4"
+    },
+    {
+      "path": "/migrated-media/79e66cc67a0ee5cc2c1a837b.jpg",
+      "sha256": "1186eca5cf2fc7aa5f0d9279257368534d7f54a4317893d26d1f9aebcb2dac1e"
+    },
+    {
+      "path": "/migrated-media/7a1a4b67bb7b8812ca881564.png",
+      "sha256": "fe06f8f60643998cf881a8591fb830f08747cbe7e896a988634b335fb9410e72"
+    },
+    {
+      "path": "/migrated-media/804e71e50e4e877f75899afb.jpg",
+      "sha256": "ceb29719c2810e9ca221cc8974540d74abd3a7f8fae27381e9d3cc8e40cabee8"
+    },
+    {
+      "path": "/migrated-media/9dcc03b55f11980573e562b7.jpg",
+      "sha256": "07994092c005600c298c4702721a75bdbcac29a5511c617058c9d3e8130f9f0a"
+    },
+    {
+      "path": "/migrated-media/9eb36d28398dd246ffdcd6fa.jpg",
+      "sha256": "0c8710163b7ec366387c688b5bbb3be754ad3692b163942c6048c982e415ec87"
+    },
+    {
+      "path": "/migrated-media/9eeb4233002531d07a32d796.jpg",
+      "sha256": "97edfbad1d728554d8fc7487113910d9d916d26db79d1c0bb505f3bca1a8e1a8"
+    },
+    {
+      "path": "/migrated-media/ca8c29d0fcf9d6a671ba2579.jpg",
+      "sha256": "0240ee9312697fe754d3e188f34b82ada95de0e25ed2cf021160008b2704f830"
+    },
+    {
+      "path": "/migrated-media/cd13f9fb3e75339f78f0a9a3.jpg",
+      "sha256": "e40288554c0863a8738e98f64e0b41f3db2ba27584c183f6620f6ff974886b8d"
+    },
+    {
+      "path": "/migrated-media/cf125a22260e6cb68a9afae5.jpg",
+      "sha256": "14ee593df768152fa8dd3b951c80f4be2a00555ea41b061fb86cb2e5e66a9971"
+    },
+    {
+      "path": "/migrated-media/e2ccc662a5ebdc1d70c58547.png",
+      "sha256": "3b4ec1950b34555faa54e4557ca49c785765204c8de6485920cb5193981015d2"
+    },
+    {
+      "path": "/migrated-media/fe5d8c0ffbad57bc8c25de8d.svg",
+      "sha256": "9b6b7f96ef609a620ac3983d08294aeb0b97cc916deca93eaa4176a2139e1efe"
+    }
+  ],
+  "occasion_aliases": [
+    "/media/895adc6a-cc13-5695-ad79-26d60c57c6d0/occasion-logo-v1.png",
+    "/occasion-assets/menu.css",
+    "/occasion-assets/menu.js",
+    "/occasion-assets/admin-links.js",
+    "/occasion-assets/occasion-menu-qr.svg",
+    "/occasion-assets/cover.css",
+    "/occasion-assets/occasion-interior-v2.webp",
+    "/occasion-assets/occasion-cover-v1.png",
+    "/occasion-assets/abol-test.css",
+    "/occasion-assets/abol-test.js"
+  ],
+  "sheba_aliases": [
+    "/sheba-assets/body-bold.woff",
+    "/sheba-assets/body.woff",
+    "/sheba-assets/coffee.webp",
+    "/sheba-assets/display.woff",
+    "/sheba-assets/gathering.webp",
+    "/sheba-assets/heading.woff",
+    "/sheba-assets/logo.webp",
+    "/sheba-assets/menu.js",
+    "/sheba-assets/pastry.webp",
+    "/sheba-assets/tea.webp"
+  ],
+  "legacy_routes": [
+    "/#/r/:slug",
+    "/r/occasion",
+    "/preview/occasion",
+    "/r/occasion?design=abol",
+    "/r/sheba-coffee",
+    "/manager"
+  ]
+}

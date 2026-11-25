@@ -20,7 +20,7 @@ export function resolveFeatures(config,policies,supported,data={},role='manager'
 export function publicProjection(config,states,restaurant,data={},locale='en'){
   const enabled=k=>!!states[k]?.enabled,c=config.content_settings;
   const selected=enabled('guest.language')&&c.languages.includes(locale)?locale:'en';
-  const dto={schema_version:1,restaurant:{id:restaurant.id,name:restaurant.name,slug:restaurant.slug,currency:restaurant.currency||'ETB'},theme:{...config.theme},locale:selected,features:Object.fromEntries(FEATURE_KEYS.map(k=>[k,enabled(k)])),items:[]};
+  const dto={schema_version:1,template:{id:config.template_id,version:config.template_version},restaurant:{id:restaurant.id,name:restaurant.name,slug:restaurant.slug,currency:restaurant.currency||'ETB'},theme:{...config.theme},locale:selected,features:Object.fromEntries(FEATURE_KEYS.map(k=>[k,enabled(k)])),items:[]};
   if(enabled('brand.cover'))dto.cover={url:safeURL(c.cover_url,'image'),focal:{...c.cover_focal}};
   if(enabled('brand.logo'))dto.logo_url=safeURL(c.logo_url,'image');
   if(enabled('menu.story'))dto.story=c.story;

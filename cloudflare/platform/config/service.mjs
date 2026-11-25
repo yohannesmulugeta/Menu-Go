@@ -74,6 +74,12 @@ export async function configRoute(request,env){
   if(action==='config'&&method==='PATCH'){
     const patch=await input(request,32768),b=await bundle(db,access);
     const next=mergePatch(b.config,patch);
+    // Private managed media can only be attached through the ownership-checked route.
+    for(const key of ['logo_url','cover_url']){
+      const value=next.content_settings[key],old=b.config.content_settings[key];
+      const managed=v=>{try{return /^\/api\/restaurants\/[^/]+\/media\//.test(new URL(v).pathname);}catch{return false;}};
+      if(value!==old&&(managed(value)||managed(old)))fail(400,'Use the image controls to replace or remove an uploaded image.');
+    }
     if(patch.revision!==b.revision||patch.policy_revision!==b.policy_revision)fail(409,'Settings changed. Reload before saving.');
     const supported=await template(db,next);
     if((next.template_id!==b.config.template_id||next.template_version!==b.config.template_version)&&FEATURE_KEYS.some(k=>!supported.includes(k)))fail(400,'Choose a template that supports every shared feature.');

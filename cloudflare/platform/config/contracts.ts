@@ -9,3 +9,7 @@ export interface RestaurantConfig { schema_version:2; template_id:string; templa
 export interface ConfigResponse { revision:number; policy_revision:number; config:RestaurantConfig; effective:Record<FeatureKey,EffectiveFeature>; }
 export type ConfigPatch = { revision:number; policy_revision:number; schema_version?:2; template_id?:string; template_version?:number; features?:Partial<FeatureFlags>; theme?:Partial<Theme>; content_settings?:Partial<ContentSettings> };
 export interface CapabilityManifest { version:1; template_id:string; template_version:number; requested:FeatureFlags; ready:FeatureFlags; }
+export type MediaKind = 'logo'|'cover'|'item';
+export interface MediaUploadResponse { id:string; url:string; kind:MediaKind; width:number; height:number; size_bytes:number; }
+export type MediaAttachmentPatch = { revision:number; policy_revision:number; media_id:string|null } & ({kind:'logo'|'cover';item_id?:never}|{kind:'item';item_id:string});
+export interface MenuPreviewData { schema_version:1; template:{id:string;version:number}; restaurant:{id:string;name:string;slug:string;currency:string}; theme:Theme; locale:string; features:FeatureFlags; items:Array<{id:string;name:string;price:number;category_id?:string;description?:string;image_url?:string;popular?:boolean;labels?:string[];variants?:Array<{id:string;label:string;price_minor:number}>}>; }
