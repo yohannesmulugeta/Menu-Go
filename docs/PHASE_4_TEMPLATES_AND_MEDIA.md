@@ -75,7 +75,9 @@ Executed locally with Node 24.14.0 and in-memory synthetic SQLite/R2 fixtures:
 
 No layout-shift performance trace, production screenshot parity, load benchmark or deployed R2 round trip was performed. Width/geometry checks are not a visual-parity certification.
 
-The terminal cannot connect to GitHub, npm or Cloudflare (Cloudflare/npm network errors include EACCES). GitHub source/PR operations use the connected API. Exact dependency installation could not finish: the local cache lacks Vite 7.3.6 and TypeScript 5.8.3. Consequently canonical `npm run check:menu-features` typechecking, `build:cloudflare-frontend`, `check:frontend-recovery`, and root `npm run check` could not complete locally. Their failures are dependency/build-output failures, not reported as passes. Existing CI is extended with the new media suite; record its actual result in the PR after pushing.
+The terminal cannot connect to GitHub, npm or Cloudflare (Cloudflare/npm network errors include EACCES). GitHub source/PR operations use the connected API. Exact dependency installation could not finish: the local cache lacks Vite 7.3.6 and TypeScript 5.8.3. Consequently canonical `npm run check:menu-features` typechecking, `build:cloudflare-frontend`, `check:frontend-recovery`, and root `npm run check` could not complete locally. Their local failures are dependency/build-output failures, not reported as local passes.
+
+GitHub CI subsequently completed successfully on runtime/source commit `6c30e98b0854f20088c550ac175f81738532169a`: [run 45584211438](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45584211438). It performed exact `npm ci --ignore-scripts`, baseline integrity/router tests and packaging, recovered frontend build and normalized parity, schema/new media tests, authentication, typed feature checks, and full root lint/TypeScript/Vite/production checks. The PR workflow now includes the full root check; it does not deploy anything. The subsequent documentation/evidence commit does not alter those validated runtime modules. The earlier runtime commit `7adab17` also passed the recovery/platform/auth/feature gate in run 45583866964.
 
 ## Staging rollout and rollback
 
@@ -96,6 +98,6 @@ Sources for the runtime/API design: https://developers.cloudflare.com/workers/ru
 
 ## Remaining work
 
-Phase 4 still needs the canonical dependency/build/CI gate, authenticated staging deployment, real R2/conversion/retention verification, actual approved restaurant content reconciliation and a reviewed visual-parity comparison. New layouts retain separate identities but are not certified replicas. Direct multi-format server decoding, layout-shift tracing and capacity/cost measurements remain explicit gaps.
+Phase 4 still needs authenticated staging deployment, real R2/conversion/retention verification, actual approved restaurant content reconciliation and a reviewed visual-parity comparison. The canonical dependency/build/CI gate has passed on the runtime/source commit recorded above. New layouts retain separate identities but are not certified replicas. Direct multi-format server decoding, layout-shift tracing and capacity/cost measurements remain explicit gaps.
 
 After Phase 4 acceptance, Phase 5 is the integrated/paginated restaurant dashboard and configuration-only onboarding. Phase 6 is validated publication/public delivery, published-media references, cache/current-policy enforcement and end-to-end QR behavior. Phase 7 requires the concrete production release/rollback manifest and explicit cutover approval. None of those later phases is claimed complete here.

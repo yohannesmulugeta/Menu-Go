@@ -52,5 +52,20 @@
     "upload_and_attachment": "passed locally",
     "deployed_r2_round_trip": "not run"
   },
-  "deployment_blocker": "Cloudflare outbound network access from the executor fails with EACCES. No deployed version is claimed."
+  "deployment_blocker": "Cloudflare outbound network access from the executor fails with EACCES. No deployed version is claimed.",
+  "ci_validation": {
+    "commit": "6c30e98b0854f20088c550ac175f81738532169a",
+    "run_id": 45584211438,
+    "result": "success",
+    "includes": [
+      "exact dependency installation",
+      "baseline integrity and router tests",
+      "baseline packaging",
+      "recovered frontend build/parity",
+      "schema and media suites",
+      "authentication",
+      "typed features",
+      "root lint/build/production checks"
+    ]
+  }
 }
