@@ -20,6 +20,7 @@ jobs:
       - run: npm run build:cloudflare-frontend
       - run: npm run check:frontend-recovery
       - run: npm run check:menu-platform
+      - run: npm run check:menu-onboarding
       - run: npm run check:menu-auth
       - run: npm run check:menu-features
       - run: npm run check

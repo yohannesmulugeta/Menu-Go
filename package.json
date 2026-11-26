@@ -17,7 +17,8 @@
     "check:menu-platform": "node scripts/check-menu-platform.mjs && node scripts/check-menu-media.mjs",
     "check:menu-auth": "node scripts/check-menu-auth.mjs",
     "check:menu-features": "tsc -p cloudflare/platform/tsconfig.contract.json && node scripts/check-menu-features.mjs",
-    "check:menu-media": "node scripts/check-menu-media.mjs"
+    "check:menu-media": "node scripts/check-menu-media.mjs",
+    "check:menu-onboarding": "node scripts/check-menu-onboarding.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",
