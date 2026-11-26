@@ -1,3 +1,4 @@
+import {favicon} from './web/favicon.mjs';
 import {restaurantRoute} from './restaurants/service.mjs';
 import {authRoute,cleanupAuth} from './auth/service.mjs';
 import {response} from './auth/http.mjs';
@@ -18,6 +19,10 @@ export default {
       if(!await environmentReady(env))return response({error:'Environment is not configured.'},503);
       const url=new URL(request.url);
       if(url.protocol!=='https:')return response({error:'Use HTTPS.'},400);
+      if(url.pathname==='/favicon.ico'){
+        if(!['GET','HEAD'].includes(request.method))return response({error:'Method not allowed.'},405,{Allow:'GET, HEAD'});
+        return new Response(request.method==='HEAD'?null:favicon,{headers:{'Content-Type':'image/svg+xml','Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'}});
+      }
       if(url.pathname==='/api/health'){
         if(!['GET','HEAD'].includes(request.method))return response({error:'Method not allowed.'},405,{Allow:'GET, HEAD'});
         if(request.method==='HEAD')return new Response(null,{headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}});

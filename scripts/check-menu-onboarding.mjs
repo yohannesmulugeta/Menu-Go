@@ -9,6 +9,8 @@ async function request(path,{token=owner,body,method=body?'POST':'GET',headers={
     body:body?JSON.stringify(body):undefined
   }),env);
 }
+const icon=await request('/favicon.ico');assert.equal(icon.status,200);assert.equal(icon.headers.get('content-type'),'image/svg+xml');
+assert.equal(await(await request('/favicon.ico',{method:'HEAD'})).text(),'');
 const path='/api/platform/restaurants';
 const body={name:'Synthetic onboarding',slug:'synthetic-onboard',preset_id:'cafe',preset_version:2,template_id:'occasion',template_version:1};
 assert.equal((await request(path,{body,token:manager})).status,403);
