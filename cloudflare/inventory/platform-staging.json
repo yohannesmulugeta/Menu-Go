@@ -1,7 +1,7 @@
 {
-  "phase": 4,
+  "phase": 5,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "551d7209-007e-4c13-ae0b-946f4aa47e24",
+  "worker_version": "a0213465-a250-4840-8d6e-052612dac951",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -74,23 +74,8 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
-    "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
-    "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
-    "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
-    "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
-    "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
-    "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
-    "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
-    "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
-    "web/page.mjs": "8bf1bf2d3a6635e3a6f3463c1ae8a8214771e1869fae6378a1a61291ae1a96fe",
-    "worker.mjs": "9247d9ee8d55c1382d2f23a25f6a8938afb51335ac3b77b2f8f8ae0c95028ea4",
-    "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
-    "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
-    "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
-    "templates/render.mjs": "c6f1df4af33eecfc82010416ecc897b5f13eb40df8d4bde1ab7a8dfae8985f8e",
-    "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
-    "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506"
+    "worker.js": "d7e0a8f8a3c1bd92c6de7a0c6ff56e106bb3c40af4dcc35c84e1e062cbe0514e",
+    "worker.js.map": "7519a34f5c89f3b274387cc0ca7c23243890e56d07a32d575a0f3a9a33159dc6"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -363,5 +348,145 @@
       "Performance traces and capacity/cost validation",
       "Direct multi-format server upload handling and public publication flows are outside this release."
     ]
+  },
+  "phase_5_validation": {
+    "source_commit": "5b63fd540da6b2bf77ac4ee79666eb8608922b42",
+    "verified_at_utc": "2026-11-26T18:50:03.633Z",
+    "deployment_id": "0a90c1a7-5b3a-4835-80bf-24df61c3daa6",
+    "deployed_at": "2026-11-26T18:49:20.705998Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. Six existing checksums verified before and after.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/render.mjs": "c6f1df4af33eecfc82010416ecc897b5f13eb40df8d4bde1ab7a8dfae8985f8e",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/page.mjs": "08bd3ad25ada340b9b16b7bcf66ce19f81aafac221d47fb5a55837f015c93846",
+      "worker.mjs": "68609f4303f0bdbf4ee8e63acd58620d0d1c5eb4e0e108007a6e2cb2ce0e6486"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "551d7209-007e-4c13-ae0b-946f4aa47e24",
+    "backup": {
+      "bytes": 220974,
+      "sha256": "8b363123630e18215cf3042c709f758fca4408fab410cb7b31918fa9ae573efe",
+      "restore": "Verified isolated SQLite import, integrity and foreign keys",
+      "storage": "Private operator directory outside Git"
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45878926330",
+      "result": "success"
+    },
+    "local_browser": {
+      "scope": "Local real Worker with in-memory synthetic D1, browser request routing",
+      "checks": [
+        "Directory beyond 100",
+        "Draft onboarding and settings",
+        "Paged manager selections preserved including new tenant",
+        "Temporary credential issued once",
+        "Four viewport widths"
+      ],
+      "errors": [],
+      "messages": [],
+      "request_count": 20
+    },
+    "remote": {
+      "tag": "p5check-53a60385f6c8",
+      "started": "2026-11-26T18:49:35.946Z",
+      "checks": [
+        "Deployed browser created draft with preset, template and audit; duplicates, foreign access and CSRF denied",
+        "Deployed settings, preselected manager creation, temporary-password change and four viewport widths passed with clean browser console"
+      ],
+      "cleanup": {
+        "tenants": [
+          "p5check-53a60385f6c8-tenant",
+          "2b041b99-4575-4c8a-9e5d-119d3912a8b1"
+        ],
+        "users": [
+          "p5check-53a60385f6c8-admin",
+          "p5check-53a60385f6c8-foreign",
+          "d5f6a68e-59f4-483f-9c59-9aeb9f52f803"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "finished": "2026-11-26T18:50:38.629Z"
+    },
+    "initial_fixture_retry": {
+      "tag": "p5check-2bf44d989827",
+      "started": "2026-11-26T18:46:02.507Z",
+      "checks": [],
+      "cleanup": {
+        "tenants": [],
+        "users": [
+          "p5check-2bf44d989827-admin",
+          "p5check-2bf44d989827-foreign"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "failure": "POST /api/auth/login HTTP 401\n\n401 !== 200\n",
+      "finished": "2026-11-26T18:46:18.991Z"
+    },
+    "favicon_check_retry": {
+      "tag": "p5check-7a9d6c58661f",
+      "started": "2026-11-26T18:47:05.224Z",
+      "checks": [
+        "Deployed browser created draft with preset, template and audit; duplicates, foreign access and CSRF denied"
+      ],
+      "cleanup": {
+        "tenants": [
+          "p5check-7a9d6c58661f-tenant",
+          "c3c28418-f16f-4366-ba21-ac1543a2b336"
+        ],
+        "users": [
+          "p5check-7a9d6c58661f-admin",
+          "p5check-7a9d6c58661f-foreign",
+          "12b3cf99-2261-4e05-8a28-c616c6ba2630"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "failure": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Failed to load resource: the server responded with a status of 404 ()'\n+ ]\n- []\n",
+      "finished": "2026-11-26T18:48:08.524Z"
+    },
+    "design_direction": "User accepted the current shared layouts and authorized Phase 5 on 26 November 2026."
   }
 }
