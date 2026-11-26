@@ -2,7 +2,19 @@
 
 Source checkpoint: `66a0d4ffc8e596ac731e55e2023bf2dc1faf2fa0`, branch `feature/menu-platform-foundation`, existing draft PR #3. Work was performed on 25 November 2026. The entire upstream tree was reconstructed through the connected GitHub API and checked against Git blob hashes; its tree is exactly `6b4e4536c7ebb7efc0baa68dd3869553bde8fd4c`. The local history retains the actual upstream commit as a shallow checkpoint.
 
-This implementation is not a completed staging rollout or a production-parity certification. Production Workers, domains, bindings, Access policies, passwords, restaurant content and printed QR destinations were not modified. No production pages were loaded to generate comparison analytics. The existing staging owner's account was not accessed or reset.
+At the 25 November implementation checkpoint, staging rollout and production visual comparison were pending. Production Workers, domains, bindings, Access policies, passwords, restaurant content and printed QR destinations were not modified. No production pages were loaded to generate comparison analytics. The existing staging owner's account was not accessed or reset.
+
+## Verified staging release on 26 November 2026
+
+Cloudflare was already serving Phase 4 at 100% traffic on staging. The version active before and after verification was `551d7209-007e-4c13-ae0b-946f4aa47e24`. Its only runtime difference from `2496ad6` was the renderer’s missing-cover fallback and responsive layout fixes. Commit `c8ad399` preserves that exact renderer on the feature branch. All 17 uploaded modules match the reconciled source byte for byte. The active deployment and both rollback checkpoints are recorded in [the staging inventory](../cloudflare/inventory/platform-staging.json).
+
+The authenticated preflight confirmed the Worker settings, staging marker, D1 ID, R2 binding, cron and database objects. All six migration checksums matched. The database already contained `0006`, so this verification applied no SQL migration and uploaded no Worker. Before creating disposable records, the operator exported staging D1 and restored the export into isolated SQLite. Database integrity, foreign keys and the migration ledger passed. This backup captures the existing Phase 4 database.
+
+Two disposable restaurant managers exercised real login, tenant isolation and private media. The dashboard converted JPEG, PNG, WebP and AVIF fixtures to PNG. Authenticated reads from R2 matched their D1 checksums. Anonymous and foreign reads were denied. Replacement preserved the old image, and referenced deletion was refused. Classic, Abol, Mokodo, Sheba and Occasion passed at 360, 390, 768 and 1440 CSS pixels. Tests checked image loading, saved cover position, unchanged price, bottom disclosure, empty search, horizontal overflow and the missing-cover fallback.
+
+A second disposable test verified retention independently through a historical snapshot and through an explicit publication reference. During the staging cleanup schedule, an aged synthetic orphan was deleted and audited while the referenced image stayed readable. The operator restored disposable settings, removed test references and images, suspended the test restaurants and disabled their managers. All interrupted test runs were reconciled. The browser recorded no page exceptions through the layout matrix. Its final console buffer was lost during a connection interruption in cleanup. The inventory contains the run IDs and final counts.
+
+The release checks passed locally and in [GitHub CI for the reconciled runtime](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45874650289). Verification used synthetic content only. Restaurant content reconciliation and visual parity require a separately authorized reference.
 
 ## Recovered design comparison
 
@@ -62,7 +74,7 @@ Future publishers must validate ownership and insert `media_publication_refs` at
 
 `cloudflare/inventory/legacy-assets.json` records the captured static URLs, the Occasion image/style/script aliases and Sheba asset names extracted from the recovered module. No catch-all R2 alias route was added. Existing absolute public asset URLs continue on their original deployment. No existing public image was deleted or copied into another product's bucket. Frozen router tests still verify the original logo/supporting routes and delegation. Future URL normalization must use an explicit allowlist adapter, not infer tenant ownership from a path.
 
-## Verification evidence
+## Local and CI evidence at the original implementation checkpoint
 
 Executed locally with Node 24.14.0 and in-memory synthetic SQLite/R2 fixtures:
 
@@ -81,7 +93,7 @@ GitHub CI subsequently completed successfully on runtime/source commit `6c30e98b
 
 ## Staging rollout and rollback
 
-The current recorded staging release remains Worker version `69bf68bb-d542-421f-b817-1d7d9c7ca405`, migrations 0001–0005. `platform-staging.json` intentionally retains that actual deployed state. `phase-4-candidate.json` records pending source/migration hashes separately. No Phase 4 deployment succeeded in this environment.
+At the 25 November source checkpoint, the last recorded staging release was Worker version `69bf68bb-d542-421f-b817-1d7d9c7ca405`, migrations 0001–0005. The historical `phase-4-candidate.json` records the candidate at that point. See the verified staging release above for current deployment evidence.
 
 From a network-enabled, authenticated operator environment:
 
@@ -98,6 +110,6 @@ Sources for the runtime/API design: https://developers.cloudflare.com/workers/ru
 
 ## Remaining work
 
-Phase 4 still needs authenticated staging deployment, real R2/conversion/retention verification, actual approved restaurant content reconciliation and a reviewed visual-parity comparison. The canonical dependency/build/CI gate has passed on the runtime/source commit recorded above. New layouts retain separate identities but are not certified replicas. Direct multi-format server decoding, layout-shift tracing and capacity/cost measurements remain explicit gaps.
+Staging deployment, R2 round trips, picker conversion, scheduled retention and template verification are recorded above. Approved restaurant content reconciliation and a reviewed visual-parity comparison remain open. New layouts retain separate identities but are not certified replicas. Direct multi-format server decoding, layout-shift tracing and capacity/cost measurements remain explicit gaps.
 
 After Phase 4 acceptance, Phase 5 is the integrated/paginated restaurant dashboard and configuration-only onboarding. Phase 6 is validated publication/public delivery, published-media references, cache/current-policy enforcement and end-to-end QR behavior. Phase 7 requires the concrete production release/rollback manifest and explicit cutover approval. None of those later phases is claimed complete here.
