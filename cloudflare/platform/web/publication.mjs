@@ -13,6 +13,7 @@ async function publicationControls(id,box) {
     if(publication.active)actions.append(el('a','Open public menu',{href:publication.url,target:'_blank',rel:'noopener noreferrer'}));
     async function change(action,body) {
       if(!confirm(action==='publish'?'Publish saved draft version '+draft.revision+' to the staging menu URL?':'Remove public access to this menu?'))return;
+      flash.replaceChildren();status.textContent=action==='publish'?'Publishing…':'Removing public access…';
       for(const control of actions.querySelectorAll('button'))control.disabled=true;
       try {
         await api(base+'/'+action,body);
