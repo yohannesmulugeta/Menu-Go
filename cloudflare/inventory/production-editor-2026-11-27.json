@@ -1,0 +1,12 @@
+{
+  "started_utc": "2026-11-27T15:15:53.752Z",
+  "scope": "Synthetic production-candidate tenant only; no real caf\u00e9 edits.",
+  "checks": [
+    "Username login, denied platform privileges and denied foreign caf\u00e9 access",
+    "Item photo uploaded, attached, previewed and published; anonymous R2 bytes match",
+    "Price edit stays in draft, then appears exactly after publishing",
+    "QR served; unpublish revokes public menu and image"
+  ],
+  "passed": true,
+  "finished_utc": "2026-11-27T15:18:23.540Z"
+}

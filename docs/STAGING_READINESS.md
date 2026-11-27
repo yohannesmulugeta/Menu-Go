@@ -1,5 +1,6 @@
 # ADMAKI Menu staging readiness
 
+**Production update:** The owner authorized the cutover and the new platform went live on 27 November 2026. Username/password admin and manager login, canonical menus and synthetic editing/publishing checks passed. See [the completed release](PRODUCTION_RELEASE.md). Earlier staging/preflight notes below are retained as historical evidence.
 27 November 2026. **Bounded Free-plan HTTP validation passed; production release remains pending.** No subscription, metered-billing activation or Paid-only CPU override was applied. The earlier failed tests remain recorded as historical failures.
 
 | Area | Current result | Next requirement |

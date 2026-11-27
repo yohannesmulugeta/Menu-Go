@@ -1,5 +1,6 @@
 # Production cutover preflight — 2026-11-27
 
+**Production update:** The owner authorized the cutover and the new platform went live on 27 November 2026. Username/password admin and manager login, canonical menus and synthetic editing/publishing checks passed. See [the completed release](PRODUCTION_RELEASE.md). Earlier staging/preflight notes below are retained as historical evidence.
 Status: draft only. No production release or database mutation authorized by this document.
 
 ## Observed legacy inventory

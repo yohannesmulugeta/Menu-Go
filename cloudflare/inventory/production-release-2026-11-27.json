@@ -1,0 +1,206 @@
+{
+  "released_utc": "2026-11-27T15:20:51.860Z",
+  "status": "live",
+  "source_commit": "891fda9ba587a3d7c25ed898e7626fe73575b281",
+  "dashboard": "https://app.admakidigital.com/login",
+  "public_origin": "https://menu.admakidigital.com",
+  "authentication": "username/password; initial temporary passwords require change",
+  "paid_subscription_or_cpu_override": false,
+  "production_database": "7da5fc86-a792-4410-9773-6dfa72e1b8e3",
+  "legacy_database_retained": "75d00eeb-0348-4b97-a4e0-d51116466d00",
+  "media_bucket": "admaki-menu-media-platform-production",
+  "versions": {
+    "admaki-menu-platform-production": [
+      {
+        "version_id": "8681f371-9f5c-4b2a-8dc7-df8bfda174fd",
+        "percentage": 100
+      }
+    ],
+    "admaki-menu-gateway-production": [
+      {
+        "version_id": "2dd07d38-b2be-44f2-8ef1-7fe4272c1a08",
+        "percentage": 100
+      }
+    ],
+    "admaki-menu": [
+      {
+        "version_id": "9165d6f7-a226-47c4-9863-8856262539c2",
+        "percentage": 100
+      }
+    ],
+    "admaki-menu-router": [
+      {
+        "version_id": "22b21817-df16-48ba-8e83-f324057bedb5",
+        "percentage": 100
+      }
+    ],
+    "admaki-menu-platform-staging": [
+      {
+        "version_id": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+        "percentage": 100
+      }
+    ]
+  },
+  "counts": {
+    "restaurants": 7,
+    "items": 366,
+    "categories": 58,
+    "platform_admins": 1,
+    "enabled_logins": 5,
+    "unrevoked_sessions": 0,
+    "live_managed_images": 0,
+    "release_fixtures": 0
+  },
+  "initial_publications": {
+    "abol-coffee": 1,
+    "mokodo-pizza": 1,
+    "occasion": 1,
+    "sheba-coffee": 1
+  },
+  "route_cutover": {
+    "switched_utc": "2026-11-27T15:20:51.860Z",
+    "success": true,
+    "added": [
+      {
+        "id": "d968489c8e544b04b3a6455d38d13ced",
+        "pattern": "app.admakidigital.com/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "765314d389794d648fbd69519c1dd331",
+        "pattern": "menu.admakidigital.com/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      }
+    ],
+    "changed_routes": 13,
+    "routes": [
+      {
+        "id": "169ffedbd97b4b649cac4b41b2892d23",
+        "pattern": "app.admakidigital.com/",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "ad8b9feb7c2c4c47900416879715f0ec",
+        "pattern": "app.admakidigital.com/manager*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "0591965ad73841079d51c1b788d4ea96",
+        "pattern": "menu.admakidigital.com/api/restaurants/a4f0f62b-4e64-4b4b-b3d9-22e4d869e974/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "4531e018fd30421991547c28ce60f1be",
+        "pattern": "app.admakidigital.com/r/occasion*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "d4c47b8a1ae348d0a6e232626a1fd9c3",
+        "pattern": "menu.admakidigital.com/occasion-assets/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "d968489c8e544b04b3a6455d38d13ced",
+        "pattern": "app.admakidigital.com/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "d6a39597166f471ca13b08a5f92057b5",
+        "pattern": "app.admakidigital.com/preview/occasion*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "765314d389794d648fbd69519c1dd331",
+        "pattern": "menu.admakidigital.com/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "37b7c8830550406ab0dcce20e8f5ec34",
+        "pattern": "app.admakidigital.com/index.html",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "9eff037cf55b49298c42d6556e06f6b9",
+        "pattern": "app.admakidigital.com/api/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "0d120e78b05443fc8062ad406d3e9f95",
+        "pattern": "menu.admakidigital.com/r/sheba-coffee*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "5799ebd5ba41417d8ae4f6cdaf709b3e",
+        "pattern": "menu.admakidigital.com/sheba-assets/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "9f3fd2694286483086c6e5d376d50b1a",
+        "pattern": "app.admakidigital.com/occasion-assets/*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "504979899ea444a7931c818fd508ffb2",
+        "pattern": "menu.admakidigital.com/r/occasion*",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      },
+      {
+        "id": "b613a3cb56db4ee1b987ab30549034e2",
+        "pattern": "menu.admakidigital.com/media/895adc6a-cc13-5695-ad79-26d60c57c6d0/occasion-logo-v1.png",
+        "script": "admaki-menu-gateway-production",
+        "request_limit_fail_open": false
+      }
+    ]
+  },
+  "rollback": {
+    "restore_from": "cloudflare/inventory/production-routes-before-2026-11-27.json",
+    "remove_new_route_ids": [
+      "d968489c8e544b04b3a6455d38d13ced",
+      "765314d389794d648fbd69519c1dd331"
+    ],
+    "legacy_workers_unchanged": true,
+    "restore_legacy_source_of_truth": "Retain candidate data and export any post-release customer edits before rollback; route reversal alone does not merge new edits into the legacy database."
+  },
+  "validation": {
+    "offline_snapshot_restore": {
+      "tables": 16,
+      "foreign_keys": true
+    },
+    "original_names_and_prices_preserved": 366,
+    "temporary_logins_verified": 5,
+    "real_restaurant_price_edits_used_for_testing": false,
+    "synthetic_edit_photo_publish_and_unpublish_passed": true,
+    "test_restaurant_removed": true,
+    "test_media_deleted_through_API": true,
+    "test_user_disabled_and_secret_cleared": true,
+    "source_data_fingerprints_unchanged_before_cutover": true,
+    "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/46022884516",
+    "browser": {
+      "canonical_login_form": "Username/password; no email verification",
+      "abol_old_hash_link": "Resolved to /r/abol-coffee; 89 items; Popular filter 13; cover/logo/item image loaded",
+      "occasion": "116 items; white background; cover and logo loaded"
+    },
+    "physical_phone_certification": false,
+    "large_capacity_certification": false,
+    "source_rechecked_after_cutover": true,
+    "unchanged_source_business_and_identity_tables": 8
+  },
+  "gateway_bundle_sha256": "d236b4811d5b3be605746b17888ee518c030ddfae9f2f0a4d50c9533ab4d2dd1",
+  "platform_bundle_sha256": "6f1d745f57f2efb54fd8eac975886b6de8e42e1aacb9773441fde9ff7246d56d"
+}
