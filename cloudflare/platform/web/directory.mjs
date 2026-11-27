@@ -1,10 +1,12 @@
 // Shares the account shell's DOM helpers and authenticated API client.
 export const directoryScript=String.raw`
 async function dashboard(offset=0,search='') {
+  dashboardShell(null,'restaurants');
   root.replaceChildren();
   navigate(me.role==='super_admin'?'/platform':'/manage');
   const box=el('section'), cards=el('div',null,{class:'cards'}), status=el('p','Loading restaurants…',{role:'status'});
-  box.append(el('h1',me.role==='super_admin'?'Platform dashboard':'Your restaurants'));
+  const heading=pageHeading(me.role==='super_admin'?'Platform dashboard':'Your restaurants',me.role==='super_admin'?'ADMAKI MENU ADMIN':'RESTAURANT MANAGER');
+  const stats=el('div',null,{class:'stats-grid'});box.append(el('h2','Restaurant tenants'));
   const searchForm=el('form'), query=el('input',null,{id:'restaurant-search',type:'search',maxlength:'120'});
   query.value=search;
   searchForm.append(el('label','Find a restaurant',{for:query.id}),query,el('button','Search',{type:'submit'}));
@@ -15,11 +17,12 @@ async function dashboard(offset=0,search='') {
     actions.append(button('Create restaurant',createRestaurant),button('Manage accounts',()=>accounts(),true),button('Platform features',platformFeatures,true));
     box.append(actions);
   }
-  root.append(box);
+  root.append(heading,stats,box);
   try {
     const data=await api('/api/restaurants?offset='+offset+'&search='+encodeURIComponent(search));
     if(!root.contains(box))return;
     status.textContent=data.restaurants.length?'':'No restaurants found.';
+    stats.replaceChildren(stat('Restaurants',data.restaurants.length,'Current results','restaurants'),stat('Active',data.restaurants.filter(r=>r.status==='active').length,'Current results','overview'),stat('Draft',data.restaurants.filter(r=>r.status==='draft').length,'Current results','menu'),stat('Public access','QR','No guest sign-in','qr'));
     for(const restaurant of data.restaurants) {
       const card=button(restaurant.name,()=>overview(restaurant.id));
       card.append(el('small',restaurant.slug+' · '+restaurant.status));cards.append(card);
@@ -34,6 +37,7 @@ async function dashboard(offset=0,search='') {
 }
 
 async function createRestaurant() {
+  setActive('restaurants');
   const loading=el('section','Loading onboarding options…');root.replaceChildren(loading);
   try {
     const options=await api('/api/platform/onboarding-options');

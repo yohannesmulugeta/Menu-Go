@@ -1,5 +1,6 @@
 export const guestReportsScript=String.raw`
 async function guestReport(id,type,offset=0) {
+  setActive(type);
   const box=el('section'),status=el('p','Loading…',{role:'status'});
   box.append(el('h1',type==='feedback'?'Feedback inbox':'Menu analytics'),status,button('Back to restaurant',()=>overview(id),true));root.replaceChildren(box);
   try {

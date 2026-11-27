@@ -67,6 +67,7 @@ function menuTranslationForm(id,itemId,locale,label,translation,data) {
   name.input.required=true;insertMenuFields(editor,[name,description]);editor.actions.append(button('Cancel',()=>menuItemForm(id,itemId),true));root.replaceChildren(editor.box);
 }
 async function menuHours(id) {
+  setActive('hours');
   const loading=el('section','Loading opening hours…');root.replaceChildren(loading);
   try {
     const data=await api(menuBase(id)+'/hours');if(!root.contains(loading))return;

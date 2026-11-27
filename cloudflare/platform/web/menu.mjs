@@ -11,6 +11,7 @@ function menuForm(title,submit,save) {
 }
 function insertMenuFields(editor,fields) {for(const field of fields)editor.f.insertBefore(field.wrap||field.row,editor.error);}
 async function menuScreen(id,kind='items',offset=0,search='') {
+  setActive(kind==='categories'?'categories':'menu');
   const box=el('section'),status=el('p','Loading menu…',{role:'status'}),rows=el('div'),actions=el('div',null,{class:'actions'});
   box.append(el('h1',kind==='items'?'Menu items':'Categories'),status);
   actions.append(button('Menu items',()=>menuScreen(id)),button('Categories',()=>menuScreen(id,'categories'),true),button('Opening hours',()=>menuHours(id),true),button('Back to restaurant',()=>overview(id),true));box.append(actions);
