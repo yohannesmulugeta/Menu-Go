@@ -42,7 +42,7 @@ export default {
       }
       return response({error:'Not found.'},404);
     }catch(error){
-      if(error.status)return response({error:error.message,code:error.code||'REQUEST_FAILED'},error.status,error.status===429?{'Retry-After':'900'}:{});
+      if(error.status)return response({error:error.message,code:error.code||'REQUEST_FAILED'},error.status,error.status===429?{'Retry-After':String(error.retryAfter||900)}:{});
       // No exception messages, request bodies, cookies, credentials or SQL in logs/responses.
       console.error('Menu request failed',{name:error.name||'Error'});
       return response({error:'Unable to complete this request. Please try again.'},503);

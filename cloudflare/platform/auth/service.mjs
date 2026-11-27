@@ -1,4 +1,4 @@
-import {randomToken,digest,temporaryPassword,normalizeUsername,passwordProblem,hashPassword,verifyPassword,DUMMY_CREDENTIAL,HASH_FORMAT} from './passwords.mjs';
+import {randomToken,digest,temporaryPassword,temporaryManagerPin,managerPinProblem,normalizeUsername,passwordProblem,hashPassword,verifyPassword,DUMMY_CREDENTIAL,HASH_FORMAT} from './passwords.mjs';
 import {fail,input,response} from './http.mjs';
 export const COOKIE='__Host-admaki_menu';
 const IDLE=1800, ABSOLUTE=28800, RECENT=300;
@@ -9,7 +9,7 @@ async function limit(db,key,max,window=900) {
   const t=now(),bucket=Math.floor(t/window);
   const row=await db.prepare('INSERT INTO auth_rate_limits(key,count,expires_at) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET count=count+1 RETURNING count')
     .bind(digest(`${bucket}:${key}`),(bucket+1)*window).first();
-  if(row.count>max)fail(429,'Too many attempts. Try again in 15 minutes.');
+  if(row.count>max){const e=new Error(window===900?'Too many attempts. Try again in 15 minutes.':'Daily sign-in limit reached. Try again later or contact your administrator.');e.status=429;e.code='RATE_LIMITED';e.retryAfter=window;throw e;}
 }
 export async function session(request,db) {
   const token=request.headers.get('Cookie')?.split(';').map(c=>c.trim()).find(c=>c.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);
@@ -89,6 +89,7 @@ export async function authRoute(request,env) {
     const username=normalizeUsername(body.username);
     if(!username||typeof body.password!=='string'||Buffer.byteLength(body.password,'utf8')>1024)fail(401,'Incorrect username or password.');
     await limit(db,'login-account:'+username,15);
+    await limit(db,'login-daily:'+username,30,86400);
     const c=await db.prepare(credentialSQL+' WHERE c.username=? COLLATE NOCASE').bind(username).first();
     const valid=verifyPassword(body.password,c&&!c.disabled&&!c.user_disabled?c:DUMMY_CREDENTIAL);
     if(!c||c.disabled||c.user_disabled||!valid||(c.temporary_expires_at&&c.temporary_expires_at<=now()))fail(401,'Incorrect username or password.');
@@ -124,7 +125,8 @@ export async function authRoute(request,env) {
     const s=await requireSession(request,db,false),old=await verifyCurrent(db,s,body.current_password);
     const username=body.username===undefined?old.username:normalizeUsername(body.username);
     if(!username)fail(400,'Use 3–48 letters, numbers, dots, hyphens or underscores for your username.');
-    const problem=passwordProblem(body.new_password,username);if(problem)fail(400,problem);
+    const isAdmin=!!await db.prepare('SELECT 1 FROM platform_admins WHERE user_id=?').bind(s.user_id).first();
+    const problem=isAdmin?passwordProblem(body.new_password,username):managerPinProblem(body.new_password);if(problem)fail(400,problem);
     if(body.new_password===body.current_password)fail(400,'Choose a different password.');
     if(await db.prepare('SELECT 1 FROM login_credentials WHERE username=? COLLATE NOCASE AND user_id<>?').bind(username,s.user_id).first())fail(409,'This username is already in use.');
     const h=hashPassword(body.new_password);
@@ -143,7 +145,8 @@ export async function authRoute(request,env) {
   if(reset) {
     const userId=decodeURIComponent(reset[1]);if(userId===s.user_id)fail(400,'Use Change password for your own account.');
     const target=await credentialFor(db,userId);if(!target)fail(404,'Account not found.');
-    const password=temporaryPassword(),h=hashPassword(password);
+    const targetIsAdmin=!!await db.prepare('SELECT 1 FROM platform_admins WHERE user_id=?').bind(userId).first();
+    const password=targetIsAdmin?temporaryPassword():temporaryManagerPin(),h=hashPassword(password);
     const results=await db.batch([
       db.prepare(`UPDATE login_credentials SET hash_format=?,password_hash=?,parameters_json=?,credential_version=credential_version+1,must_change_password=1,temporary_expires_at=?,updated_at=CURRENT_TIMESTAMP WHERE user_id=? AND credential_version=? AND ${actorGuard()}`)
         .bind(h.hash_format,h.password_hash,h.parameters_json,now()+86400,userId,target.credential_version,...actorParams(s)),
@@ -158,7 +161,7 @@ export async function authRoute(request,env) {
   if(!username||!Array.isArray(ids)||!ids.length||ids.length>10||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||id.length>100)||Object.hasOwn(body,'role'))fail(400,'Enter a username and 1–10 different restaurants.');
   if(await db.prepare('SELECT 1 FROM login_credentials WHERE username=? COLLATE NOCASE').bind(username).first())fail(409,'This username is already in use.');
   for(const id of ids)if(!await db.prepare('SELECT 1 FROM restaurants WHERE id=?').bind(id).first())fail(400,'Choose an existing restaurant.');
-  const userId=crypto.randomUUID(),password=temporaryPassword(),h=hashPassword(password);
+  const userId=crypto.randomUUID(),password=temporaryManagerPin(),h=hashPassword(password);
   const ops=[db.prepare(`INSERT INTO users(id,email) SELECT ?,? WHERE ${actorGuard()}`).bind(userId,`${userId}@login.admaki.invalid`,...actorParams(s)),
     db.prepare('INSERT INTO login_credentials(user_id,username,hash_format,password_hash,parameters_json,temporary_expires_at) SELECT id,?,?,?,?,? FROM users WHERE id=?').bind(username,h.hash_format,h.password_hash,h.parameters_json,now()+86400,userId),
     ...ids.map(id=>db.prepare("INSERT INTO restaurant_members(id,restaurant_id,user_id,role) SELECT ?,?,id,'manager' FROM users WHERE id=?").bind(crypto.randomUUID(),id,userId)),

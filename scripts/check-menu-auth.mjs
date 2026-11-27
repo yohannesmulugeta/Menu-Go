@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {pbkdf2Sync} from 'node:crypto';
 import {applyLocalMigrations} from '../cloudflare/platform/migrations.mjs';
-import {hashPassword,verifyPassword,passwordProblem,normalizeUsername,digest} from '../cloudflare/platform/auth/passwords.mjs';
+import {hashPassword,verifyPassword,passwordProblem,managerPinProblem,temporaryManagerPin,normalizeUsername,digest} from '../cloudflare/platform/auth/passwords.mjs';
 import {legacyCredentialPlan} from '../cloudflare/platform/auth/legacy.mjs';
 import {ownerPlan} from '../cloudflare/platform/auth/operator.mjs';
 import {cleanupAuth} from '../cloudflare/platform/auth/service.mjs';
@@ -23,7 +23,7 @@ user('manager','manager',managerPassword);
 db.prepare("INSERT INTO restaurants(id,name,slug,status) VALUES('other','Other private restaurant','other','draft')").run();
 user('multi','multi','sunny mountain window 84',false,['staging-demo','other']);
 assert.equal(normalizeUsername(' OccaSion '),'occasion');assert.equal(normalizeUsername('bad@example.com'),null);
-assert.ok(passwordProblem('short'));assert.equal(passwordProblem('a memorable coffee phrase 7','user'),null);
+assert.ok(passwordProblem('short'));assert.ok(passwordProblem('483927','owner'));assert.equal(managerPinProblem('048392'),null);for(const invalid of ['123456','111111','121212','12345','1234567','abc123','123456\n'])assert.ok(managerPinProblem(invalid));for(let i=0;i<20;i++)assert.equal(managerPinProblem(temporaryManagerPin()),null);assert.equal(passwordProblem('a memorable coffee phrase 7','user'),null);
 const h=hashPassword('a memorable coffee phrase 7');assert.ok(verifyPassword('a memorable coffee phrase 7',h));assert.ok(!verifyPassword('wrong',h));
 assert.ok(!verifyPassword('x',{...h,parameters_json:'{"N":9999999999}'}));
 let r=await call('/api/auth/login',{username:'owner',password:ownerPassword},undefined,{Origin:'https://evil.invalid'});assert.equal(r.status,403);
@@ -44,15 +44,18 @@ assert.equal((await call('/api/platform/users/owner/reset-password',{},manager.t
 db.prepare("DELETE FROM restaurant_members WHERE user_id='manager'").run();assert.equal((await call('/api/manage/staging-demo/overview',undefined,manager.token)).status,404);
 db.prepare("INSERT INTO restaurant_members(id,restaurant_id,user_id,role) VALUES('restored','staging-demo','manager','manager')").run();
 // First-login credentials cannot reach even their own protected overview.
-r=await call('/api/platform/users',{username:'newmanager',restaurant_ids:['staging-demo','other']},owner.token);assert.equal(r.status,201,await r.clone().text());let created=await r.json();const temporary=created.temporary_password;
+r=await call('/api/platform/users',{username:'newmanager',restaurant_ids:['staging-demo','other']},owner.token);assert.equal(r.status,201,await r.clone().text());let created=await r.json();const temporary=created.temporary_password;assert.match(temporary,/^\d{6}$/);assert.equal(managerPinProblem(temporary),null);
 const first=await login('newmanager',temporary);assert.equal(first.data.must_change_password,true);
 assert.equal((await call('/api/manage/staging-demo/overview',undefined,first.token)).status,403);
-r=await call('/api/auth/password',{current_password:temporary,new_password:'blue basket meadow 907',username:'newname'},first.token);assert.equal(r.status,200,await r.clone().text());
+assert.equal((await call('/api/auth/password',{current_password:ownerPassword,new_password:'483927'},owner.token)).status,400);
+assert.equal((await call('/api/auth/password',{current_password:temporary,new_password:'123456'},first.token)).status,400);
+assert.equal((await call('/api/auth/password',{current_password:temporary,new_password:'a long restaurant passphrase'},first.token)).status,400);
+r=await call('/api/auth/password',{current_password:temporary,new_password:temporary==='483927'?'592836':'483927',username:'newname'},first.token);assert.equal(r.status,200,await r.clone().text());
 assert.equal(await (await call('/api/auth/session',undefined,first.token)).json(),null);
 assert.equal((await call('/api/auth/login',{username:'newmanager',password:temporary})).status,401);
-const renamed=await login('newname','blue basket meadow 907');assert.equal(renamed.data.must_change_password,false);
+const renamed=await login('newname',temporary==='483927'?'592836':'483927');assert.equal(renamed.data.must_change_password,false);
 const second=await login('newname','blue basket meadow 907');
-r=await call('/api/platform/users/'+created.user_id+'/reset-password',{},owner.token);assert.equal(r.status,200);const reset=await r.json();
+r=await call('/api/platform/users/'+created.user_id+'/reset-password',{},owner.token);assert.equal(r.status,200);const reset=await r.json();assert.match(reset.temporary_password,/^\d{6}$/);
 for(const t of [renamed.token,second.token])assert.equal(await (await call('/api/auth/session',undefined,t)).json(),null);
 assert.equal((await call('/api/auth/login',{username:'newname',password:'blue basket meadow 907'})).status,401);
 assert.equal((await login('newname',reset.temporary_password)).data.must_change_password,true);
@@ -82,7 +85,7 @@ legacy();beforeBatch=()=>{const changed=hashPassword('different current secret 1
 assert.equal((await call('/api/auth/login',{username:'legacy',password:legacyPassword})).status,409);
 // Rotation racing a reset cannot overwrite it.
 beforeBatch=()=>db.prepare("UPDATE login_credentials SET credential_version=credential_version+1 WHERE user_id='manager'").run();
-assert.equal((await call('/api/auth/password',{current_password:managerPassword,new_password:'different garden phrase 23'},manager.token)).status,409);
+assert.equal((await call('/api/auth/password',{current_password:managerPassword,new_password:'592836'},manager.token)).status,409);
 // Last enabled owner is protected at the database boundary.
 assert.throws(()=>db.prepare("DELETE FROM platform_admins WHERE user_id='owner'").run(),/last/);
 assert.throws(()=>db.prepare("UPDATE users SET disabled=1 WHERE id='owner'").run(),/last/);

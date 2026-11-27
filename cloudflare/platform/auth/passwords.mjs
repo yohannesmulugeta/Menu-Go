@@ -1,9 +1,19 @@
-import { scryptSync, pbkdf2Sync, randomBytes, createHash, timingSafeEqual } from 'node:crypto';
+import { scryptSync, pbkdf2Sync, randomBytes, randomInt, createHash, timingSafeEqual } from 'node:crypto';
 export const HASH_FORMAT = 'scrypt-v1';
 const COST = Object.freeze({ N:16384, r:8, p:5, maxmem:33554432 });
 export const randomToken = () => randomBytes(32).toString('hex');
 export const digest = value => createHash('sha256').update(value).digest('hex');
 export const temporaryPassword = () => randomBytes(18).toString('base64url');
+export function managerPinProblem(value) {
+  if (typeof value !== 'string' || !/^\d{6}$/.test(value)) return 'Use exactly six digits.';
+  if (/^(\d)\1{5}$/.test(value) || /^(\d{2})\1{2}$/.test(value) || /^(\d{3})\1$/.test(value) || ['123456','654321','012345','987654','234567','345678','456789','567890','098765','876543','765432','543210','121212','112233','123123','159753','123789'].includes(value)) return 'Choose a less predictable six-digit PIN.';
+  return null;
+}
+export function temporaryManagerPin() {
+  let pin;
+  do { pin = String(randomInt(0,1000000)).padStart(6,'0'); } while (managerPinProblem(pin));
+  return pin;
+}
 export function normalizeUsername(value) {
   if (typeof value !== 'string') return null;
   const username = value.trim().toLowerCase();

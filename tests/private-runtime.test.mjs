@@ -38,9 +38,9 @@ it('keeps secure auth, session revocation, tenant rules and image quotas across 
   expect((await call('/api/auth/login',{method:'POST',body:{username:'rpc-manager',password},headers:{Origin:'https://evil.invalid'}})).status).toBe(403);
 
   const created=await call('/api/platform/users',{method:'POST',cookie:owner.cookie,body:{username:'rpc-created',restaurant_ids:['staging-demo']}});
-  expect(created.status).toBe(201);const account=await created.json();const first=await login('rpc-created',account.temporary_password);
+  expect(created.status).toBe(201);const account=await created.json();expect(account.temporary_password).toMatch(/^\d{6}$/);const first=await login('rpc-created',account.temporary_password);
   expect(first.data.must_change_password).toBe(true);
-  const changed=await call('/api/auth/password',{method:'POST',cookie:first.cookie,body:{current_password:account.temporary_password,new_password:'Another private test coffee 823'}});
+  const changed=await call('/api/auth/password',{method:'POST',cookie:first.cookie,body:{current_password:account.temporary_password,new_password:account.temporary_password==='483927'?'592836':'483927'}});
   expect(changed.status).toBe(200);
   expect(await(await call('/api/auth/session',{cookie:first.cookie})).json()).toBe(null);
   const renewed=await login('rpc-created','Another private test coffee 823');
