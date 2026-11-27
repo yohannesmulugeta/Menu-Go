@@ -46,7 +46,7 @@ assert.equal((await worker.fetch(req(),{})).status,503);
 assert.equal((await worker.fetch(req("/api/auth/login"),env)).status,405);
 assert.equal((await worker.fetch(req("/api/health","POST"),env)).status,405);
 const health=await worker.fetch(req(),env);assert.equal(health.status,200);
-assert.deepEqual(await health.json(),{ok:true,environment:"staging",schema_migrations:migrationCount,media_binding:true,authentication:"username/password",public_menus:"not enabled"});
+assert.deepEqual(await health.json(),{ok:true,environment:"staging",schema_migrations:migrationCount,media_binding:true,authentication:"username/password",public_menus:"staging publications"});
 assert.equal((await worker.fetch(req("/api/health","HEAD"),env)).body,null);
 assert.equal((await worker.fetch(req(),{...env,DB:{prepare(){return {async first(){return {name:"production"};}};}}})).status,503);
 console.log("Shared schema/worker checks passed: replay, checksums, rollback, tenant FKs, JSON shape, username uniqueness, platform audit, isolated dump/restore and fail-closed staging health.");
