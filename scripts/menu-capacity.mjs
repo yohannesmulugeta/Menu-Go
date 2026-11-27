@@ -3,6 +3,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
+import {createHash} from 'node:crypto';
 import {applyLocalMigrations} from '../cloudflare/platform/migrations.mjs';
 import {validateConfig} from '../cloudflare/platform/config/validation.mjs';
 import {resolveFeatures,capabilityManifest} from '../cloudflare/platform/config/resolution.mjs';
@@ -87,18 +88,35 @@ export async function runRate({rate,seconds=10,paths,fetcher=fetch,origin=PUBLIC
     const task=(async()=>{
       const began=performance.now();
       try {
-        const response=await fetcher(origin+endpoint.path+'?capacity_probe='+run+'-'+i,{redirect:'error',signal:AbortSignal.timeout(timeoutMs),headers:{'Cache-Control':'no-cache'}});
+        const url=new URL(endpoint.path,origin);url.searchParams.set('capacity_probe',run+'-'+i);if(endpoint.locale)url.searchParams.set('locale',endpoint.locale);
+        const response=await fetcher(url,{redirect:'error',signal:AbortSignal.timeout(timeoutMs),headers:{'Cache-Control':'no-cache'}});
         const headersMs=performance.now()-began,body=Buffer.from(await response.arrayBuffer()),type=response.headers.get('content-type')||'';
-        const ok=response.status===200&&/no-store/.test(response.headers.get('cache-control')||'')&&type.includes(endpoint.type)&&(!endpoint.contains||body.toString().includes(endpoint.contains));
-        rows.push({status:response.status,ok,headers_ms:headersMs,total_ms:performance.now()-began,bytes:body.length,colo:(response.headers.get('cf-ray')||'').split('-').at(-1),path:endpoint.path,...(ok?{}:{error:'Unexpected status, content, type or cache policy'})});
-      } catch(error) {rows.push({status:0,ok:false,total_ms:performance.now()-began,path:endpoint.path,error:error.name+': '+error.message});}
+        const needles=endpoint.contains?(Array.isArray(endpoint.contains)?endpoint.contains:[endpoint.contains]):[];
+        const ok=response.status===200&&/no-store/.test(response.headers.get('cache-control')||'')&&type.includes(endpoint.type)&&needles.every(n=>body.toString().includes(n))&&(!endpoint.min_bytes||body.length>=endpoint.min_bytes)&&(!endpoint.sha256||createHash('sha256').update(body).digest('hex')===endpoint.sha256);
+        rows.push({status:response.status,ok,headers_ms:headersMs,total_ms:performance.now()-began,bytes:body.length,colo:(response.headers.get('cf-ray')||'').split('-').at(-1),path:endpoint.path,kind:endpoint.kind||endpoint.type,...(ok?{}:{error:'Unexpected status, content, checksum, length, type or cache policy'})});
+      } catch(error) {rows.push({status:0,ok:false,total_ms:performance.now()-began,path:endpoint.path,kind:endpoint.kind||endpoint.type,error:error.name+': '+error.message});}
     })();
     pending.add(task);void task.then(()=>pending.delete(task));
   }
   await Promise.all(pending);
   const elapsed=performance.now()-start,successful=rows.filter(r=>r.ok),errors=rows.length-successful.length;
   const p95=successful.length?percentile(successful.map(r=>r.total_ms),.95):null;
-  return {rate,seconds,scheduled:rate*seconds,started:rows.length,dropped,errors,error_rate:rows.length?errors/rows.length:1,achieved_rps:Math.round(rows.length/(elapsed/1000)*100)/100,elapsed_ms:Math.round(elapsed),latency_ms:successful.length?{median:percentile(successful.map(r=>r.total_ms),.5),p95,max:percentile(successful.map(r=>r.total_ms),1)}:null,colos:[...new Set(rows.map(r=>r.colo).filter(Boolean))],gate:{p95_budget_ms:p95BudgetMs,max_error_rate:.01,passed:dropped===0&&rows.length>0&&errors/rows.length<=.01&&p95!==null&&p95<=p95BudgetMs},failures:rows.filter(r=>!r.ok),samples:rows};
+  const by_kind=Object.fromEntries([...new Set(rows.map(r=>r.kind))].map(kind=>{const group=rows.filter(r=>r.kind===kind),ok=group.filter(r=>r.ok);return [kind,{started:group.length,errors:group.length-ok.length,bytes:group.reduce((n,r)=>n+(r.bytes||0),0),p95_ms:ok.length?percentile(ok.map(r=>r.total_ms),.95):null}];}));
+  return {rate,seconds,scheduled:rate*seconds,started:rows.length,dropped,errors,error_rate:rows.length?errors/rows.length:1,achieved_rps:Math.round(rows.length/(elapsed/1000)*100)/100,elapsed_ms:Math.round(elapsed),latency_ms:successful.length?{median:percentile(successful.map(r=>r.total_ms),.5),p95,max:percentile(successful.map(r=>r.total_ms),1)}:null,colos:[...new Set(rows.map(r=>r.colo).filter(Boolean))],by_kind,gate:{p95_budget_ms:p95BudgetMs,max_error_rate:.01,passed:dropped===0&&rows.length>0&&errors/rows.length<=.01&&p95!==null&&p95<=p95BudgetMs},failures:rows.filter(r=>!r.ok),samples:rows};
+}
+
+async function representativeLoad(manifestPath) {
+  const {readFile}=await import('node:fs/promises');const manifest=JSON.parse(await readFile(manifestPath,'utf8'));
+  assert.equal(manifest.origin,PUBLIC_ORIGIN);assert.equal(manifest.fixtures.length,3);assert.equal(manifest.paths.length,60);
+  for(const fixture of manifest.fixtures){assert.equal(fixture.items,100);assert.equal(fixture.images.length,6);}
+  const results=[],schedule=[{phase:'preflight',rate:10,seconds:6},{phase:'ramp-10',rate:10,seconds:10},{phase:'ramp-25',rate:25,seconds:10},{phase:'ramp-50',rate:50,seconds:10},{phase:'sustained-25',rate:25,seconds:30}];
+  for(const step of schedule) {
+    const result={phase:step.phase,...await runRate({...step,paths:manifest.paths})};results.push(result);
+    console.log(JSON.stringify({...result,samples:undefined}));
+    if(!result.gate.passed)break;
+    await delay(1000);
+  }
+  return {mode:'remote-representative',origin:PUBLIC_ORIGIN,scope:'Three disposable 100-item/10-category menus, variants, translations and six R2 PNGs each. Paced independent HTTP requests, including full image-body checksum verification. Not browser page loads, CPU billing, login/upload load, multi-region certification or a long-duration soak.',fixture_manifest:manifest.fixtures,results};
 }
 
 async function remoteLoad(manifest) {
@@ -118,7 +136,7 @@ async function remoteLoad(manifest) {
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
   const [mode,output,manifest]=process.argv.slice(2);assert(output,'Supply an output JSON path.');
   const started=new Date().toISOString();
-  const result=mode==='local'?await localScale():mode==='remote'?await remoteLoad(manifest):mode==='control'?{mode:'remote-health-control',scope:'Same load generator and staging host, environment-marker and schema-count queries; no menu projection or R2.',results:[await runRate({rate:10,paths:[{path:'/api/health',type:'application/json',contains:'"environment":"staging"'}]})]}:assert.fail('Choose local, remote or control.');
+  const result=mode==='local'?await localScale():mode==='remote'?await remoteLoad(manifest):mode==='representative'?await representativeLoad(manifest):mode==='control'?{mode:'remote-health-control',scope:'Same load generator and staging host, environment-marker and schema-count queries; no menu projection or R2.',results:[await runRate({rate:10,paths:[{path:'/api/health',type:'application/json',contains:'"environment":"staging"'}]})]}:assert.fail('Choose local, remote, representative or control.');
   await writeFile(output,JSON.stringify({started_utc:started,finished_utc:new Date().toISOString(),...result},null,2)+'\n');
   console.log(JSON.stringify({output,results:result.results.map(({samples,plans,...r})=>{void samples;void plans;return r;})}));
   if(result.results.some(r=>r.gate&&!r.gate.passed))process.exitCode=1;

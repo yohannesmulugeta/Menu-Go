@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import {percentile,runRate} from './menu-capacity.mjs';
 import {estimate} from './menu-cost.mjs';
+import {createHash} from 'node:crypto';
+import {DatabaseSync} from 'node:sqlite';
+import {applyLocalMigrations} from '../cloudflare/platform/migrations.mjs';
+import {prepareFixtureState,syntheticPNG,publicManifest} from './staging-capacity-fixtures.mjs';
 assert.equal(percentile([1,2,3,4,100],.95),100);assert.equal(percentile([4,1,2,3],.5),2);
 const paths=[{path:'/r/editcheck-123abc',type:'text/html',contains:'fixture'}];
 const fetcher=async()=>new Response('fixture',{headers:{'content-type':'text/html','cache-control':'no-store','cf-ray':'test-ADD'}});
@@ -8,6 +12,12 @@ const ok=await runRate({rate:10,seconds:1,paths,fetcher});assert.equal(ok.starte
 const bad=await runRate({rate:10,seconds:1,paths,fetcher:async()=>new Response('Unavailable',{status:503})});assert.equal(bad.errors,10);assert.equal(bad.gate.passed,false);
 const wrong=await runRate({rate:10,seconds:1,paths,fetcher:async()=>new Response('wrong body',{headers:{'content-type':'text/html','cache-control':'no-store'}})});assert.equal(wrong.errors,10);
 const slowBudget=await runRate({rate:10,seconds:1,paths,fetcher,p95BudgetMs:0});assert.equal(slowBudget.gate.passed,false);
+const image=syntheticPNG(320,240,1),sha256=createHash('sha256').update(image).digest('hex');
+const imagePaths=[{path:'/public-media/editcheck-123abc/11111111-1111-1111-1111-111111111111',type:'image/png',sha256,min_bytes:image.length}];
+const correctImage=await runRate({rate:10,seconds:1,paths:imagePaths,fetcher:async()=>new Response(image,{headers:{'content-type':'image/png','cache-control':'no-store'}})});assert.equal(correctImage.errors,0);
+const corruptImage=await runRate({rate:10,seconds:1,paths:imagePaths,fetcher:async()=>new Response(Buffer.alloc(image.length),{headers:{'content-type':'image/png','cache-control':'no-store'}})});assert.equal(corruptImage.errors,10);
+let requestedLocale;
+const translated=await runRate({rate:10,seconds:1,paths:[{...paths[0],locale:'am',contains:['fixture','ቡና']}],fetcher:async url=>{requestedLocale=new URL(url).searchParams.get('locale');return new Response('fixture ቡና',{headers:{'content-type':'text/html','cache-control':'no-store'}});}});assert.equal(requestedLocale,'am');assert.equal(translated.errors,0);
 let release;const held=new Promise(r=>{release=r;});setTimeout(()=>release(),1200);
 const dropped=await runRate({rate:10,seconds:1,paths,maxInFlight:1,fetcher:async()=>{await held;return fetcher();}});assert(dropped.dropped>0);assert.equal(dropped.gate.passed,false);
 await assert.rejects(runRate({rate:10,seconds:1,paths,origin:'https://app.admakidigital.com',fetcher}));
@@ -17,4 +27,9 @@ const low=estimate({tenants:20}),high=estimate({tenants:1000});assert(low.total_
 assert.equal(low.monthly_usage.views,180000);assert.equal(low.monthly_usage.r2_class_b,720000);
 assert.equal(estimate({tenants:1,viewsPerDay:0,cpuMs:0,mediaGBPerTenant:10.01}).costs_usd.r2_storage,.015);
 assert.throws(()=>estimate({tenants:20,cpuMs:NaN}));assert.throws(()=>estimate({tenants:0}));
-console.log('Capacity tooling checks passed: pacing, content validation, error/latency gates, dropped arrivals, staging-only targets, pricing allowances and R2 rounding.');
+const state=prepareFixtureState(),fixtureDB=new DatabaseSync(':memory:');applyLocalMigrations(fixtureDB);
+fixtureDB.exec('BEGIN');for(const q of state.seedQueries)fixtureDB.prepare(q.sql).run(...q.params);fixtureDB.exec('COMMIT');
+assert.equal(fixtureDB.prepare("SELECT count(*) n FROM menu_items").get().n,300);assert.equal(fixtureDB.prepare('SELECT count(*) n FROM menu_item_variants').get().n,60);assert.equal(fixtureDB.prepare('SELECT count(*) n FROM menu_item_translations').get().n,300);assert.deepEqual(fixtureDB.prepare('PRAGMA foreign_key_check').all(),[]);fixtureDB.close();
+for(const f of state.fixtures){f.publication={publication_revision:1};for(const i of f.images){i.uploaded={id:crypto.randomUUID(),size_bytes:123};i.sha256='a'.repeat(64);}}
+const manifest=publicManifest(state);assert.equal(manifest.paths.length,60);assert(!JSON.stringify(manifest).includes(state.sessionToken));assert(!JSON.stringify(manifest).includes(state.userId));
+console.log('Capacity tooling checks passed: pacing, multilingual content/checksum validation, error/latency gates, dropped arrivals, staging-only targets, pricing allowances, R2 rounding and isolated fixture schema/credential boundaries.');
