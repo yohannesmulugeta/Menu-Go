@@ -3,7 +3,7 @@ export async function checkMenuAuthBrowser({page,browser},options){const checks=
  const base='https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev';
  await page.setViewport({width:390,height:844,deviceScaleFactor:1});await page.goto(base+'/login',{waitUntil:'networkidle0'});
  ownerPassword=options.adminPassword;await page.waitForSelector('#field-username');await page.type('#field-username',options.adminUsername);await page.type('#field-password',ownerPassword);await page.click('button[type=submit]');
- await page.waitForFunction(()=>document.querySelector('h1')?.textContent==='Platform dashboard');checks.push('owner accesses shared dashboard');
+ await page.waitForFunction(()=>document.querySelector('h1')?.textContent==='Restaurants');checks.push('owner accesses shared dashboard');
  await page.evaluate(()=>Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Manage accounts').click());await page.waitForSelector('#restaurants');
  await page.type('#field-username',options.managerUsername);await page.select('#restaurants',options.restaurantId);await page.click('button[type=submit]');
  await page.waitForSelector('.secret');const managerPassword=await page.$eval('.secret',e=>e.textContent);checks.push('admin creates manager with one-time temporary password');

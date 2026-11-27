@@ -12,14 +12,28 @@ export async function restaurantRoute(request,env) {
     const offset=Number(url.searchParams.get('offset')||0);
     const search=(url.searchParams.get('search')||'').trim();
     if(!Number.isSafeInteger(offset)||offset<0||search.length>120)fail(400,'Check the search and page.');
+    const status=url.searchParams.get('status')||'all';
+    const includeTests=url.searchParams.get('include_tests');
+    if(!['all','active','draft','suspended'].includes(status)||!['0','1',null].includes(includeTests))fail(400,'Choose a supported restaurant filter.');
+    // Presentation filter only. Test records remain available, and production
+    // never classifies a restaurant as a fixture based on its name or slug.
+    const hideTests=env.ENVIRONMENT==='admaki-menu-platform-staging'&&includeTests==='0';
+    const fixture="(r.slug GLOB 'editcheck-*' OR r.slug GLOB 'p4check-*' OR r.slug GLOB 'p5check-*' OR r.slug GLOB 'p6check-*' OR r.slug GLOB 'p4-*' OR r.slug='staging-private')";
     const pattern='%'+search.replace(/[\\%_]/g,'\\$&')+'%';
-    const rows=await db.prepare(`SELECT r.id,r.name,r.slug,r.status FROM restaurants r
-      WHERE (EXISTS(SELECT 1 FROM platform_admins WHERE user_id=?)
+    const where=`(EXISTS(SELECT 1 FROM platform_admins WHERE user_id=?)
         OR EXISTS(SELECT 1 FROM restaurant_members m WHERE m.user_id=? AND m.restaurant_id=r.id AND m.role='manager'))
       AND (r.name LIKE ? ESCAPE '\\' OR r.slug LIKE ? ESCAPE '\\')
+      AND (?='all' OR r.status=?) AND ${hideTests?'NOT '+fixture:'1=1'}`;
+    const params=[session.user_id,session.user_id,pattern,pattern,status,status];
+    const [rows,summary]=await Promise.all([
+      db.prepare(`SELECT r.id,r.name,r.slug,r.status FROM restaurants r WHERE ${where}
       ORDER BY r.name COLLATE NOCASE,r.id LIMIT 51 OFFSET ?`)
-      .bind(session.user_id,session.user_id,pattern,pattern,offset).all();
-    return response({restaurants:rows.results.slice(0,50),next_offset:rows.results.length>50?offset+50:null});
+        .bind(...params,offset).all(),
+      db.prepare(`SELECT count(*) total,coalesce(sum(r.status='active'),0) active,
+        coalesce(sum(r.status='draft'),0) draft,coalesce(sum(r.status='suspended'),0) suspended
+        FROM restaurants r WHERE ${where}`).bind(...params).first()
+    ]);
+    return response({restaurants:rows.results.slice(0,50),next_offset:rows.results.length>50?offset+50:null,summary});
   }
   if(url.pathname==='/api/platform/onboarding-options') {
     await requireAdmin(request,db);
