@@ -2,7 +2,7 @@
 
 Date: 27 November 2026. Source before measurement: `18caacfec0c113c3ba92b1e9ab1c6b718ce169a7`.
 
-**Result: tooling and initial measurements completed; capacity acceptance remains unresolved.** Local indexed reads passed at 100 and 1,000 synthetic restaurants. The deployed 10 requests/second probe returned correct responses without errors, but missed the provisional 3-second p95 end-to-end budget. A health-only control showed almost the same slowdown. These observations cannot establish the application's maximum capacity or isolate an application defect. The 25 and 50 requests/second steps were deliberately skipped after the first failed latency gate.
+**Result: the independent health control now passes; complete-menu capacity acceptance remains unresolved.** Local indexed reads passed at 100 and 1,000 synthetic restaurants. The earlier executor-based 10 requests/second menu and health probes missed the provisional 3-second p95 budget. Two subsequent health probes from an independent GitHub runner passed at 0.52–0.54 seconds p95 against the unchanged staging version. The earlier delay was not reproduced from that client. This narrows the investigation toward client/network/edge path differences but does not establish the application's maximum capacity. The earlier 25 and 50 requests/second menu steps were skipped after the initial failed gate and still need representative independent-client validation.
 
 Production code, routes, domains, accounts and content were not changed. PR #3 remains draft. The staging Worker version remains `03da5e9d-be53-4770-9aff-7d31566dcc8d`; no deployment or migration was needed.
 
@@ -77,9 +77,32 @@ Where this executor requires its configured outbound proxy, set `NODE_USE_ENV_PR
 
 Validation passed: runner/pricing behavior checks, local scale assertions, existing publication/media regression suite, and ESLint. CI now includes the tooling checks; these use fake HTTP responses and do not generate remote traffic. No application runtime code changed.
 
+## Independent-client health comparison
+
+The [independent GitHub-hosted run](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45936406697) completed successfully on 27 November 2026. Both runs used the existing control script, 10 requests/second for 10 seconds, and the same staging deployment as the earlier measurements.
+
+| Health control | Earlier executor | Independent run 1 | Independent run 2 |
+| --- | ---: | ---: | ---: |
+| Started / correct requests | 100 / 100 | 100 / 100 | 100 / 100 |
+| Dropped / incorrect | 0 / 0 | 0 / 0 | 0 / 0 |
+| Median | 3,766.29 ms | 472.68 ms | 466.28 ms |
+| p95 | 7,535.66 ms | 538.16 ms | 515.28 ms |
+| Edge | MXP | ORD | ORD |
+| Provisional 3-second p95 gate | Failed | Passed | Passed |
+
+Worker version `03da5e9d-be53-4770-9aff-7d31566dcc8d` and deployment `e47e1ed2-8176-40bc-94a5-be3dc7f93600` were verified unchanged before and after this comparison. No restaurant state was changed.
+
+The health endpoint performs **two D1 reads**: environment-marker lookup and migration count. It does not render menus or read R2. Earlier control metadata described only the environment check; that scope label is corrected in the tool, with no behavior change. No HTTP latency measurement here is treated as Worker CPU time.
+
+The similar slow menu/health result in the original executor and the much faster independent health result support the inference that the original client/network/edge path contributed. Geography and client both changed, so this is not proof that a particular proxy or network was responsible. Full public-menu requests still require their own independent test, representative content/images and sustained load. Addis Ababa mobile-network performance remains unmeasured.
+
+The new `.github/workflows/staging-network-probe.yml` runs only when that workflow file changes on the existing feature branch. It has read-only repository permissions, uses no secrets, makes only staging health GETs, and saves raw JSON even if the latency budget fails. Existing runs can be rerun from their Actions page. It is not a production deployment or recurring schedule.
+
+[Durable comparison summary](../cloudflare/inventory/capacity/network-control-2026-11-27.json) includes the source commit and artifact digest. Raw samples are in the `staging-network-probe` artifact on the run page, currently retained until 27 December 2026. The standard build/regression workflow also passed on the probe workflow's source commit.
+
 ## Remaining Stage 1 acceptance
 
-1. Run the same paced health/public tests from an independent client with known network conditions, including Addis Ababa. Capture Worker CPU, wall time and D1 latency/queue metrics for the exact test interval. Keep the staging resource bindings and deployment fixed.
+1. Independent GitHub-hosted health controls passed. Next run the public menu/image/QR workloads from an independent client with representative fixtures; Addis Ababa remains an additional geographic check. Capture Worker CPU, wall time and D1 latency/queue metrics for the exact interval. Keep bindings and deployment fixed.
 2. If that confirms backend latency, address the measured source and rerun the same baseline. Do not remove live publication/policy revocation checks to reduce request time.
 3. Use isolated, fully populated synthetic staging menus with representative images, translations/variants and publication history; then clear 10/25/50 requests/second and a sustained soak against agreed budgets. Local 1,000-tenant results do not replace this step.
 4. Separately benchmark login and upload workloads, including CPU and rate-limit outcomes. Their cost remains assumed here.

@@ -118,7 +118,7 @@ async function remoteLoad(manifest) {
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
   const [mode,output,manifest]=process.argv.slice(2);assert(output,'Supply an output JSON path.');
   const started=new Date().toISOString();
-  const result=mode==='local'?await localScale():mode==='remote'?await remoteLoad(manifest):mode==='control'?{mode:'remote-health-control',scope:'Same load generator and staging host, environment-check query only; no menu projection or R2.',results:[await runRate({rate:10,paths:[{path:'/api/health',type:'application/json',contains:'"environment":"staging"'}]})]}:assert.fail('Choose local, remote or control.');
+  const result=mode==='local'?await localScale():mode==='remote'?await remoteLoad(manifest):mode==='control'?{mode:'remote-health-control',scope:'Same load generator and staging host, environment-marker and schema-count queries; no menu projection or R2.',results:[await runRate({rate:10,paths:[{path:'/api/health',type:'application/json',contains:'"environment":"staging"'}]})]}:assert.fail('Choose local, remote or control.');
   await writeFile(output,JSON.stringify({started_utc:started,finished_utc:new Date().toISOString(),...result},null,2)+'\n');
   console.log(JSON.stringify({output,results:result.results.map(({samples,plans,...r})=>{void samples;void plans;return r;})}));
   if(result.results.some(r=>r.gate&&!r.gate.passed))process.exitCode=1;
