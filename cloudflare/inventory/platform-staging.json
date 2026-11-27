@@ -1,7 +1,7 @@
 {
   "phase": 6,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+  "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -74,8 +74,7 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "worker.js": "464a9121aac019595d4cc9034a1f45f623851fd4680b05d4f4c2d566ac2fd60a",
-    "worker.js.map": "08adc3f16d5aa901839272f7bb88cdaacb314b6819f48bca9dd88e5430e5d47f"
+    "entry.js": "84e4fdaaa2283bc7a3ba78cc6a4f16bc652140ac8a2af364dc2790492f5fd409"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -1106,8 +1105,26 @@
     "billing_changed": false,
     "runtime_settings_changed": false,
     "password_work_factor_changed": false,
-    "proposed_staging_cpu_ms_after_paid_approval": 500,
+    "proposed_staging_cpu_ms_after_paid_approval": null,
     "readiness_report": "docs/STAGING_READINESS.md",
-    "cleanup_proof": "cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json"
+    "cleanup_proof": "cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json",
+    "free_plan_implementation": {
+      "status": "Bounded deployed HTTP validation passed; provider RPC disconnect outcomes need review",
+      "source_commit": "ae5d55f807b098d00032049ff5b1a4ed788f0ba4",
+      "deployment_id": "ee7980c9-93c5-41d7-aeb1-818c8f84774c",
+      "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
+      "namespace_id": "8d0a87d9c4be43ac86747eaa5d63bd65",
+      "sqlite_backed": true,
+      "migration_tag": "private-operations-v1",
+      "bundle_matches_dry_run": true,
+      "billing_changed": false,
+      "explicit_cpu_override_applied": false,
+      "d1_migrations_applied": 0,
+      "recovery_note": "Class lifecycle boundary blocks direct rollback to pre-class versions. Retain the class/namespace and forward deploy corrections; see docs/RUNTIME_BUDGET_REMEDIATION.md.",
+      "validation_evidence": "cloudflare/inventory/capacity/free-runtime-validation-2026-11-27.json",
+      "http_evidence": "cloudflare/inventory/capacity/free-runtime-http-2026-11-27.json",
+      "cleanup_verified": true,
+      "production_workers_unchanged": true
+    }
   }
 }

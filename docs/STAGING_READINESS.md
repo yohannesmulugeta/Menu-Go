@@ -1,22 +1,20 @@
 # ADMAKI Menu staging readiness
 
-27 November 2026. **Not ready for a public launch or a customer-manager pilot yet.** The latest tests found a real runtime-budget blocker despite the earlier passing public-menu tests and local regression suites.
+27 November 2026. **Bounded Free-plan HTTP validation passed; production release remains pending.** No subscription, metered-billing activation or Paid-only CPU override was applied. The earlier failed tests remain recorded as historical failures.
 
 | Area | Current result | Next requirement |
 | --- | --- | --- |
-| Shared dashboard/editor, roles, policy enforcement and publication | Existing implementation and regression suites pass | Complete release reconciliation after operational blockers are resolved |
-| Public delivery | 1,660-request bounded profile passed, including 10/25/50 requests/s | Agree real production traffic/duration expectations; complete phone/browser geographic checks |
-| Login | Nine sequential logins passed; the three-concurrent profile encountered HTTP 503 and resource-limit events | Resolve the Free-plan CPU budget and rerun the complete bounded profile |
-| Uploads | Three sequential and nine concurrent uploads passed; extended uploads failed with HTTP 503 before quota verification completed | Resolve the budget and rerun the complete profile and quota checks |
-| Actual CPU | Public mean about 4.85 ms; sequential login about 155.52 ms; upload phases about 19.09 ms, including reported startup for modeling | Current Workers Free allows 10 ms/request; verify a compatible runtime budget |
-| Cost | Paid-plan scenarios are calibrated with measured CPU; about $5/month for 20 restaurants under the documented assumptions | Owner chose Free; validate private Durable Object quotas and runtime behavior |
-| Test cleanup | Three managers disabled, all sessions revoked, three restaurants suspended, no live test media; 21 media tombstones include an interrupted upload | Verified original data and Worker version unchanged |
-| Restaurant content | No new approved customer menu was launched by these tests | Verify each café's prices, images, tax notes and contact links |
-| Real phones | Not certified by the HTTP probes | Test QR scanning, sharing, images and manager editing on actual phones/networks |
-| Production cutover | PR #3 remains draft; production unchanged | Reviewed release, rollback/recovery checks and owner's production decision |
+| Shared dashboard/editor, username/password, roles and feature toggles | Implemented in staging; regression suites pass | Reconcile existing café accounts and approved settings before cutover |
+| Public delivery | Earlier 1,660-request bounded profile passed; Free remediation passed 24 menu/QR/image checks | Real-phone and geographic checks; no unlimited-capacity claim |
+| Free-plan login | New private runtime passed nine sequential and nine three-concurrent login requests, generic-error, isolation, rate-limit and logout checks | Review provider RPC disconnect telemetry; bounded HTTP success is not full capacity certification |
+| Free-plan uploads | Three sequential and nine three-concurrent requests passed, plus image integrity, rejection and quota checks | Real-phone file-picker/network checks |
+| Provider outcomes | Front Worker: 153 estimated invocations, zero errors. Durable Objects: three success and 60 clientDisconnected RPC outcomes; no resource-limit outcome returned | Explain RPC lifecycle outcomes before claiming zero provider errors |
+| Test cleanup | Three users/credentials disabled, zero unrevoked sessions, three fixtures suspended, all 28 uploads deleted; 15 protected table fingerprints unchanged | Retain audit evidence and private backup recovery procedure |
+| Old QR routing | Shared candidate supports exact legacy hash menu links before sign-in; malformed links return an error, never another café | Verify in staging, then reconcile production domains and every printed QR before cutover |
+| Restaurant content | Abol 89 items/13 categories and Occasion 116/15 were previously inventoried; no customer content published by these tests | Confirm exact prices, images, tax notes, contact links and designs |
+| Real phones | HTTP and simulated-browser checks do not certify physical phones | Test QR scanning, sharing, images and manager editing on actual phones/networks |
+| Production cutover | PR #3 remains draft; production Worker versions unchanged | Current-data import rehearsal, route/content parity, recovery manifest and final release decision |
 
-The owner chose **Workers Free**. The [free runtime change](RUNTIME_BUDGET_REMEDIATION.md) is implemented and passed local Workers-runtime tests; deployed validation is still pending. No Paid subscription or 500 ms override will be applied. Password hashing and security controls remain intact.
+The retained Free remediation deployment is `79390ac3-596e-499f-9161-0484f77805cc`. Its private SQLite Durable Object binding keeps password hashing and upload validation outside the front Worker's small CPU budget without weakening authentication. Public menus retain their previous handler. The new class is a lifecycle boundary: preserve it and its namespace/migration history during forward corrections; do not attempt a direct rollback to pre-class versions.
 
-The extended login and upload runs are retained as **failed**, not described as completed capacity checks. Upload-only setup used temporary operator-issued sessions and cannot stand in for a passing login test. The driver now stops queueing new work after a failure and drains active requests before cleanup.
-
-Evidence: [CPU/account usage](../cloudflare/inventory/capacity/usage-2026-11-27.json), [failed login run](../cloudflare/inventory/capacity/login-failed-2026-11-27.json), [failed extended upload run](../cloudflare/inventory/capacity/upload-failed-2026-11-27.json), [cleanup](../cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json), [conditional Paid forecast](../cloudflare/inventory/capacity/calibrated-cost-2026-11-27.json).
+Evidence: [Free validation and cleanup](../cloudflare/inventory/capacity/free-runtime-validation-2026-11-27.json), [HTTP tests](../cloudflare/inventory/capacity/free-runtime-http-2026-11-27.json), [public checks](../cloudflare/inventory/capacity/free-runtime-public-2026-11-27.json), [revocation](../cloudflare/inventory/capacity/free-runtime-revocation-2026-11-27.json), [runtime implementation/recovery](RUNTIME_BUDGET_REMEDIATION.md) and [production preflight](PRODUCTION_CUTOVER_PREFLIGHT.md).

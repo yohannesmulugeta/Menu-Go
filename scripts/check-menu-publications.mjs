@@ -3,6 +3,25 @@ import {Script} from 'node:vm';
 import {testEnvironment,fixturePNG} from './check-menu-media.mjs';
 import worker from '../cloudflare/platform/worker.mjs';
 import {PUBLIC_ORIGIN as origin} from '../cloudflare/platform/publications/service.mjs';
+import {menuSlug,legacyMenuTarget} from '../cloudflare/platform/publications/links.mjs';
+import {appPage} from '../cloudflare/platform/web/page.mjs';
+
+assert.equal(menuSlug('%73taging-demo'),'staging-demo');
+for(const value of ['%','%2fother','staging%252ddemo','UPPER','-other','other--menu','a'.repeat(81)])assert.equal(menuSlug(value),null);
+assert.equal(legacyMenuTarget('#/r/staging-demo'),'/r/staging-demo');
+assert.equal(legacyMenuTarget('#/r/%73taging-demo/?locale=am&design=abol&next=https://other.invalid'),'/r/staging-demo?locale=am');
+assert.equal(legacyMenuTarget('#/r/staging-demo?locale=unknown'),'/r/staging-demo');
+for(const value of ['#/r','#/r/','#/r/%','#/r/%2fother','#/r/staging-demo/other','#/r/staging-demo#other','#/r/https://other.invalid'])assert.equal(legacyMenuTarget(value),'');
+for(const value of ['','#/login','#/platform','#/admin/example'])assert.equal(legacyMenuTarget(value),null);
+// Execute the actual shipped shell: old menu links must redirect before any
+// account fetch, and invalid menu links must not fall through to sign-in.
+const shell=await appPage().text(),shellScript=shell.match(/<script nonce="[^"]+">([\s\S]*?)<\/script>/)[1];
+for(const [hash,target] of [['#/r/staging-demo','/r/staging-demo'],['#/r/%','']]){
+  let replaced=null,notice=null;
+  const root={replaceChildren(value){notice=value;}};
+  new Script(shellScript).runInNewContext({URLSearchParams,location:{hash,replace(value){replaced=value;}},document:{querySelector(){return root;},createElement(){return {setAttribute(){}};}},fetch(){assert.fail('A legacy public menu must not request an account session.');}});
+  if(target)assert.equal(replaced,target);else {assert.equal(replaced,null);assert.match(notice.textContent,/menu link is invalid/);}
+}
 
 const t=testEnvironment(),{db,env,manager,foreign}=t,queries=[];
 const prepare=env.DB.prepare.bind(env.DB);env.DB.prepare=sql=>{queries.push(sql);return prepare(sql);};
@@ -30,6 +49,8 @@ assert.match(r.headers.get('cache-control'),/no-store/);assert.match(r.headers.g
 assert.equal((await call('/r/'+slug,{method:'HEAD',token:null})).status,200);
 assert.equal(await(await call('/r/'+slug,{method:'HEAD',token:null})).text(),'');
 assert.equal((await call('/r/'+slug,{method:'POST',body:{},token:null})).status,405);
+for(const path of ['/r/%73taging-demo','/r/'+slug+'/'])assert.equal((await call(path,{token:null})).status,200);
+for(const path of ['/r/%','/r/%2Fstaging-demo','/r/staging%252ddemo','/r/unknown-menu','/r/'+slug+'/other','/r/'+slug+'//'])assert.equal((await call(path,{token:null})).status,404);
 assert.equal((await call('/r/'+slug+'/qrXsvg',{token:null})).status,404);
 queries.length=0;r=await call('/r/'+slug+'/qr.svg',{token:null});assert.equal(r.status,200);assert.equal(queries.length,3);assert.match(await r.text(),/<svg[^>]*xmlns="http:\/\/www.w3.org\/2000\/svg"/);assert.match(r.headers.get('content-disposition'),/attachment/);
 queries.length=0;assert.equal((await call('/api/public/menus/'+slug+'/feedback',{method:'POST',token:null,body:{message:'Synthetic feedback'}})).status,201);assert.equal(queries.length,4,'Feedback must retain the live write gate with one context read.');

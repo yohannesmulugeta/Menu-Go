@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-27",
+  "source_commit": "ae5d55f807b098d00032049ff5b1a4ed788f0ba4",
+  "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
+  "scope": "Bounded staging HTTP tests on the existing Free plan, reviewed against retained test output and freshly reverified provider state. Does not certify phone networks, unlimited capacity, billing or production.",
+  "worker_metrics": {
+    "start": "2026-11-27T04:57:38Z",
+    "end": "2026-11-27T05:08:05Z",
+    "requests": 153,
+    "errors": 0,
+    "cpuTimeUs": 318655,
+    "startupCpuTimeUs": 18860,
+    "scope": "Adaptive provider estimates for the full test window, grouped by success. The front Worker has zero recorded errors or resource-limit outcomes in this window."
+  },
+  "durable_object_metrics": {
+    "durableObjectsInvocationsAdaptiveGroups": [
+      {
+        "dimensions": {
+          "status": "success",
+          "type": "jsrpc"
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 3,
+          "wallTime": 5325292
+        }
+      },
+      {
+        "dimensions": {
+          "status": "clientDisconnected",
+          "type": "jsrpc"
+        },
+        "sum": {
+          "errors": 60,
+          "requests": 60,
+          "wallTime": 99792002
+        }
+      }
+    ],
+    "scope": "Same test window. clientDisconnected RPC outcomes remain unexplained; do not present these as zero provider errors or assume they are harmless. No exceededResources outcome was returned."
+  },
+  "verified_utc": "2026-11-27T12:03:42.711Z",
+  "cleanup": {
+    "disabled_users": 3,
+    "disabled_credentials": 3,
+    "active_sessions": 0,
+    "suspended_fixtures": 3,
+    "live_assets": 0,
+    "deleted_asset_records": 28
+  },
+  "protected_table_fingerprints": {
+    "platform_environment": {
+      "count": 1,
+      "sha256": "d4d8ae865ed9ac0ed03f6f64a3f9e7bf3d3afec4e59831507062d378e4647003"
+    },
+    "schema_migrations": {
+      "count": 6,
+      "sha256": "462b2af63ef420f6983e661441bc3b5703606ce5f3f326027fb593623aadb2fe"
+    },
+    "restaurants": {
+      "count": 29,
+      "sha256": "350eee968eca1d51e3ff0954eb8efbdb08bf97017db39125d2714571dca12268"
+    },
+    "restaurant_configs": {
+      "count": 27,
+      "sha256": "5b290545e2a30cf6221a2fbfd9112dc2e896df7d632dbe74546fefe68970264c"
+    },
+    "categories": {
+      "count": 33,
+      "sha256": "058f0b47d826613c66a5c21daace89df2ddba0bf848e4f4a46099783b6a62a0b"
+    },
+    "menu_items": {
+      "count": 310,
+      "sha256": "70dd169107f2cdb168ee142928e8dd13f0e404e2930e61a3f00be20a5f23ead8"
+    },
+    "menu_item_variants": {
+      "count": 63,
+      "sha256": "0bcf0fdd2d14557ea6533c23d8e8d5b995684e2405959d5a3f564686c2c369e7"
+    },
+    "menu_item_translations": {
+      "count": 303,
+      "sha256": "445c354889781ae0bfa60e7b2ac3c962aaa29133f68bf8eb245ad1fac57e4bac"
+    },
+    "opening_hours": {
+      "count": 23,
+      "sha256": "9c02525aa3d7dfd743997b2fea2198f85051e49a836d1896ae1bf0a0778b445d"
+    },
+    "users": {
+      "count": 40,
+      "sha256": "d0ffd0c004122e03fb7f7c127ce61f3ff0e0bd9cf0e5cd7f115b1928a508d87f"
+    },
+    "login_credentials": {
+      "count": 40,
+      "sha256": "257f13ae6b77a51ff3b5fa918b501d35533ac2c42decfcf9854aefc216975018"
+    },
+    "restaurant_members": {
+      "count": 31,
+      "sha256": "c013566ce46ef4636dd9d76c7db0d57e98633136bbd0665b9b924b5a3fd0d4d5"
+    },
+    "platform_admins": {
+      "count": 9,
+      "sha256": "ef6b73d2e2c63b9d49eb81637d513b995da050e9b613d58d05c56bc551ae75df"
+    },
+    "restaurant_publications": {
+      "count": 8,
+      "sha256": "969d752e5cf6e8bd01e2beb092ce567c4992e7786315a3158d8bac93c1d0ea97"
+    },
+    "restaurant_publication_heads": {
+      "count": 6,
+      "sha256": "ff029a45308a4f4b6030762f612bda58e3fd84549e2a0be4450e92c160c1ac23"
+    }
+  },
+  "production_versions_unchanged": {
+    "admaki-menu": "9165d6f7-a226-47c4-9863-8856262539c2",
+    "admaki-menu-router": "22b21817-df16-48ba-8e83-f324057bedb5"
+  },
+  "private_backup_restore": {
+    "passed": true,
+    "foreign_keys_valid": true,
+    "protected_table_fingerprints_match": true
+  },
+  "paid_plan_enabled": false,
+  "explicit_cpu_override_applied": false
+}

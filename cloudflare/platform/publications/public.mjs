@@ -4,6 +4,7 @@ import {QRCodeSVG} from 'qrcode.react';
 import {publishedMenu,assertCurrent,publicURL} from './service.mjs';
 import {renderMenu} from '../templates/render.mjs';
 import {response,fail} from '../auth/http.mjs';
+import {menuSlug} from './links.mjs';
 
 const privateHeaders={'Cache-Control':'no-store, max-age=0','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer','X-Frame-Options':'DENY'};
 export async function publicMenuRoute(request,env) {
@@ -12,7 +13,9 @@ export async function publicMenuRoute(request,env) {
   const mediaMatch=/^\/public-media\/([^/]+)\/([a-f0-9-]{36})$/.exec(url.pathname);
   if(!menuMatch&&!mediaMatch)return null;
   if(!['GET','HEAD'].includes(request.method))return response({error:'Method not allowed.'},405,{Allow:'GET, HEAD'});
-  const slug=decodeURIComponent((menuMatch||mediaMatch)[1]),menu=await publishedMenu(env.DB,slug,url.searchParams.get('locale')||'en');
+  const slug=menuSlug((menuMatch||mediaMatch)[1]);
+  if(!slug)fail(404,'Menu not found.');
+  const menu=await publishedMenu(env.DB,slug,url.searchParams.get('locale')||'en');
   if(mediaMatch) {
     const id=mediaMatch[2];
     if(!menu.images.includes(id))fail(404,'Image not found.');

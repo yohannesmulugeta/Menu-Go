@@ -1,6 +1,6 @@
 # Runtime-budget remediation on Workers Free
 
-27 November 2026. **Launch blocker: concurrent login reached Cloudflare runtime limits.** The public-menu HTTP profile passed previously; that does not validate the substantially more expensive password-checking workload.
+27 November 2026. **Historical blocker: concurrent login reached Cloudflare runtime limits before the Free-plan remediation.** The public-menu HTTP profile passed previously; that does not validate the substantially more expensive password-checking workload.
 
 ## Verified evidence
 
@@ -18,7 +18,7 @@
 
 The owner explicitly chose Workers Free. No subscription upgrade or Paid-only CPU override is authorized or applied. The earlier $5/month Paid option is deferred; it is not the next required action.
 
-## Free-plan implementation — live validation pending
+## Free-plan implementation — bounded staging HTTP validation passed
 
 The staging entrypoint now routes only secure-password mutations and PNG uploads through a private SQLite-backed `MenuPrivateOperations` Durable Object binding. Public menus, QR delivery, session reads, editing and the remaining routes retain their existing handler. Request bodies stream across RPC; the front Worker does not buffer or parse credentials/images. Auth objects are partitioned by a SHA-256 digest of the Cloudflare-provided source address; image objects by restaurant ID digest. No raw address, username, password or session token is stored in object names. This is private request coordination, not a new public authentication API or identity store. D1 remains authoritative for sessions, quotas and credential-version/actor guards across objects.
 
@@ -28,7 +28,9 @@ Cloudflare documents [SQLite Durable Objects on Free](https://developers.cloudfl
 
 Local validation passed in the actual Workers runtime using the Cloudflare Vitest integration: concurrent username/password login, secure cookies over RPC, generic errors, account creation, first-password change, administrator reset, old-session revocation, unchanged scrypt parameters, cross-tenant/role/CSRF denials, real D1/R2 PNG round trips, invalid/oversize uploads, the 20-image quota and login rate limiting. The full existing security/build regression suites also passed. These local tests do not prove deployed Free-plan behavior.
 
-Before accepting the fix: deploy only verified staging bindings after a tested private database restore; repeat the bounded real login/upload profile with fresh synthetic users; collect provider resource outcomes and CPU metrics; clean every test identity/session/image; compare original protected records; and check public delivery. Keep production unchanged and PR #3 draft until phone, content and production release checks pass.
+The retained deployment `79390ac3-596e-499f-9161-0484f77805cc` passed the complete bounded HTTP profile: nine sequential and nine three-concurrent logins; three sequential and nine three-concurrent uploads; generic error, tenant/origin/input bounds, quota and logout checks. Twenty-eight accepted uploads were deleted through the media API. A fresh read verified all three users/credentials disabled, all sessions revoked, all three fixtures suspended and no live test media. All 15 original protected table fingerprints match the backup. The private backup was restored locally with valid foreign keys. Twenty-four public menu/QR/image checks passed, followed by 24 denied responses after fixture suspension.
+
+The front Worker's adaptive analytics report 153 success invocations, zero errors and no resource-limit outcome for the test window. Durable Object analytics report three success and 60 `clientDisconnected` RPC outcomes. HTTP tests passed, but the disconnect outcomes require lifecycle review; this is not a zero-provider-error claim. No `exceededResources` outcome was returned for either runtime in that window. No large-login-capacity, independent mobile latency or bill certification is implied. See [validation and cleanup](../cloudflare/inventory/capacity/free-runtime-validation-2026-11-27.json) and the separate [HTTP profile](../cloudflare/inventory/capacity/free-runtime-http-2026-11-27.json). Production Worker versions remain unchanged. Keep PR #3 draft until phone, content and production release checks pass.
 
 ## Cost implication
 
@@ -37,3 +39,9 @@ Before accepting the fix: deploy only verified staging bindings after a tested p
 Calendar-month analytics were also retrieved across the account. They are adaptive estimates for the stated UTC period, not the actual subscription billing cycle. The dedicated billing/subscription API was not available through the current connection, so the account plan was verified in the dashboard instead. R2 storage analytics appeared delayed relative to the retained test objects and were not substituted for the explicit retained-storage assumptions.
 
 [Provider CPU and usage evidence](../cloudflare/inventory/capacity/usage-2026-11-27.json) includes units, windows, sampling caveats and the current plan observation. Login/upload test results and cleanup are recorded separately. A free domain or low request count would not resolve the measured per-invocation CPU mismatch.
+
+## Recovery after the new Durable Object class
+
+Creating the class is a lifecycle boundary. Cloudflare [does not allow version rollback across a Durable Object lifecycle change](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/#bindings). The pre-change version `03da5e9d-be53-4770-9aff-7d31566dcc8d` is historical evidence, **not a valid direct rollback target for this rollout**.
+
+The first version with the retained class is `79390ac3-596e-499f-9161-0484f77805cc`. Preserve the class export, namespace, `private-operations-v1` migration state, D1 history and R2 objects during recovery. A code correction must be a forward staging deployment, without deleting or recreating the namespace or restoring revoked credentials. For containment, remove only the `PRIVATE_OPERATIONS` binding from a forward deployment while retaining the exported class and migration history: the tested dispatcher then returns 503 for expensive private mutations, and public delivery keeps its existing path. Re-add the verified binding when the fix is ready. This containment is not a launch-ready login solution. Once validated, this first class-bearing version can serve as the checkpoint for later code-only releases that retain the same class lifecycle state.

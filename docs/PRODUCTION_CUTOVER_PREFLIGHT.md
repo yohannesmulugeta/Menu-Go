@@ -16,6 +16,7 @@ Read-only production D1 counts and public API results agree:
 Abol has 13 popular items, so its initial category is not an indication of data loss. The Some Café record is active but empty; do not substitute Abol or remove it without owner approval.
 
 ## Routing
+- The shared candidate now resolves old `#/r/:slug` links client-side before requesting a login session, then uses the existing published-only clean route. Only supported locale values survive the redirect. Invalid encodings, embedded slashes, double encoding and unknown slugs cannot select a fallback café. This does not modify the recovered frontend or production routes.
 - menu.admakidigital.com/r/occasion and /r/sheba-coffee returned their intended menus.
 - menu.admakidigital.com/r/abol-coffee, /r/mokodo-pizza and /r/some returned 404.
 - app.admakidigital.com/r/some opened Abol because the legacy SPA uses HashRouter and defaults to Abol on an empty hash.
