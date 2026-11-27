@@ -38,4 +38,10 @@ await assert.rejects(()=>completePrivateResponse(broken),/private-stream-details
 const empty=new Response(null,{status:204});empty[Symbol.dispose]=()=>disposed++;assert.equal((await completePrivateResponse(empty)).status,204);assert.equal(disposed,3);
 const streamFailure={...env,PRIVATE_OPERATIONS:{getByName(){return {dispatch(){return new Response(new ReadableStream({start(c){c.error(Error('secret-response-stream'));}}));}};}}};
 const denied=await runtime.fetch(req('/api/auth/login'),streamFailure);assert.equal(denied.status,503);assert.ok(!(await denied.text()).includes('secret'));
+let unreadCancelled=0;
+for(const throws of [false,true]){
+  const unread=new Request(origin+'/api/auth/login',{method:'POST',duplex:'half',body:new ReadableStream({cancel(){unreadCancelled++;if(throws)throw Error('already disconnected');}})});
+  assert.equal((await dispatchPrivateOperation(unread,{ENVIRONMENT:'production'})).status,503);
+}
+assert.equal(unreadCancelled,2);
 console.log('Private runtime checks passed: bounded route selection, source/tenant partitioning, body/header/cookie forwarding, public path bypass, fail-closed binding/environment and no automatic mutation retry.');

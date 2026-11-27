@@ -63,7 +63,12 @@ export async function dispatchPrivateOperation(request,env) {
   if(privateOperationKey(request)===null)return response({error:'Not found.'},404);
   // The original router performs environment, CSRF, session, role, tenant,
   // quota and credential-version checks, including guards after expensive work.
-  return worker.fetch(request,env);
+  try {return await worker.fetch(request,env);}
+  finally {
+    // Early denials (origin, access, content length) intentionally skip reading
+    // the body. Release that transferred stream without draining hostile input.
+    if(request.body&&!request.bodyUsed)try {await request.body.cancel();} catch {/* Preserve the original response if the client already canceled. */}
+  }
 }
 
 export default {fetch:privateRuntimeFetch,scheduled:worker.scheduled};
