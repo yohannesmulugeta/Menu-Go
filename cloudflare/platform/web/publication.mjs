@@ -11,8 +11,17 @@ async function publicationControls(id,box) {
     const preview=el('a','Preview saved draft',{href:'/preview/'+encodeURIComponent(id),target:'_blank',rel:'noopener noreferrer'});
     actions.append(preview);
     if(publication.active)actions.append(el('a','Open public menu',{href:publication.url,target:'_blank',rel:'noopener noreferrer'}));
-    async function change(action,body) {
-      if(!confirm(action==='publish'?'Publish saved draft version '+draft.revision+' to the public menu URL?':'Remove public access to this menu?'))return;
+    function change(action,body) {
+      if(panel.querySelector('[data-publication-confirm]'))return;
+      const previous=document.activeElement;
+      const question=el('section',null,{class:'notice','data-publication-confirm':'1',role:'group','aria-label':'Confirm publication'});
+      question.append(el('h3',action==='publish'?'Publish saved draft?':'Unpublish this menu?'),el('p',action==='publish'?'Saved draft version '+draft.revision+' will replace the menu at its permanent public link.':'Guests will no longer be able to open this menu. Saved menu content will be kept.'));
+      const choices=el('div',null,{class:'actions'});
+      const yes=button(action==='publish'?'Confirm publish':'Confirm unpublish',async()=>{question.remove();await applyChange(action,body);});
+      choices.append(yes,button('Cancel',()=>{question.remove();if(previous?.isConnected)previous.focus();},true));
+      question.append(choices);panel.append(question);yes.focus();
+    }
+    async function applyChange(action,body) {
       flash.replaceChildren();status.textContent=action==='publish'?'Publishing…':'Removing public access…';
       for(const control of actions.querySelectorAll('button'))control.disabled=true;
       try {

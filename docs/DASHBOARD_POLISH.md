@@ -15,3 +15,11 @@ The recovered owner account was verified through the authenticated staging dashb
 - The packaged Worker preserves the MenuPrivateOperations export and the existing fetch/scheduled handlers. Both environments use the same bundle with their existing environment-specific bindings.
 
 Full build, lint and actual Cloudflare runtime checks are required in GitHub CI before production. Remote staging and production results must be recorded after deployment; local verification alone does not establish a live release.
+
+## Remote progress
+
+The directory update passed GitHub CI and was deployed to staging. The existing authenticated owner session remained usable. The deployed default directory hides retained test restaurants, and Show test restaurants restores their visibility. Direct menu navigation was checked.
+
+Two explicitly labeled sample items were saved only in the staging example. Public menu and QR verification remain pending because browser controls could not respond to a native confirmation. The follow-up replaces that prompt with an in-dashboard confirmation and Cancel action; its browser check remains pending.
+
+The user computer disconnected during validation. Production has not been deployed by this update. No production migration, credential reset, route change, binding change or paid service activation occurred. Recovery details and private production audit metadata are intentionally excluded from this public repository. On resumption, recheck current state, discard or replace the unsubmitted earlier production editor candidate, verify the final staging sample publication and QR, then deploy and verify production.
