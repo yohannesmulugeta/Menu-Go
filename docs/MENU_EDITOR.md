@@ -22,7 +22,7 @@ All routes below start with `/api/restaurants/:id/menu`. Mutations include `revi
 | `/categories?search=&offset=0` | GET with 50-row pagination, POST creation |
 | `/categories/:categoryId` | PATCH name, sort order and visibility |
 | `/items?search=&offset=0` | GET with 50-row pagination, POST creation |
-| `/items/:itemId` | GET item, variants and translations; PATCH item fields |
+| `/items/:itemId` | GET item with variants and translations, PATCH item fields |
 | `/items/:itemId/variants` | POST variant |
 | `/items/:itemId/variants/:variantId` | PATCH variant |
 | `/items/:itemId/translations/:locale` | PATCH translation |
@@ -41,7 +41,7 @@ A delayed image-control response is included in the browser check. Settings subm
 
 Local Chrome checks exercised category and item creation, JPEG conversion, photo attachment/removal, exact variant pricing, translation entry, opening hours and feature activation. Published variants, translated names and hours matched the saved data. A later price edit stayed in the draft. Unsaved item fields survived attempts to open a dependent editor. The item screen passed 360, 390, 768 and 1440 pixel widths with a clean console.
 
-No database migration or new dependency is required. Staging deployment uses `cloudflare/wrangler.platform-staging.jsonc` after checking the live bindings, six migration checksums and a private D1 backup. The rollout inventory records the active Worker version and rollback checkpoint. Remote evidence is added after deployed checks complete.
+No database migration or new dependency is required. Staging deployment uses `cloudflare/wrangler.platform-staging.jsonc` after checking the live bindings, six migration checksums and a private D1 backup. The rollout inventory records the active Worker version and rollback checkpoint. Deployed evidence is recorded below.
 
 ## Changed files
 
@@ -50,3 +50,15 @@ No database migration or new dependency is required. Staging deployment uses `cl
 - `cloudflare/platform/worker.mjs` connects the menu routes. Shared `config/service.mjs` and `media/service.mjs` enforce the live admin-role guard.
 - `scripts/check-menu-editor.mjs`, `package.json` and `.github/workflows/check-cloudflare-baseline.yml` add the verification gate.
 - This report and `cloudflare/inventory/platform-staging.json` record the staging release.
+
+## Verified staging release
+
+Worker version `0d590b59-f666-404e-be4f-b80eb6faef13` serves 100% of staging traffic. Its uploaded bundle matches the checked dry-run build. The environment marker, D1/R2 bindings, six migration checksums and existing scheduled cleanup were verified. Code rollback targets `ae586267-7f7f-4ac6-b9c4-33010cae1600`, captured before the editor rollout. The private D1 export passed a test restore.
+
+A disposable manager used the deployed dashboard to create a category and item, convert and attach an item photo, save a variant for 250.75, enter a translation and set opening hours. Feature activation and the private preview matched those values. Public delivery then showed the translated name, exact variant price, hours and real R2 image bytes. Later price, photo and category edits stayed in the draft until republished. The old public image URL was revoked after replacement. Stale and cross-tenant edits were denied. The item editor passed four viewport widths. The final browser console was clean.
+
+The first deployed run exposed a settings loading race. Submission is now attached before optional image controls load, and a delayed-response browser check passes. The final audit received a Cloudflare 403 after applying cleanup. A new authenticated process completed verification against the pre-rollout backup. Original content, credentials, users, roles and memberships matched. Both attempts have disabled test accounts, revoked sessions, suspended restaurants and zero draft image references. Referenced synthetic image objects and publication history remain retained.
+
+Five sequential public response-header measurements were 2061, 2537, 2580, 2555, 2846 ms, including network overhead. Public delivery performance, capacity and cost remain release work. Native mobile sharing and approved restaurant content/cutover also require their follow-up checks and approval.
+
+[CI passed on the final runtime commit](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45923678788). [The staging inventory](../cloudflare/inventory/platform-staging.json) contains the source, backup, deployment and cleanup evidence. PR #3 remains draft.
