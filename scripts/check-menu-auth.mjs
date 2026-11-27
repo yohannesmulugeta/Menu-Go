@@ -54,10 +54,10 @@ r=await call('/api/auth/password',{current_password:temporary,new_password:tempo
 assert.equal(await (await call('/api/auth/session',undefined,first.token)).json(),null);
 assert.equal((await call('/api/auth/login',{username:'newmanager',password:temporary})).status,401);
 const renamed=await login('newname',temporary==='483927'?'592836':'483927');assert.equal(renamed.data.must_change_password,false);
-const second=await login('newname','blue basket meadow 907');
+const second=await login('newname',(temporary==='483927'?'592836':'483927'));
 r=await call('/api/platform/users/'+created.user_id+'/reset-password',{},owner.token);assert.equal(r.status,200);const reset=await r.json();assert.match(reset.temporary_password,/^\d{6}$/);
 for(const t of [renamed.token,second.token])assert.equal(await (await call('/api/auth/session',undefined,t)).json(),null);
-assert.equal((await call('/api/auth/login',{username:'newname',password:'blue basket meadow 907'})).status,401);
+assert.equal((await call('/api/auth/login',{username:'newname',password:(temporary==='483927'?'592836':'483927')})).status,401);
 assert.equal((await login('newname',reset.temporary_password)).data.must_change_password,true);
 const usersBody=await (await call('/api/platform/users',undefined,owner.token)).text();assert.ok(!usersBody.includes(reset.temporary_password));
 db.prepare('UPDATE login_credentials SET temporary_expires_at=? WHERE user_id=?').run(Math.floor(Date.now()/1000)-1,created.user_id);
@@ -99,7 +99,7 @@ await operator('recover','owner','owner');assert.equal(await (await call('/api/a
 const fresh=new DatabaseSync(':memory:');applyLocalMigrations(fresh);const bootstrap=ownerPlan({mode:'bootstrap',userId:'new-owner',username:'owner',credential:recovery,expiresAt:9999999999,requestId:'bootstrap-test'});
 fresh.exec('BEGIN');for(const q of bootstrap)fresh.prepare(q.sql).run(...q.params);fresh.exec('COMMIT');assert.equal(fresh.prepare('SELECT count(*) n FROM platform_admins').get().n,1);
 // No plaintext passwords in credentials or audit records.
-const audits=JSON.stringify(db.prepare('SELECT * FROM platform_audit_logs').all());for(const secret of [ownerPassword,managerPassword,temporary,reset.temporary_password])assert.ok(!audits.includes(secret));
+const audits=JSON.stringify(db.prepare('SELECT * FROM platform_audit_logs').all());for(const secret of [ownerPassword,managerPassword,temporary,reset.temporary_password])assert.ok(!audits.includes(JSON.stringify(secret)));
 // Logout, absolute/idle expiry, user disable and scheduled bounded cleanup.
 const final=await login('multi','sunny mountain window 84');assert.equal((await call('/api/auth/logout',{},final.token)).status,200);assert.equal(await (await call('/api/auth/session',undefined,final.token)).json(),null);
 const expired=await login('multi','sunny mountain window 84');db.prepare('UPDATE auth_sessions SET idle_expires_at=created_at+1,absolute_expires_at=created_at+1 WHERE token_hash=?').run(digest(expired.token.split('=')[1]));

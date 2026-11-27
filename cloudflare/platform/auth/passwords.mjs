@@ -5,7 +5,7 @@ export const randomToken = () => randomBytes(32).toString('hex');
 export const digest = value => createHash('sha256').update(value).digest('hex');
 export const temporaryPassword = () => randomBytes(18).toString('base64url');
 export function managerPinProblem(value) {
-  if (typeof value !== 'string' || !/^\d{6}$/.test(value)) return 'Use exactly six digits.';
+  if (typeof value !== 'string' || value.length !== 6 || !/^\d{6}$/.test(value)) return 'Use exactly six digits.';
   if (/^(\d)\1{5}$/.test(value) || /^(\d{2})\1{2}$/.test(value) || /^(\d{3})\1$/.test(value) || ['123456','654321','012345','987654','234567','345678','456789','567890','098765','876543','765432','543210','121212','112233','123123','159753','123789'].includes(value)) return 'Choose a less predictable six-digit PIN.';
   return null;
 }

@@ -43,7 +43,7 @@ it('keeps secure auth, session revocation, tenant rules and image quotas across 
   const changed=await call('/api/auth/password',{method:'POST',cookie:first.cookie,body:{current_password:account.temporary_password,new_password:account.temporary_password==='483927'?'592836':'483927'}});
   expect(changed.status).toBe(200);
   expect(await(await call('/api/auth/session',{cookie:first.cookie})).json()).toBe(null);
-  const renewed=await login('rpc-created','Another private test coffee 823');
+  const renewed=await login('rpc-created',account.temporary_password==='483927'?'592836':'483927');
   const reset=await call('/api/platform/users/'+account.user_id+'/reset-password',{method:'POST',cookie:owner.cookie,body:{}});
   expect(reset.status).toBe(200);expect(await(await call('/api/auth/session',{cookie:renewed.cookie})).json()).toBe(null);
   const credential=await env.DB.prepare('SELECT * FROM login_credentials WHERE user_id=?').bind(account.user_id).first();
