@@ -1,0 +1,17 @@
+{
+  "started_utc": "2026-11-27T12:53:25.552Z",
+  "scope": "Bounded post-cleanup-fix staging HTTP smoke using the same three synthetic managers, fully consumed response bodies, and no customer accounts.",
+  "checks": [
+    "Three concurrent secure logins; cookies and complete JSON responses verified",
+    "Six complete wrong-origin denial responses after unused request-stream cancellation",
+    "Two concurrent uploads and authenticated R2 checksum reads; the third manager retains its exhausted 15-minute upload quota",
+    "Deletion did not reset the original manager 15-minute image quota",
+    "Cross-origin, foreign-tenant and over-5-MiB uploads denied with full response bodies"
+  ],
+  "cleanup": [],
+  "passed": true,
+  "accepted_uploads": 2,
+  "deleted_uploads": 2,
+  "finished_utc": "2026-11-27T12:54:17.620Z",
+  "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae"
+}

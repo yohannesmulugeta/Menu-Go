@@ -1,0 +1,55 @@
+{
+  "verified_utc": "2026-11-27T12:43:38.285Z",
+  "scope": "Read-only current production inventory; not content approval or a release.",
+  "restaurants": [
+    {
+      "id": "77777777-7777-4777-8777-777777777777",
+      "slug": "abol-coffee",
+      "status": "active",
+      "categories": 13,
+      "items": 89
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "slug": "addis-harvest",
+      "status": "draft",
+      "categories": 6,
+      "items": 10
+    },
+    {
+      "id": "039a267a-a969-4381-b0ab-1b0f81f0a62e",
+      "slug": "mokodo-pizza",
+      "status": "active",
+      "categories": 12,
+      "items": 103
+    },
+    {
+      "id": "895adc6a-cc13-5695-ad79-26d60c57c6d0",
+      "slug": "occasion",
+      "status": "active",
+      "categories": 15,
+      "items": 116
+    },
+    {
+      "id": "a4f0f62b-4e64-4b4b-b3d9-22e4d869e974",
+      "slug": "sheba-coffee",
+      "status": "active",
+      "categories": 7,
+      "items": 40
+    },
+    {
+      "id": "a97837ac-2398-4c96-be9a-e23a96cd5403",
+      "slug": "some",
+      "status": "active",
+      "categories": 0,
+      "items": 0
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "slug": "sora-table",
+      "status": "draft",
+      "categories": 5,
+      "items": 8
+    }
+  ]
+}

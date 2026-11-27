@@ -1,0 +1,224 @@
+{
+  "date": "2026-11-27",
+  "scope": "Bounded staging diagnosis and validation on the existing Free plan. No claim about every historical cancellation, Ethiopia phone networks, unlimited capacity, or billing.",
+  "source_commit": "8d1207965b29c3c7a27ad9dec1e23b7ef9958209",
+  "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+  "deployment_id": "290646ad-cf78-421d-83f0-284d5c3ec018",
+  "worker_sha256": "2674a8f8b21188a88d261486d377a83d9f93cb4099a57e6cef92525525e47cfe",
+  "no_paid_plan_or_cpu_override": true,
+  "d1_migrations_applied": 0,
+  "durable_object_namespace_unchanged": true,
+  "provider_units": {
+    "cpuTimeUs": "microseconds",
+    "startupCpuTimeUs": "microseconds"
+  },
+  "baseline_denials": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "durableObjectsInvocationsAdaptiveGroups": [
+              {
+                "dimensions": {
+                  "status": "clientDisconnected",
+                  "type": "jsrpc"
+                },
+                "sum": {
+                  "errors": 6,
+                  "requests": 6
+                }
+              }
+            ],
+            "workersInvocationsAdaptive": [
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "sum": {
+                  "cpuTimeUs": 12150,
+                  "errors": 0,
+                  "requests": 6,
+                  "startupCpuTimeUs": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "profile_and_final_metrics": {
+    "observed_utc": "2026-11-27T12:54:44.469Z",
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "finalObject": [
+              {
+                "dimensions": {
+                  "status": "success",
+                  "type": "jsrpc"
+                },
+                "sum": {
+                  "errors": 0,
+                  "requests": 6
+                }
+              },
+              {
+                "dimensions": {
+                  "status": "clientDisconnected",
+                  "type": "jsrpc"
+                },
+                "sum": {
+                  "errors": 9,
+                  "requests": 9
+                }
+              }
+            ],
+            "finalWorker": [
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "sum": {
+                  "cpuTimeUs": 52038,
+                  "errors": 0,
+                  "requests": 23,
+                  "startupCpuTimeUs": 0
+                }
+              }
+            ],
+            "profileObject": [
+              {
+                "dimensions": {
+                  "status": "success",
+                  "type": "jsrpc"
+                },
+                "sum": {
+                  "errors": 0,
+                  "requests": 60
+                }
+              },
+              {
+                "dimensions": {
+                  "status": "clientDisconnected",
+                  "type": "jsrpc"
+                },
+                "sum": {
+                  "errors": 3,
+                  "requests": 3
+                }
+              }
+            ],
+            "profileWorker": [
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "sum": {
+                  "cpuTimeUs": 309376,
+                  "errors": 0,
+                  "requests": 104,
+                  "startupCpuTimeUs": 21985
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "cleanup": {
+    "verified_utc": "2026-11-27T12:55:15.090Z",
+    "cleanup": {
+      "disabled_users": 3,
+      "disabled_credentials": 3,
+      "unrevoked_sessions": 0,
+      "suspended_fixtures": 3,
+      "live_media": 0,
+      "deleted_media": 32
+    },
+    "fingerprints": {
+      "platform_environment": {
+        "count": 1,
+        "sha256": "d4d8ae865ed9ac0ed03f6f64a3f9e7bf3d3afec4e59831507062d378e4647003"
+      },
+      "schema_migrations": {
+        "count": 6,
+        "sha256": "462b2af63ef420f6983e661441bc3b5703606ce5f3f326027fb593623aadb2fe"
+      },
+      "restaurants": {
+        "count": 32,
+        "sha256": "c61e7037078de6f24a6447b5efdc0ffef229f424942b48bd1f5dd4f18f396519"
+      },
+      "restaurant_configs": {
+        "count": 30,
+        "sha256": "d5fe78258b52ee6c05010f97f90204a06370d28a31f0c9950bda3c99014a496a"
+      },
+      "categories": {
+        "count": 33,
+        "sha256": "058f0b47d826613c66a5c21daace89df2ddba0bf848e4f4a46099783b6a62a0b"
+      },
+      "menu_items": {
+        "count": 310,
+        "sha256": "70dd169107f2cdb168ee142928e8dd13f0e404e2930e61a3f00be20a5f23ead8"
+      },
+      "menu_item_variants": {
+        "count": 63,
+        "sha256": "0bcf0fdd2d14557ea6533c23d8e8d5b995684e2405959d5a3f564686c2c369e7"
+      },
+      "menu_item_translations": {
+        "count": 303,
+        "sha256": "445c354889781ae0bfa60e7b2ac3c962aaa29133f68bf8eb245ad1fac57e4bac"
+      },
+      "opening_hours": {
+        "count": 23,
+        "sha256": "9c02525aa3d7dfd743997b2fea2198f85051e49a836d1896ae1bf0a0778b445d"
+      },
+      "users": {
+        "count": 43,
+        "sha256": "b76b6a616e0609b6105b775e8d358eb24db22c25629b6204cdda5e8d204dfc66"
+      },
+      "login_credentials": {
+        "count": 43,
+        "sha256": "e00ff507b2a80f931b0a7d611180021ed2e810c9c111c730092810143c6fd171"
+      },
+      "restaurant_members": {
+        "count": 34,
+        "sha256": "bb84a4b2d0017840222340f335d07aa3527b9844549a33392cd57dddaefabe6b"
+      },
+      "platform_admins": {
+        "count": 9,
+        "sha256": "ef6b73d2e2c63b9d49eb81637d513b995da050e9b613d58d05c56bc551ae75df"
+      },
+      "restaurant_publications": {
+        "count": 8,
+        "sha256": "969d752e5cf6e8bd01e2beb092ce567c4992e7786315a3158d8bac93c1d0ea97"
+      },
+      "restaurant_publication_heads": {
+        "count": 6,
+        "sha256": "ff029a45308a4f4b6030762f612bda58e3fd84549e2a0be4450e92c160c1ac23"
+      }
+    },
+    "credential_files_cleared_after_verified_disable": true
+  },
+  "changed_original_tables": [],
+  "interpretation": {
+    "response_only_profile": "60 private RPC successes and three clientDisconnected outcomes. All HTTP checks, including body integrity, errors, quotas and cleanup, passed. The three remaining outcomes align with deliberately unread-body upload denials.",
+    "final_sample": "Six successful private RPC outcomes match three logins, two accepted uploads and one consumed-body quota denial. Nine clientDisconnected outcomes match six deliberate origin denials and three early upload rejections. Every expected HTTP response body completed. These cancellation outcomes remain recorded, not relabeled as provider success.",
+    "limits": "Provider data are adaptive estimates; HTTP completion and provider outcomes are distinct. This is no broad zero-provider-error or large-capacity certification."
+  },
+  "production_versions_unchanged": {
+    "admaki-menu": "9165d6f7-a226-47c4-9863-8856262539c2",
+    "admaki-menu-router": "22b21817-df16-48ba-8e83-f324057bedb5"
+  },
+  "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/46000944222",
+  "post_deployment": {
+    "source_matches_checked_bundle": true,
+    "bindings_unchanged": true,
+    "health_staging_and_six_migrations": true,
+    "unknown_menu_denied": true
+  }
+}

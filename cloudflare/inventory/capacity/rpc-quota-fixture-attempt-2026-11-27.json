@@ -1,0 +1,19 @@
+{
+  "started_utc": "2026-11-27T12:51:42.983Z",
+  "scope": "Bounded post-cleanup-fix staging HTTP smoke using the same three synthetic managers, fully consumed response bodies, and no customer accounts.",
+  "checks": [
+    "Three concurrent secure logins; cookies and complete JSON responses verified",
+    "Six complete wrong-origin denial responses after unused request-stream cancellation"
+  ],
+  "cleanup": [],
+  "passed": false,
+  "failure": {
+    "name": "AssertionError",
+    "message": "All upload/read jobs must complete successfully."
+  },
+  "accepted_uploads": 2,
+  "deleted_uploads": 2,
+  "finished_utc": "2026-11-27T12:52:17.173Z",
+  "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+  "fixture_note": "The already-exhausted 20-uploads-per-15-minute fixture was reused. The final rerun used the other two fixture managers for accepted uploads and separately verified that deletion did not reset the exhausted quota. No quota or throttle was reset."
+}

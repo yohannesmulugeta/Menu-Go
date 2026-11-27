@@ -1,7 +1,7 @@
 {
   "phase": 6,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "e252deb5-21e2-4357-bdc9-7b8b9648ea27",
+  "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -74,7 +74,7 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "entry.js": "4187b1e0d0ffa5a9c3c70d3cbf0662d7240a3ac3ac826f844fb76bad3a4fc01d"
+    "entry.js": "2674a8f8b21188a88d261486d377a83d9f93cb4099a57e6cef92525525e47cfe"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -1109,7 +1109,7 @@
     "readiness_report": "docs/STAGING_READINESS.md",
     "cleanup_proof": "cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json",
     "free_plan_implementation": {
-      "status": "Bounded deployed HTTP validation passed; provider RPC disconnect outcomes need review",
+      "status": "Bounded HTTP validation passed; response lifecycle corrected; intentional denial cancellations reproduced and classified",
       "source_commit": "ae5d55f807b098d00032049ff5b1a4ed788f0ba4",
       "deployment_id": "ee7980c9-93c5-41d7-aeb1-818c8f84774c",
       "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
@@ -1142,5 +1142,22 @@
     "evidence": "cloudflare/inventory/capacity/legacy-routing-2026-11-27.json",
     "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45996453322",
     "recovery_version": "79390ac3-596e-499f-9161-0484f77805cc"
+  },
+  "rpc_lifecycle_validation": {
+    "source_commit": "8d1207965b29c3c7a27ad9dec1e23b7ef9958209",
+    "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+    "deployment_id": "290646ad-cf78-421d-83f0-284d5c3ec018",
+    "bundle_matches_dry_run": true,
+    "namespace_unchanged": true,
+    "d1_migrations_applied": 0,
+    "paid_billing_changed": false,
+    "original_protected_tables_unchanged": 15,
+    "deleted_test_uploads": 32,
+    "test_credentials_disabled_and_cleared": true,
+    "unrevoked_test_sessions": 0,
+    "evidence": "cloudflare/inventory/capacity/rpc-lifecycle-2026-11-27.json",
+    "final_smoke": "cloudflare/inventory/capacity/rpc-final-smoke-2026-11-27.json",
+    "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/46000944222",
+    "production_workers_unchanged": true
   }
 }

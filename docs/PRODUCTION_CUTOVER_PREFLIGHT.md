@@ -3,15 +3,17 @@
 Status: draft only. No production release or database mutation authorized by this document.
 
 ## Observed legacy inventory
-Read-only production D1 counts and public API results agree:
+The earlier public API baseline and a fresh read-only production D1 check agree for the active menus. Drafts are also listed for preservation; this is not content approval:
 
-| Slug | Items | Categories |
-|---|---:|---:|
-| abol-coffee | 89 | 13 |
-| mokodo-pizza | 103 | 12 |
-| occasion | 116 | 15 |
-| sheba-coffee | 40 | 7 |
-| some | 0 | 0 |
+| Slug | Status | Items | Categories |
+| --- | --- | ---: | ---: |
+| abol-coffee | active | 89 | 13 |
+| mokodo-pizza | active | 103 | 12 |
+| occasion | active | 116 | 15 |
+| sheba-coffee | active | 40 | 7 |
+| some | active | 0 | 0 |
+| addis-harvest | draft | 10 | 6 |
+| sora-table | draft | 8 | 5 |
 
 Abol has 13 popular items, so its initial category is not an indication of data loss. The Some Café record is active but empty; do not substitute Abol or remove it without owner approval.
 
@@ -33,3 +35,5 @@ Abol has 13 popular items, so its initial category is not an indication of data 
 7. Record pre-release database and media backups, rollback version and route restoration instructions. Review migration and test results before any production switch.
 
 Read-only legacy API inventory check: node scripts/check-legacy-menu-inventory.mjs. Recorded counts are a snapshot; intentional client edits require reconciliation. This check does not certify browser routes, designs, or device sharing.
+
+[Fresh production counts](../cloudflare/inventory/production-menu-counts-2026-11-27.json) were read on 27 November 2026. No draft was published and no menu data was modified.

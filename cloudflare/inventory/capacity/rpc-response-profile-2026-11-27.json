@@ -1,0 +1,89 @@
+{
+  "started_utc": "2026-11-27T12:40:02.568Z",
+  "origin": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "scope": "Three isolated managers/tenants. Bounded actual login/upload HTTP tests from the operator executor. Wall times include its outbound network/proxy; no independent-network or large-login-capacity claim.",
+  "phases": [
+    {
+      "name": "login-sequential",
+      "started_utc": "2026-11-27T12:40:02.569Z",
+      "finished_utc": "2026-11-27T12:40:23.581Z",
+      "requests": 9,
+      "unexpected_failures": 0,
+      "concurrency": 1,
+      "statuses": {
+        "200": 9
+      },
+      "latency_ms": {
+        "median": 1489.51,
+        "p95": 9161.41,
+        "max": 9161.41
+      }
+    },
+    {
+      "name": "login-concurrent",
+      "started_utc": "2026-11-27T12:40:23.582Z",
+      "finished_utc": "2026-11-27T12:40:34.384Z",
+      "requests": 9,
+      "unexpected_failures": 0,
+      "concurrency": 3,
+      "statuses": {
+        "200": 9
+      },
+      "latency_ms": {
+        "median": 1529.07,
+        "p95": 9563.73,
+        "max": 9563.73
+      }
+    },
+    {
+      "name": "upload-sequential",
+      "started_utc": "2026-11-27T12:41:10.118Z",
+      "finished_utc": "2026-11-27T12:41:33.056Z",
+      "requests": 3,
+      "unexpected_failures": 0,
+      "concurrency": 1,
+      "statuses": {
+        "201": 3
+      },
+      "latency_ms": {
+        "median": 10081.29,
+        "p95": 10175.4,
+        "max": 10175.4
+      }
+    },
+    {
+      "name": "upload-concurrent",
+      "started_utc": "2026-11-27T12:41:33.057Z",
+      "finished_utc": "2026-11-27T12:42:02.116Z",
+      "requests": 9,
+      "unexpected_failures": 0,
+      "concurrency": 3,
+      "statuses": {
+        "201": 9
+      },
+      "latency_ms": {
+        "median": 9974.12,
+        "p95": 10367.83,
+        "max": 10367.83
+      }
+    }
+  ],
+  "checks": [
+    "Generic incorrect/unknown-account errors",
+    "Managers have no platform privileges or cross-tenant access",
+    "Sixteenth account login attempt returns 429/Retry-After without resetting rate limits",
+    "Authenticated R2 image round trips match expected SHA-256 and length",
+    "Invalid image, cross-origin, oversize and cross-tenant uploads denied",
+    "Twenty accepted uploads/account; next upload denied without lifting quota",
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access"
+  ],
+  "cleanup": [],
+  "passed": true,
+  "finished_utc": "2026-11-27T12:51:06.504Z",
+  "accepted_uploads": 28,
+  "deleted_uploads": 28,
+  "source_commit": "ccbcc9a76fe457d6fdda30ac04c470ec9ae8815f",
+  "worker_version": "c19e3acb-dbde-405f-9578-34396ea806c7"
+}

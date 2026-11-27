@@ -2,9 +2,9 @@
 
 Date: 27 November 2026. Source before measurement: `18caacfec0c113c3ba92b1e9ab1c6b718ce169a7`.
 
-**Result: public delivery passed, but the account runtime budget blocks launch.** Nine sequential logins succeeded; the concurrent-login profile and later extended uploads encountered HTTP 503 with Cloudflare resource-limit events. The dashboard confirmed Workers Free (10 ms/request). Measured mean CPU was about 155.52 ms for the sequential login window and 19.09 ms for upload samples, versus 4.85 ms for the earlier public profile. No billing/runtime setting or password work factor was changed. See [current readiness](STAGING_READINESS.md) and [the proposed runtime-budget fix](RUNTIME_BUDGET_REMEDIATION.md).
+**Current result: bounded public and private HTTP profiles passed on the existing Free plan.** The original login/upload CPU-budget failures below are retained as historical findings. Private SQLite Durable Object routing and explicit response/request lifecycle cleanup passed the new deployed checks. See [current readiness](STAGING_READINESS.md), [the Free runtime implementation](RUNTIME_BUDGET_REMEDIATION.md) and [RPC diagnosis and provider outcomes](RPC_RESPONSE_LIFECYCLE.md).
 
-Production code, routes, domains, accounts and content were not changed. PR #3 remains draft. The staging Worker version remains `03da5e9d-be53-4770-9aff-7d31566dcc8d`; no deployment or migration was needed.
+Production code, routes, domains, accounts and content were not changed. PR #3 remains draft. Current staging version is `64b83127-f8aa-4ee0-9f81-0c83aed31cae`; the code-only corrections retained the existing class/namespace, migration tag, D1 schema and Free plan.
 
 ## Measured results
 
@@ -106,13 +106,13 @@ The new `.github/workflows/staging-network-probe.yml` runs only when that workfl
 
 All fixtures are suspended, their temporary account is disabled and revoked, all 24 public menu/QR/image destinations returned 404, and the account API returned 401. Original records across 15 protected tables matched their pre-test checksums. Three synthetic publications and 18 images (4.97 MB) remain privately retained. See [full results, methodology, cleanup and limits](REPRESENTATIVE_MENU_CAPACITY.md).
 
-## Remaining Stage 1 acceptance
+## Stage 1 outcome and remaining acceptance
 
-1. Resolve the verified Free-plan CPU-budget mismatch. The owner chose to remain on Free. Private SQLite-backed Durable Object routing is implemented and locally tested; deployed login/upload/resource validation remains pending. No subscription upgrade or Paid-only CPU override is authorized.
-2. Rerun login and extended upload/quota tests after the budget is compatible. The latest extended profiles failed; only their smaller successful samples are reported as passing. Operator-network wall timings are not independent browser timings.
-3. Actual provider CPU/account usage is now recorded, and Paid forecasts use measured public/login/upload CPU means. Future traffic, event/manager CPU, storage retention, shared allowance consumption and the real invoice period still limit the forecast.
-4. Agree production traffic/duration expectations and complete café content, real-phone/network, sharing and final release checks. The earlier three-restaurant/30-second profile is not a deployed 1,000-tenant or long-soak certification.
+1. The bounded Free runtime test gate passed. The full login/upload/quota profile and final lifecycle/denial checks are documented separately by version. Historical failed runs remain preserved. No upgrade, Paid-only CPU override or weaker password hashing was applied.
+2. Provider outcomes are explained for the controlled test: successful RPC calls finish cleanly, while deliberate early denials cancel unread bodies and remain recorded as cancellations. Do not equate expected HTTP denials with runtime failures or claim zero provider cancellations.
+3. Agree realistic production traffic/duration expectations within free daily allowances. Existing paid-plan forecasts remain conditional historical scenarios, not an authorized next step or an invoice. Operator wall timings do not certify Ethiopia mobile performance.
+4. Complete café content, physical phone/network, sharing, production import/recovery and final release checks. The bounded public samples and local 1,000-tenant simulation do not certify a deployed 1,000-tenant service or long-soak reliability.
 
-Current launch status is blocked. All new test accounts/sessions/media were cleaned up, original protected records matched, and production remains unchanged. See [current readiness](STAGING_READINESS.md).
+Current release remains pending the phone/content/cutover checks. All 32 new RPC-test uploads were deleted, every synthetic session revoked and credentials disabled/cleared; original protected records matched. See [current readiness](STAGING_READINESS.md).
 
 Machine-readable evidence: [capacity measurements](../cloudflare/inventory/capacity/2026-11-27.json), [cost scenarios](../cloudflare/inventory/capacity/cost-2026-11-27.json).
