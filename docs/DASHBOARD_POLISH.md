@@ -1,25 +1,29 @@
-# Restaurant workspace update
+# Restaurant workspace release
 
-27 November 2026. This update changes the authenticated dashboard and directory reads. It does not migrate a database, reset production accounts, republish a restaurant, change a public menu renderer, or change Cloudflare plans, routes or bindings.
+The dashboard and six-digit client PIN update were deployed to production on 27 November 2026 using the same bundle tested in staging. The application source is commit `f51e8857626d04a4d289a457a07a3cd59492c481`. Both complete GitHub verification runs passed before deployment.
 
-The restaurant directory now has explicit Edit menu, Preview and QR code actions, status filtering, totals across all matching pages, and responsive cards. A staging notice links to the live administration site. Known staging fixtures are hidden by default and remain available through Show test restaurants. The filter is restricted to the exact staging environment; it never hides production restaurants based on their names or slugs. Existing directory callers retain their default visibility and response fields.
+[Live dashboard](https://app.admakidigital.com/login) · [Staging sample menu](https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/staging-demo)
 
-The recovered owner account was verified through the authenticated staging dashboard and restaurant editor after operator recovery. Production admin credentials were not recovered or reset. The six-digit client PIN policy retains the strong owner passphrase policy, first-login rotation, hashing, throttles and session revocation.
+## Changes
 
-## Verification before deployment
+The restaurant directory has direct Edit menu, Preview and QR actions, status filters, accurate totals across pages, responsive cards and a clear staging notice. Known staging fixtures are hidden by default and can be shown without deleting records. Production never classifies restaurants as fixtures by name or slug. Publication now has a visible in-dashboard confirmation and Cancel action.
 
-- SQLite-backed authentication, onboarding/directory, editor, publication, schema, feature, gateway, production-isolation and private-runtime unit checks passed locally. The directory tests cover totals beyond 100 rows, status validation, tenant scoping, reversible fixture filtering and production visibility.
-- The recovered baseline verified 52 exact source/assets and all 14 original router tests passed.
-- The browser used a local actual Worker with synthetic SQLite/R2 only: owner sign-in, hidden/visible test records, direct menu navigation, an exact price save and matching private preview, QR draft guidance, and manager sign-in with a six-digit PIN passed. No browser warning/error was captured.
-- The restaurant directory fit 360, 390, 768 and 1440 pixel viewports without horizontal overflow. These checks do not certify physical phones.
-- The packaged Worker preserves the MenuPrivateOperations export and the existing fetch/scheduled handlers. Both environments use the same bundle with their existing environment-specific bindings.
+Clients can use six-digit PINs with the existing hashing, throttling, first-login rotation and session rules. Super admins retain the strong passphrase policy. Existing production credentials were not reset.
 
-Full build, lint and actual Cloudflare runtime checks are required in GitHub CI before production. Remote staging and production results must be recorded after deployment; local verification alone does not establish a live release.
+## Verified results
 
-## Remote progress
+- Staging owner login and the restored dashboard/editor were verified. The existing owner session remained usable after deployment.
+- Local browser checks used synthetic SQLite/R2 only: owner and six-digit manager sign-in, direct menu navigation, an exact price save and matching preview, QR navigation, and the directory at 360, 390, 768 and 1440 pixels. The browser captured no warnings or errors during those checks.
+- Deployed staging Cancel left the draft unpublished; Confirm publish published the two explicitly labeled sample items with correct prices. The generated 320 by 320 QR image loaded successfully.
+- Production health reported the production environment, six migrations and the existing media binding after release.
+- Ordered before/after fingerprints matched for restaurant records, menu contents/prices/image URLs, categories, saved design/configuration and publication snapshots/heads. Private production recovery and audit details are excluded from this public repository.
+- No production data migration, credential reset, route change, binding change or paid service activation was performed.
 
-The directory update passed GitHub CI and was deployed to staging. The existing authenticated owner session remained usable. The deployed default directory hides retained test restaurants, and Show test restaurants restores their visibility. Direct menu navigation was checked.
+| Live menu | Verified items |
+| --- | ---: |
+| Abol Coffee | 89 |
+| Mokodo Pizza | 103 |
+| Occasion | 116 |
+| Sheba Coffee | 40 |
 
-Two explicitly labeled sample items were saved only in the staging example. Public menu and QR verification remain pending because browser controls could not respond to a native confirmation. The follow-up replaces that prompt with an in-dashboard confirmation and Cancel action; its browser check remains pending.
-
-The user computer disconnected during validation. Production has not been deployed by this update. No production migration, credential reset, route change, binding change or paid service activation occurred. Recovery details and private production audit metadata are intentionally excluded from this public repository. On resumption, recheck current state, discard or replace the unsubmitted earlier production editor candidate, verify the final staging sample publication and QR, then deploy and verify production.
+The user computer disconnected during the last production QR download check. The read-only release workflow checks production health, the login shell, the four public menus and their SVG GET/HEAD download responses independently of that computer connection. Its result must be inspected before claiming that final check passed. Physical-phone scanning and a fresh real production-admin password login are not claimed as verified by this update.
