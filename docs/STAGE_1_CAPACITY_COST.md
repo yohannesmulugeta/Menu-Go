@@ -2,7 +2,7 @@
 
 Date: 27 November 2026. Source before measurement: `18caacfec0c113c3ba92b1e9ab1c6b718ce169a7`.
 
-**Result: the independent health control now passes; complete-menu capacity acceptance remains unresolved.** Local indexed reads passed at 100 and 1,000 synthetic restaurants. The earlier executor-based 10 requests/second menu and health probes missed the provisional 3-second p95 budget. Two subsequent health probes from an independent GitHub runner passed at 0.52–0.54 seconds p95 against the unchanged staging version. The earlier delay was not reproduced from that client. This narrows the investigation toward client/network/edge path differences but does not establish the application's maximum capacity. The earlier 25 and 50 requests/second menu steps were skipped after the initial failed gate and still need representative independent-client validation.
+**Result: the bounded public-menu HTTP load profile now passes; complete Stage 1 acceptance remains open.** Independent staging tests completed 1,660 correct requests against three 100-item menus with real R2 payloads, including 10/25/50 requests per second and a 30-second sample at 25 requests per second. Ramp/sustained p95 was 1.08–1.13 seconds with no errors or dropped arrivals. Local 100/1,000-tenant reads and independent health controls also passed. Deployed CPU/account usage, login/upload load, longer-duration expectations and Ethiopia mobile/browser performance remain separate checks. See [the representative menu report](REPRESENTATIVE_MENU_CAPACITY.md).
 
 Production code, routes, domains, accounts and content were not changed. PR #3 remains draft. The staging Worker version remains `03da5e9d-be53-4770-9aff-7d31566dcc8d`; no deployment or migration was needed.
 
@@ -94,20 +94,25 @@ Worker version `03da5e9d-be53-4770-9aff-7d31566dcc8d` and deployment `e47e1ed2-8
 
 The health endpoint performs **two D1 reads**: environment-marker lookup and migration count. It does not render menus or read R2. Earlier control metadata described only the environment check; that scope label is corrected in the tool, with no behavior change. No HTTP latency measurement here is treated as Worker CPU time.
 
-The similar slow menu/health result in the original executor and the much faster independent health result support the inference that the original client/network/edge path contributed. Geography and client both changed, so this is not proof that a particular proxy or network was responsible. Full public-menu requests still require their own independent test, representative content/images and sustained load. Addis Ababa mobile-network performance remains unmeasured.
+The similar slow menu/health result in the original executor and the much faster independent health result support the inference that the original client/network/edge path contributed. Geography and client both changed, so this is not proof that a particular proxy or network was responsible. The subsequent representative public-menu HTTP tests also passed; see the report below. Addis Ababa mobile-network performance remains unmeasured.
 
 The new `.github/workflows/staging-network-probe.yml` runs only when that workflow file changes on the existing feature branch. It has read-only repository permissions, uses no secrets, makes only staging health GETs, and saves raw JSON even if the latency budget fails. Existing runs can be rerun from their Actions page. It is not a production deployment or recurring schedule.
 
 [Durable comparison summary](../cloudflare/inventory/capacity/network-control-2026-11-27.json) includes the source commit and artifact digest. Raw samples are in the `staging-network-probe` artifact on the run page, currently retained until 27 December 2026. The standard build/regression workflow also passed on the probe workflow's source commit.
 
+## Representative public delivery — passed for the tested profile
+
+[The independent menu run](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45937691892) verified three 100-item layouts, English/Amharic content, exact variant prices, six R2 images per menu and QR responses. All 1,660 requests were correct, with no dropped arrivals. p95 was 1,078.26 ms at 10 requests/s, 1,129.61 ms at 25 requests/s, 1,101.04 ms at 50 requests/s and 1,077.97 ms during the 30-second 25 requests/s sample. The 60-request preflight p95 was 1,638.23 ms. The unchanged staging version served 368.9 MB of response payload from the SJC edge.
+
+All fixtures are suspended, their temporary account is disabled and revoked, all 24 public menu/QR/image destinations returned 404, and the account API returned 401. Original records across 15 protected tables matched their pre-test checksums. Three synthetic publications and 18 images (4.97 MB) remain privately retained. See [full results, methodology, cleanup and limits](REPRESENTATIVE_MENU_CAPACITY.md).
+
 ## Remaining Stage 1 acceptance
 
-1. Independent GitHub-hosted health controls passed. Next run the public menu/image/QR workloads from an independent client with representative fixtures; Addis Ababa remains an additional geographic check. Capture Worker CPU, wall time and D1 latency/queue metrics for the exact interval. Keep bindings and deployment fixed.
-2. If that confirms backend latency, address the measured source and rerun the same baseline. Do not remove live publication/policy revocation checks to reduce request time.
-3. Use isolated, fully populated synthetic staging menus with representative images, translations/variants and publication history; then clear 10/25/50 requests/second and a sustained soak against agreed budgets. Local 1,000-tenant results do not replace this step.
-4. Separately benchmark login and upload workloads, including CPU and rate-limit outcomes. Their cost remains assumed here.
-5. Replace CPU/event/management/storage assumptions with measured account usage, account for other apps sharing allowances, and agree the expected traffic before accepting a monthly budget.
+1. Agree the production traffic profile, duration and response/error budgets. The tested profile passed; extend the duration or workload where the actual operating requirements warrant it. A 30-second sample is not a long soak, and three deployed fixtures do not validate 1,000 deployed tenants.
+2. Capture deployed Worker CPU and account usage, including D1/R2 activity and shared allowances, before accepting the monthly cost budget. Client response times cannot replace CPU measurements.
+3. Separately benchmark login and upload workloads, including CPU and rate limits. The successful 18-image fixture setup was functional verification, not an upload-capacity certification.
+4. Keep Addis Ababa mobile/browser timings and native phone sharing as explicit device/geographic checks. Approved restaurant content and production cutover remain later work.
 
-Stage 1 must not be marked capacity-approved. Native phone sharing, approved restaurant content and production cutover remain later work.
+Public-delivery checks passed for this bounded profile; overall Stage 1 and production release approval remain open.
 
 Machine-readable evidence: [capacity measurements](../cloudflare/inventory/capacity/2026-11-27.json), [cost scenarios](../cloudflare/inventory/capacity/cost-2026-11-27.json).
