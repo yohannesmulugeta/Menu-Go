@@ -62,6 +62,7 @@ export async function configRoute(request,env){
   }
   const match=/^\/api\/restaurants\/([^/]+)\/(config|preview-data|feature-catalogue|feedback|analytics)$/.exec(path);if(!match)return null;
   const id=decodeURIComponent(match[1]),action=match[2],access=await restaurantAccess(request,db,id);
+  const actor={admin:access.role==='super_admin',restaurantId:id};
   if(action==='feature-catalogue'&&method==='GET'){
     const [templates,presets]=await Promise.all([db.prepare('SELECT template_id,version,name,supported_features_json FROM template_releases WHERE json_array_length(supported_features_json)>0 ORDER BY template_id,version').all(),db.prepare('SELECT preset_id,version,name,schema_version FROM config_presets WHERE schema_version=2 ORDER BY preset_id,version').all()]);
     return response({schema_version:2,features:FEATURE_KEYS.map(key=>({key,...FEATURES[key]})),templates:templates.results.map(t=>({...t,supported_features:JSON.parse(t.supported_features_json),supported_features_json:undefined})),presets:presets.results});
@@ -87,8 +88,8 @@ export async function configRoute(request,env){
     if(access.role!=='super_admin')for(const [key,feature]of Object.entries(CONTENT_FEATURE))if(canonical(next.content_settings[key])!==canonical(b.config.content_settings[key])&&b.effective[feature].locked)fail(403,'These settings are locked: '+FEATURES[feature].label+'.');
     for(const itemId of Object.keys(next.content_settings.item_labels))if(!await db.prepare('SELECT 1 FROM menu_items WHERE id=? AND restaurant_id=? AND deleted_at IS NULL').bind(itemId,id).first())fail(400,'Item labels must belong to this restaurant.');
     const result=await db.batch([
-      db.prepare(`UPDATE restaurant_configs SET schema_version=?,template_id=?,template_version=?,features_json=?,theme_json=?,content_settings_json=?,revision=revision+1,updated_at=CURRENT_TIMESTAMP WHERE restaurant_id=? AND revision=? AND (SELECT revision FROM platform_policy_state WHERE singleton=1)=? AND ${liveActorSQL()}`)
-        .bind(next.schema_version,next.template_id,next.template_version,JSON.stringify(next.features),JSON.stringify(next.theme),JSON.stringify(next.content_settings),id,b.revision,b.policy_revision,...liveActorParams(access.session,{restaurantId:id})),
+      db.prepare(`UPDATE restaurant_configs SET schema_version=?,template_id=?,template_version=?,features_json=?,theme_json=?,content_settings_json=?,revision=revision+1,updated_at=CURRENT_TIMESTAMP WHERE restaurant_id=? AND revision=? AND (SELECT revision FROM platform_policy_state WHERE singleton=1)=? AND ${liveActorSQL(actor)}`)
+        .bind(next.schema_version,next.template_id,next.template_version,JSON.stringify(next.features),JSON.stringify(next.theme),JSON.stringify(next.content_settings),id,b.revision,b.policy_revision,...liveActorParams(access.session,actor)),
       db.prepare("INSERT INTO platform_audit_logs(actor_user_id,action,target_type,target_id,before_json,after_json,request_id) SELECT ?,'config.restaurant_saved','restaurant',?,?,?,? WHERE changes()=1")
         .bind(access.session.user_id,id,JSON.stringify(auditConfig(b.config)),JSON.stringify(auditConfig(next)),crypto.randomUUID())
     ]);

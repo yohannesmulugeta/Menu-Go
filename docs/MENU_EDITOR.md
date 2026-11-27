@@ -29,13 +29,15 @@ All routes below start with `/api/restaurants/:id/menu`. Mutations include `revi
 | `/hours` | GET saved days and configured timezone |
 | `/hours/:weekday` | PATCH a day from 0 (Sunday) to 6 (Saturday) |
 
-Reads return draft and policy revisions plus the current content-editing permissions. The revision is read before the content, so concurrent edits produce a stale save. Each write atomically advances the configuration revision, updates the owned content and inserts an audit record. The transaction rechecks session, tenant membership, policy epoch and item version where applicable. A former admin cannot retain an earlier policy bypass after a role change.
+Reads return draft and policy revisions plus the current content-editing permissions. The revision is read before the content, so concurrent edits produce a stale save. Each write atomically advances the configuration revision, updates the owned content and inserts an audit record. The transaction rechecks session, tenant membership, policy epoch and item version where applicable. A former admin cannot retain an earlier policy bypass after a role change. The same transaction guard now protects shared settings and photo mutations.
 
 The manager-editing locks for categories, descriptions, popularity, images, variants, languages and hours apply to their content controls. Foreign category/item/variant IDs are rejected. Item image URLs are changed through the image service. The shared renderer and public delivery continue consuming saved publication snapshots.
 
 ## Validation and deployment
 
 `npm run check:menu-editor` covers category and item creation and updates, validation, cross-tenant and origin denials, stale drafts and item versions, transaction rollback, membership/policy/admin-role races, feature locks, variants, translations, hours, publication isolation and pagination beyond 100 rows. CI includes this suite with the existing authentication, schema, media, feature, publication, onboarding and root checks.
+
+A delayed image-control response is included in the browser check. Settings submission is attached before image controls load, so an early Save remains functional.
 
 Local Chrome checks exercised category and item creation, JPEG conversion, photo attachment/removal, exact variant pricing, translation entry, opening hours and feature activation. Published variants, translated names and hours matched the saved data. A later price edit stayed in the draft. Unsaved item fields survived attempts to open a dependent editor. The item screen passed 360, 390, 768 and 1440 pixel widths with a clean console.
 
@@ -45,6 +47,6 @@ No database migration or new dependency is required. Staging deployment uses `cl
 
 - `cloudflare/platform/menu/access.mjs`, `validation.mjs`, `mutations.mjs` and `service.mjs` implement the editor API.
 - `cloudflare/platform/web/menu.mjs`, `menu-extras.mjs` and `page.mjs` implement the dashboard forms.
-- `cloudflare/platform/worker.mjs` connects the menu routes.
+- `cloudflare/platform/worker.mjs` connects the menu routes. Shared `config/service.mjs` and `media/service.mjs` enforce the live admin-role guard.
 - `scripts/check-menu-editor.mjs`, `package.json` and `.github/workflows/check-cloudflare-baseline.yml` add the verification gate.
 - This report and `cloudflare/inventory/platform-staging.json` record the staging release.

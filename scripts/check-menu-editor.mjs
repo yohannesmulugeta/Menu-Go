@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import {testEnvironment} from './check-menu-media.mjs';
+import {testEnvironment,fixturePNG} from './check-menu-media.mjs';
 import worker from '../cloudflare/platform/worker.mjs';
 const t=testEnvironment(),{db,env,origin,manager,foreign}=t,base='/api/restaurants/staging-demo/menu';
-async function call(path,{body,method=body?'POST':'GET',token=manager,headers={}}={}) {
-  return worker.fetch(new Request(origin+path,{method,headers:{...(token?{Cookie:'__Host-admaki_menu='+token}:{}),...(body?{Origin:origin,'Content-Type':'application/json','X-Menu-Request':'1'}:{}),...headers},body:body?JSON.stringify(body):undefined}),env);
+async function call(path,{body,bytes,method=body||bytes?'POST':'GET',token=manager,headers={}}={}) {
+  return worker.fetch(new Request(origin+path,{method,headers:{...(token?{Cookie:'__Host-admaki_menu='+token}:{}),...(body||bytes?{Origin:origin,'Content-Type':bytes?'image/png':'application/json','X-Menu-Request':'1'}:{}),...headers},body:bytes||(body?JSON.stringify(body):undefined)}),env);
 }
 async function meta(){const r=await call(base+'/categories');assert.equal(r.status,200);const m=await r.json();return {revision:m.revision,policy_revision:m.policy_revision};}
 async function save(path,body,method='POST',status=201) {const r=await call(base+path,{method,body:{...await meta(),...body}});assert.equal(r.status,status,await r.clone().text());return r.json();}
@@ -51,7 +51,17 @@ db.prepare("INSERT INTO restaurant_members(id,restaurant_id,user_id,role) VALUES
 db.prepare("UPDATE feature_policies SET manager_editable=0 WHERE feature_key='menu.categories'").run();db.prepare('UPDATE platform_policy_state SET revision=revision+1').run();
 t.race(()=>db.prepare("DELETE FROM platform_admins WHERE user_id='owner'").run());
 const revokedRole=await call(base+'/categories',{token:t.owner,body:{...await meta(),name:'Stale admin bypass',sort_order:0,is_active:true}});assert.equal(revokedRole.status,409);
+db.prepare("INSERT INTO platform_admins(user_id) VALUES('owner')").run();
+db.prepare("UPDATE feature_policies SET manager_editable=0 WHERE feature_key='menu.popular'").run();db.prepare('UPDATE platform_policy_state SET revision=revision+1').run();
+const ownerConfig=await(await call('/api/restaurants/staging-demo/config',{token:t.owner})).json();
+t.race(()=>db.prepare("DELETE FROM platform_admins WHERE user_id='owner'").run());
+assert.equal((await call('/api/restaurants/staging-demo/config',{method:'PATCH',token:t.owner,body:{revision:ownerConfig.revision,policy_revision:ownerConfig.policy_revision,features:{'menu.popular':false}}})).status,409);
+db.prepare("INSERT INTO platform_admins(user_id) VALUES('owner')").run();
+db.prepare("UPDATE feature_policies SET manager_editable=0 WHERE feature_key='brand.cover'").run();db.prepare('UPDATE platform_policy_state SET revision=revision+1').run();
+t.race(()=>db.prepare("DELETE FROM platform_admins WHERE user_id='owner'").run());
+assert.equal((await call('/api/restaurants/staging-demo/media?kind=cover',{token:t.owner,bytes:fixturePNG()})).status,409);
 db.prepare("INSERT INTO platform_admins(user_id) VALUES('owner')").run();db.prepare("DELETE FROM platform_admins WHERE user_id='foreign'").run();
+db.prepare("UPDATE feature_policies SET manager_editable=1 WHERE feature_key IN ('menu.popular','brand.cover')").run();db.prepare('UPDATE platform_policy_state SET revision=revision+1').run();
 db.prepare("UPDATE feature_policies SET manager_editable=1 WHERE feature_key='menu.categories'").run();db.prepare('UPDATE platform_policy_state SET revision=revision+1').run();
 // Publish, then edit content. The old publication remains unchanged until the next publish.
 async function publish(){const c=await(await call('/api/restaurants/staging-demo/config')).json(),p=await(await call('/api/restaurants/staging-demo/publication')).json();const r=await call('/api/restaurants/staging-demo/publish',{body:{revision:c.revision,policy_revision:c.policy_revision,publication_revision:p.publication_revision}});assert.equal(r.status,201,await r.clone().text());}
