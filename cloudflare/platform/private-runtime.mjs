@@ -1,3 +1,4 @@
+import {deployment} from './deployment.mjs';
 import worker from './worker.mjs';
 import {digest} from './auth/passwords.mjs';
 import {response} from './auth/http.mjs';
@@ -46,11 +47,12 @@ export function privateOperationKey(request) {
 
 export async function privateRuntimeFetch(request,env,ctx) {
   try {
+    if(deployment(env)?.label==='production'){const url=new URL(request.url);if(/^\/session-api\/(login|logout|session|password|reauth)$/.test(url.pathname)){url.pathname=url.pathname.replace('/session-api/','/api/auth/');request=new Request(url,request);}}
     const key=privateOperationKey(request);
     if(key===null)return await worker.fetch(request,env,ctx);
     // Missing/misconfigured private compute must fail closed, without falling
     // back to expensive hashing or PNG validation inside the 10 ms Worker.
-    if(env.ENVIRONMENT!=='admaki-menu-platform-staging'||!env.PRIVATE_OPERATIONS)
+    if(!deployment(env)||!env.PRIVATE_OPERATIONS)
       return response({error:'Environment is not configured.'},503);
     return await completePrivateResponse(await env.PRIVATE_OPERATIONS.getByName(key).dispatch(request));
   } catch {

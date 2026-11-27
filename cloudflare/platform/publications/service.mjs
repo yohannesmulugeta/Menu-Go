@@ -1,3 +1,4 @@
+import {configuredDeployment} from '../deployment.mjs';
 import {publishedContext} from './context.mjs';
 import {restaurantAccess,liveActorSQL,liveActorParams} from '../config/access.mjs';
 import {policies} from '../config/service.mjs';
@@ -8,12 +9,13 @@ import {input,response,fail} from '../auth/http.mjs';
 import {draftStateSQL,draftConfig,snapshotData} from './snapshot.mjs';
 
 export const PUBLIC_ORIGIN='https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev';
-export const publicURL=slug=>PUBLIC_ORIGIN+'/r/'+encodeURIComponent(slug);
+const target=env=>env?configuredDeployment(env):{publicOrigin:PUBLIC_ORIGIN,privateOrigins:[PUBLIC_ORIGIN]};
+export const publicURL=(slug,env)=>target(env).publicOrigin+'/r/'+encodeURIComponent(slug);
 export const publicMediaPath=(slug,id)=>'/public-media/'+encodeURIComponent(slug)+'/'+id;
 const currentRevisionSQL='COALESCE((SELECT revision FROM restaurant_publication_heads WHERE restaurant_id=?),0)';
 const committedSQL="EXISTS(SELECT 1 FROM platform_audit_logs WHERE request_id=? AND action='publication.published')";
 function revision(value) {return Number.isSafeInteger(value)&&value>=0;}
-export function managedMedia(url,restaurantId) {
+export function managedMedia(url,restaurantId,env) {
   if(!url)return null;
   let parsed;try{parsed=new URL(url);}catch{return null;}
   const match=/^\/api\/restaurants\/([^/]+)\/media\/([a-f0-9-]{36})$/.exec(parsed.pathname);
@@ -21,17 +23,17 @@ export function managedMedia(url,restaurantId) {
     if(parsed.pathname.startsWith('/api/restaurants/')||parsed.pathname.startsWith('/public-media/'))fail(400,'Use the image controls for managed media.');
     return null;
   }
-  if(parsed.origin!==PUBLIC_ORIGIN||decodeURIComponent(match[1])!==restaurantId||parsed.search||parsed.hash)fail(400,'An uploaded image belongs to a different restaurant or origin.');
+  if(!target(env).privateOrigins.includes(parsed.origin)||decodeURIComponent(match[1])!==restaurantId||parsed.search||parsed.hash)fail(400,'An uploaded image belongs to a different restaurant or origin.');
   return match[2];
 }
-function referencedMedia(config,data,restaurantId) {
+function referencedMedia(config,data,restaurantId,env) {
   const refs=[];
   for(const kind of ['logo','cover']) {
-    const id=managedMedia(config.content_settings[kind+'_url'],restaurantId);
+    const id=managedMedia(config.content_settings[kind+'_url'],restaurantId,env);
     if(id)refs.push({id,kind});
   }
   for(const item of data.items) {
-    const id=managedMedia(item.image_url,restaurantId);
+    const id=managedMedia(item.image_url,restaurantId,env);
     if(id)refs.push({id,kind:'item',itemId:item.id});
   }
   return refs;
@@ -44,7 +46,7 @@ export async function publicationRoute(request,env) {
   if(action==='publication') {
     if(request.method!=='GET')return response({error:'Method not allowed.'},405,{Allow:'GET'});
     const head=await db.prepare('SELECT h.revision,p.config_revision,p.created_at FROM restaurant_publication_heads h JOIN restaurant_publications p ON p.restaurant_id=h.restaurant_id AND p.revision=h.revision WHERE h.restaurant_id=?').bind(id).first();
-    return response({publication_revision:head?.revision||0,config_revision:head?.config_revision||null,published_at:head?.created_at||null,active:access.restaurant.status==='active'&&!!head,url:publicURL(access.restaurant.slug)});
+    return response({publication_revision:head?.revision||0,config_revision:head?.config_revision||null,published_at:head?.created_at||null,active:access.restaurant.status==='active'&&!!head,url:publicURL(access.restaurant.slug,env)});
   }
   if(request.method!=='POST')return response({error:'Method not allowed.'},405,{Allow:'POST'});
   const body=await input(request);
@@ -70,7 +72,7 @@ export async function publicationRoute(request,env) {
   const template=await db.prepare('SELECT supported_features_json FROM template_releases WHERE template_id=? AND version=?').bind(config.template_id,config.template_version).first();
   const supported=template?JSON.parse(template.supported_features_json):[];
   if(FEATURE_KEYS.some(key=>!supported.includes(key)))fail(400,'Choose a template supporting the shared menu features.');
-  const data=snapshotData(state),refs=referencedMedia(config,data,id);
+  const data=snapshotData(state),refs=referencedMedia(config,data,id,env);
   for(const ref of refs) {
     const media=state.media.find(m=>m.id===ref.id);
     if(!media||media.kind!==ref.kind||media.lifecycle!=='ready'||media.state==='deleted'||(ref.itemId&&!state.owners.some(o=>o.media_id===ref.id&&o.menu_item_id===ref.itemId)))fail(409,'An uploaded image is unavailable or belongs to another item.');
@@ -99,10 +101,10 @@ export async function publicationRoute(request,env) {
     db.prepare(`UPDATE restaurants SET status='active',updated_at=CURRENT_TIMESTAMP WHERE id=? AND ${committedSQL}`).bind(id,requestId)
   ]);
   if(!result[0].meta.changes)fail(409,'The menu, images, publication or access changed. Reload before publishing.');
-  return response({ok:true,publication_revision:next,url:publicURL(access.restaurant.slug)},201);
+  return response({ok:true,publication_revision:next,url:publicURL(access.restaurant.slug,env)},201);
 }
 
-export async function publishedMenu(db,slug,locale='en') {
+export async function publishedMenu(db,slug,locale='en',env) {
   const context=await publishedContext(db,slug);
   const {snapshot,policy,supported}=context;
   if(snapshot.version!==1||!snapshot.config||!snapshot.data)fail(503,'This menu needs a new publication.');
@@ -111,9 +113,9 @@ export async function publishedMenu(db,slug,locale='en') {
   const dto=publicProjection(snapshot.config,states,snapshot.restaurant,snapshot.data,locale);
   const images=[];
   function rewrite(value) {
-    const id=managedMedia(value,context.restaurant_id);
+    const id=managedMedia(value,context.restaurant_id,env);
     if(!id)return value;
-    images.push(id);return PUBLIC_ORIGIN+publicMediaPath(slug,id);
+    images.push(id);return target(env).publicOrigin+publicMediaPath(slug,id);
   }
   if(dto.cover)dto.cover.url=rewrite(dto.cover.url);
   if(dto.logo_url)dto.logo_url=rewrite(dto.logo_url);

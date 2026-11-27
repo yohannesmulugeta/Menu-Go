@@ -1,9 +1,10 @@
 // Operator-only SQL plan. This module has no HTTP route and never contains a password.
 export const STAGING_DATABASE_ID='0cd21d93-da77-4b6b-b4dd-e16b741348c5';
 export const STAGING_ENVIRONMENT='admaki-menu-platform-staging';
-export function ownerPlan({mode,userId,username,credential,requestId,expiresAt}) {
+export function ownerPlan({mode,userId,username,credential,requestId,expiresAt,environment=STAGING_ENVIRONMENT}) {
   if(!['bootstrap','recover'].includes(mode)||!/^[-a-zA-Z0-9]{3,80}$/.test(userId)||!/^[a-z0-9][a-z0-9._-]{2,47}$/.test(username))throw Error('Explicit mode, owner user ID and normalized username are required.');
-  const h=credential,envGuard="EXISTS(SELECT 1 FROM platform_environment WHERE singleton=1 AND name='admaki-menu-platform-staging')";
+  if(!['admaki-menu-platform-staging','admaki-menu-platform-production'].includes(environment))throw Error('Explicit supported environment required.');
+  const h=credential,envGuard="EXISTS(SELECT 1 FROM platform_environment WHERE singleton=1 AND name='"+environment+"')";
   const q=(sql,params=[])=>({sql,params});
   const plan=[];
   if(mode==='bootstrap'){

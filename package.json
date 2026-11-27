@@ -24,7 +24,8 @@
     "check:menu-capacity": "node scripts/check-menu-capacity.mjs",
     "measure:menu-scale": "node scripts/menu-capacity.mjs local",
     "estimate:menu-cost": "node scripts/menu-cost.mjs",
-    "check:menu-private-runtime": "node scripts/check-menu-private-runtime.mjs && vitest run --config vitest.private.config.mjs"
+    "check:menu-private-runtime": "node scripts/check-menu-private-runtime.mjs && vitest run --config vitest.private.config.mjs",
+    "check:menu-production": "node scripts/check-menu-production.mjs && node scripts/check-menu-gateway.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",

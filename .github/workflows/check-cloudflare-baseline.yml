@@ -25,6 +25,7 @@ jobs:
       - run: npm run check:menu-capacity
       - run: npm run check:menu-onboarding
       - run: npm run check:menu-auth
+      - run: npm run check:menu-production
       - run: npm run check:menu-private-runtime
       - run: npm run check:menu-features
       - run: npm run check

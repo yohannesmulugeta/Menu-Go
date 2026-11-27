@@ -1,0 +1,11 @@
+{
+ "name":"admaki-menu-gateway-production",
+ "main":"gateway/entry.mjs",
+ "compatibility_date":"2026-11-09",
+ "workers_dev":true,
+ "services":[
+  {"binding":"PLATFORM","service":"admaki-menu-platform-production"},
+  {"binding":"LEGACY_ROUTER","service":"admaki-menu-router"},
+  {"binding":"LEGACY_CORE","service":"admaki-menu"}
+ ]
+}
