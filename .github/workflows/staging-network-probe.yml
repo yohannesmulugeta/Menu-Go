@@ -1,0 +1,61 @@
+name: Staging network probe
+on:
+  push:
+    branches: [feature/menu-platform-foundation]
+    paths:
+      - .github/workflows/staging-network-probe.yml
+permissions:
+  contents: read
+concurrency:
+  group: menu-staging-network-probe
+  cancel-in-progress: false
+jobs:
+  health-control:
+    if: github.repository == 'yohannesmulugeta/Menu-Go' && github.ref == 'refs/heads/feature/menu-platform-foundation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - name: Measure staging health twice from this runner
+        shell: bash
+        run: |
+          mkdir -p probe-results
+          probe_status=0
+          for probe_run in 1 2; do
+            node scripts/menu-capacity.mjs control "probe-results/health-${probe_run}.json" || probe_status=1
+          done
+          exit "$probe_status"
+      - name: Record comparison summary
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,writeFileSync,appendFileSync,mkdirSync} from 'node:fs';
+          const runs=[];
+          for(const index of [1,2]) {
+            try {
+              const data=JSON.parse(readFileSync('probe-results/health-'+index+'.json','utf8'));
+              runs.push({index,started_utc:data.started_utc,finished_utc:data.finished_utc,...data.results[0],samples:undefined});
+            } catch(error) { runs.push({index,error:error.message}); }
+          }
+          const payload={source_commit:process.env.GITHUB_SHA,run_id:process.env.GITHUB_RUN_ID,runner_os:process.env.RUNNER_OS,runner_arch:process.env.RUNNER_ARCH,scope:'GitHub-hosted independent-client health-only control; two 10-second windows at 10 requests/second. Does not test complete menus, CPU, uploads or Ethiopia mobile networks.',runs};
+          mkdirSync('probe-results',{recursive:true});
+          writeFileSync('probe-results/summary.json',JSON.stringify(payload,null,2)+'\n');
+          console.log('STAGING_NETWORK_RESULTS '+JSON.stringify(payload));
+          const lines=['## Staging independent-network health control','','| Run | Correct / started | p95 ms | Edge | Provisional latency gate |','| --- | --- | --- | --- | --- |',...runs.map(r=>'| '+r.index+' | '+(r.error?'Incomplete':(r.started-r.errors)+' / '+r.started)+' | '+(r.latency_ms?.p95??'Unavailable')+' | '+(r.colos||[]).join(', ')+' | '+(r.gate?.passed?'Passed':'Failed / incomplete')+' |'),'','Read-only staging health only. Production and restaurant states are unchanged. See the JSON artifact for scope and raw samples.'];
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,lines.join('\n')+'\n');
+          NODE
+      - name: Preserve raw measurements even on a failed latency gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-network-probe
+          path: probe-results/
+          if-no-files-found: error
+          retention-days: 30
