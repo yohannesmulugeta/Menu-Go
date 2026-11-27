@@ -1,3 +1,4 @@
+import {menuRoute} from './menu/service.mjs';
 import {publicationRoute} from './publications/service.mjs';
 import {publicMenuRoute} from './publications/public.mjs';
 import {favicon} from './web/favicon.mjs';
@@ -31,7 +32,7 @@ export default {
         const schema=await env.DB.prepare('SELECT count(*) count FROM schema_migrations').first();
         return response({ok:true,environment:'staging',schema_migrations:schema.count,media_binding:!!env.MEDIA,authentication:'username/password',public_menus:'staging publications'});
       }
-      if(url.pathname.startsWith('/api/'))return await publicationRoute(request,env)||await restaurantRoute(request,env)||await mediaRoute(request,env)||await attachmentRoute(request,env)||await configRoute(request,env)||await publicCapabilityRoute(request,env)||await authRoute(request,env)||response({error:'Not found.'},404);
+      if(url.pathname.startsWith('/api/'))return await menuRoute(request,env)||await publicationRoute(request,env)||await restaurantRoute(request,env)||await mediaRoute(request,env)||await attachmentRoute(request,env)||await configRoute(request,env)||await publicCapabilityRoute(request,env)||await authRoute(request,env)||response({error:'Not found.'},404);
       const publicMenu=await publicMenuRoute(request,env);if(publicMenu)return publicMenu;
       const preview=await previewRoute(request,env);if(preview)return preview;
       if(['GET','HEAD'].includes(request.method)&&(/^\/(login|platform|manage(\/[^/]+)?|account\/password)?\/?$/.test(url.pathname))){
