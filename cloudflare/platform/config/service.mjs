@@ -4,10 +4,13 @@ import {FEATURES,FEATURE_KEYS,CONTENT_FEATURE} from './registry.mjs';
 import {validateConfig,mergePatch,keys} from './validation.mjs';
 import {resolveFeatures,publicProjection} from './resolution.mjs';
 import {restaurantAccess,liveActorSQL,liveActorParams} from './access.mjs';
+export function policyFromRows(rows){
+  if(!rows.length||!Number.isSafeInteger(rows[0].policy_revision)||rows[0].policy_revision<1||FEATURE_KEYS.some(k=>!rows.some(p=>p.feature_key===k)))fail(503,'Feature policy is not initialized.');
+  return {revision:rows[0].policy_revision,byKey:Object.fromEntries(rows.map(({policy_revision,...p})=>[p.feature_key,p]))};
+}
 export async function policies(db){
   const rows=await db.prepare('SELECT f.*,s.revision policy_revision FROM feature_policies f CROSS JOIN platform_policy_state s WHERE s.singleton=1 ORDER BY f.feature_key').all();
-  if(!rows.results.length||FEATURE_KEYS.some(k=>!rows.results.some(p=>p.feature_key===k)))fail(503,'Feature policy is not initialized.');
-  return {revision:rows.results[0].policy_revision,byKey:Object.fromEntries(rows.results.map(({policy_revision,...p})=>[p.feature_key,p]))};
+  return policyFromRows(rows.results);
 }
 export async function loadConfig(db,id){
   const row=await db.prepare('SELECT * FROM restaurant_configs WHERE restaurant_id=?').bind(id).first();if(!row)fail(409,'Restaurant configuration needs initialization.');

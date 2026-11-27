@@ -1,6 +1,6 @@
 import {FEATURES,FEATURE_KEYS,hasFeature} from './registry.mjs';
 import {validateFeatures} from './validation.mjs';
-import {policies} from './service.mjs';
+import {publishedContext} from '../publications/context.mjs';
 import {fail,input,response} from '../auth/http.mjs';
 import {digest} from '../auth/passwords.mjs';
 const EVENT_FEATURE={menu_view:'analytics.collection',search:'menu.search',call_click:'contact.call',directions_click:'contact.directions',review_click:'contact.google_review',share:'guest.share',qr_download:'guest.qr_download'};
@@ -10,14 +10,11 @@ export function validateManifest(value){
 }
 export async function publishedCapability(db,slug,key){
   if(!hasFeature(key))fail(400,'Unknown feature.');
-  const row=await db.prepare(`SELECT r.id,r.status,h.revision,p.snapshot_json FROM restaurants r JOIN restaurant_publication_heads h ON h.restaurant_id=r.id JOIN restaurant_publications p ON p.restaurant_id=h.restaurant_id AND p.revision=h.revision WHERE r.slug=? AND r.status='active'`).bind(slug).first();
-  if(!row)fail(404,'Menu not found.');
-  const snapshot=JSON.parse(row.snapshot_json),manifest=validateManifest(snapshot.capabilities),policy=await policies(db),p=policy.byKey[key];
-  const template=await db.prepare('SELECT supported_features_json FROM template_releases WHERE template_id=? AND version=?').bind(manifest.template_id,manifest.template_version).first();
-  const supported=template?JSON.parse(template.supported_features_json):[];
+  const context=await publishedContext(db,slug,'capabilities');
+  const manifest=validateManifest(context.snapshot.capabilities),policy=context.policy,p=policy.byKey[key],supported=context.supported||[];
   const enabled=!!p?.allowed&&(p.forced_value===null?manifest.requested[key]:p.forced_value===1)&&manifest.ready[key]&&supported.includes(key);
   if(!enabled)fail(403,'This feature is disabled.');
-  return {restaurant_id:row.id,publication_revision:row.revision,policy_revision:policy.revision,manifest,policy:policy.byKey};
+  return {restaurant_id:context.restaurant_id,publication_revision:context.revision,policy_revision:policy.revision,manifest,policy:policy.byKey};
 }
 async function limit(db,request,tenant){
   const t=Math.floor(Date.now()/1000),window=900,key=digest(`public:${tenant}:${request.headers.get('CF-Connecting-IP')||'unknown'}:${Math.floor(t/window)}`);

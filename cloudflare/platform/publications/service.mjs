@@ -1,3 +1,4 @@
+import {publishedContext} from './context.mjs';
 import {restaurantAccess,liveActorSQL,liveActorParams} from '../config/access.mjs';
 import {policies} from '../config/service.mjs';
 import {resolveFeatures,publicProjection,capabilityManifest} from '../config/resolution.mjs';
@@ -102,25 +103,22 @@ export async function publicationRoute(request,env) {
 }
 
 export async function publishedMenu(db,slug,locale='en') {
-  const row=await db.prepare("SELECT r.id,r.status,h.revision,p.snapshot_json FROM restaurants r JOIN restaurant_publication_heads h ON h.restaurant_id=r.id JOIN restaurant_publications p ON p.restaurant_id=h.restaurant_id AND p.revision=h.revision WHERE r.slug=? AND r.status='active'").bind(slug).first();
-  if(!row)fail(404,'Menu not found.');
-  const snapshot=JSON.parse(row.snapshot_json);
+  const context=await publishedContext(db,slug);
+  const {snapshot,policy,supported}=context;
   if(snapshot.version!==1||!snapshot.config||!snapshot.data)fail(503,'This menu needs a new publication.');
-  const policy=await policies(db);
-  const template=await db.prepare('SELECT supported_features_json FROM template_releases WHERE template_id=? AND version=?').bind(snapshot.config.template_id,snapshot.config.template_version).first();
-  if(!template)fail(503,'The menu template is unavailable.');
-  const states=resolveFeatures(snapshot.config,policy.byKey,JSON.parse(template.supported_features_json),snapshot.data);
+  if(supported===null)fail(503,'The menu template is unavailable.');
+  const states=resolveFeatures(snapshot.config,policy.byKey,supported,snapshot.data);
   const dto=publicProjection(snapshot.config,states,snapshot.restaurant,snapshot.data,locale);
   const images=[];
   function rewrite(value) {
-    const id=managedMedia(value,row.id);
+    const id=managedMedia(value,context.restaurant_id);
     if(!id)return value;
     images.push(id);return PUBLIC_ORIGIN+publicMediaPath(slug,id);
   }
   if(dto.cover)dto.cover.url=rewrite(dto.cover.url);
   if(dto.logo_url)dto.logo_url=rewrite(dto.logo_url);
   for(const item of dto.items)if(item.image_url)item.image_url=rewrite(item.image_url);
-  return {restaurant_id:row.id,revision:row.revision,policy_revision:policy.revision,dto,images};
+  return {restaurant_id:context.restaurant_id,revision:context.revision,policy_revision:policy.revision,dto,images};
 }
 export async function assertCurrent(db,menu) {
   const valid=await db.prepare("SELECT 1 FROM restaurants r JOIN restaurant_publication_heads h ON h.restaurant_id=r.id CROSS JOIN platform_policy_state s WHERE r.id=? AND r.status='active' AND h.revision=? AND s.singleton=1 AND s.revision=?").bind(menu.restaurant_id,menu.revision,menu.policy_revision).first();
