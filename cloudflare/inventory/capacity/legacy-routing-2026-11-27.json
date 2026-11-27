@@ -1,0 +1,60 @@
+{
+  "verified_utc": "2026-11-27T12:12:28.821Z",
+  "scope": "Read-only deployed staging routing checks; no real phone or active customer publication claim",
+  "checks": [
+    {
+      "hash": "#/r/abol-coffee",
+      "target": "/r/abol-coffee",
+      "passed": true
+    },
+    {
+      "hash": "#/r/occasion/?locale=am&design=abol",
+      "target": "/r/occasion?locale=am",
+      "passed": true
+    },
+    {
+      "hash": "#/r/%",
+      "target": null,
+      "passed": true
+    },
+    {
+      "path": "/r/%",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "path": "/r/%2Fother",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "path": "/r/unknown-menu",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "path": "/r/occasion/other",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "path": "/r/editcheck-b0563cfff304-0",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "path": "/r/editcheck-b0563cfff304-0/qr.svg",
+      "status": 404,
+      "passed": true
+    }
+  ],
+  "health": {
+    "ok": true,
+    "environment": "staging",
+    "schema_migrations": 6,
+    "media_binding": true,
+    "authentication": "username/password",
+    "public_menus": "staging publications"
+  },
+  "passed": true
+}

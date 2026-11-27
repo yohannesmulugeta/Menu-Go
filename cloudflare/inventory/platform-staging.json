@@ -1,7 +1,7 @@
 {
   "phase": 6,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
+  "worker_version": "e252deb5-21e2-4357-bdc9-7b8b9648ea27",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -74,7 +74,7 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "entry.js": "84e4fdaaa2283bc7a3ba78cc6a4f16bc652140ac8a2af364dc2790492f5fd409"
+    "entry.js": "4187b1e0d0ffa5a9c3c70d3cbf0662d7240a3ac3ac826f844fb76bad3a4fc01d"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -1126,5 +1126,21 @@
       "cleanup_verified": true,
       "production_workers_unchanged": true
     }
+  },
+  "routing_validation": {
+    "source_commit": "7e90f749c891c38fa7bd052a5132db835d40c4e2",
+    "worker_version": "e252deb5-21e2-4357-bdc9-7b8b9648ea27",
+    "deployment_id": "70997e52-7f74-4a3f-9600-dc57804c3701",
+    "worker_sha256": "4187b1e0d0ffa5a9c3c70d3cbf0662d7240a3ac3ac826f844fb76bad3a4fc01d",
+    "bundle_matches_dry_run": true,
+    "environment": "staging",
+    "private_namespace_unchanged": true,
+    "migration_tag": "private-operations-v1",
+    "d1_migrations_applied": 0,
+    "production_workers_unchanged": true,
+    "paid_billing_changed": false,
+    "evidence": "cloudflare/inventory/capacity/legacy-routing-2026-11-27.json",
+    "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45996453322",
+    "recovery_version": "79390ac3-596e-499f-9161-0484f77805cc"
   }
 }

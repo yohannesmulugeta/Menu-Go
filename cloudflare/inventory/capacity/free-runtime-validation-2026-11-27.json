@@ -46,7 +46,8 @@
     "active_sessions": 0,
     "suspended_fixtures": 3,
     "live_assets": 0,
-    "deleted_asset_records": 28
+    "deleted_asset_records": 28,
+    "credential_files_cleared_after_verified_disable": true
   },
   "protected_table_fingerprints": {
     "platform_environment": {
