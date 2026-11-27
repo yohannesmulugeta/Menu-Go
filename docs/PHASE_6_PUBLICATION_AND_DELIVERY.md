@@ -35,10 +35,29 @@ The restaurant overview now links to the paginated feedback inbox and the existi
 
 `npm run check:menu-publications` covers snapshot isolation, duplicate and stale requests, cross-tenant and origin denials, session and policy races, R2 availability, wrong media slots, atomic failure rollback, current-policy media gating, QR serialization, unpublishing, suspension and retained legacy history. Existing schema, media, feature, authentication, onboarding, baseline and root build checks remain part of CI.
 
-Local Chrome checks exercised dashboard publication, anonymous menu and image access, 360/390/768/1440 pixel widths, guest feedback, the manager inbox and analytics report, QR link generation and unpublishing. A scanner decoded the generated QR to the exact stable staging menu URL. The browser recorded no warnings or exceptions. These local checks use synthetic in-memory D1 and R2 fixtures. Deployed evidence is added after remote verification.
+Local Chrome checks exercised dashboard publication, anonymous menu and image access, all five public templates at 360/390/768/1440 pixel widths with the feedback form expanded, guest feedback, the manager inbox and analytics report, QR link generation and unpublishing. A scanner decoded the generated QR to the exact stable staging menu URL. The browser recorded no warnings or exceptions. These local checks use synthetic in-memory D1 and R2 fixtures. The share fallback passed with native sharing disabled in the test browser. The native device share sheet remains a device verification step. Deployed evidence is recorded below.
 
 ## Rollback and remaining release work
 
 Capture the active staging Worker version and a private D1 backup before deployment. Deploy only `cloudflare/wrangler.platform-staging.jsonc`. Roll back Worker code to that captured version when required, preserving database history, references, credentials and image objects. Verify health, resource bindings and all six existing migration checksums before and after deployment.
 
 Production cutover, original domain and QR routing, real restaurant import, content editing, retention limits for historical publications, and capacity/cost certification require their respective follow-up work and approvals. This staging release adds no production route or content import.
+
+## Verified staging release
+
+Worker version `ae586267-7f7f-4ac6-b9c4-33010cae1600` serves 100% of staging traffic. The uploaded bundle matches the checked dry-run build. Bindings, the environment marker, six migration checksums, scheduled cleanup and health were verified. The previous Worker was `a0213465-a250-4840-8d6e-052612dac951`. A fresh private D1 export passed an isolated restore before rollout.
+
+A disposable restaurant manager published through the deployed dashboard. Anonymous R2 image bytes matched authenticated private reads. Private previews generated no guest events. The public menu passed four viewport widths, feedback submission, empty search, anonymous analytics and the manager inbox/report. The real downloaded SVG was scanned and decoded to its exact stable staging URL. Republished draft changes appeared only after the second publication. The old image URL lost public access while its object remained retained. Live platform policy changes revoked cover and QR availability, and the original values were restored. Unpublishing revoked menu, QR, images and feedback writes.
+
+The first remote attempt exposed a stale success notice during republishing. The notice now clears while the request runs. The final test waits for the actual response and passed with no browser warnings or exceptions. Both test attempts were cleaned up. Accounts are disabled, sessions revoked and test restaurants suspended. Referenced synthetic images and publication history remain retained. Existing restaurant configuration and credential fingerprints matched the initial snapshots.
+
+[CI passed on the final runtime commit](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45919491809). [The staging inventory](../cloudflare/inventory/platform-staging.json) records source hashes, deployment, backup, QR scan and cleanup evidence. PR #3 stays in draft.
+
+## Changed files
+
+- `cloudflare/platform/publications/service.mjs`, `snapshot.mjs` and `public.mjs` implement publication and public delivery.
+- `cloudflare/platform/templates/render.mjs` and `public-script.mjs` connect guest controls.
+- `cloudflare/platform/web/page.mjs`, `publication.mjs` and `guest-reports.mjs` add dashboard controls and reports.
+- `cloudflare/platform/worker.mjs` connects the routes and health capability.
+- `scripts/check-menu-publications.mjs`, `scripts/check-menu-platform.mjs`, `package.json` and `.github/workflows/check-cloudflare-baseline.yml` add the regression gate.
+- This report and `cloudflare/inventory/platform-staging.json` record the rollout.

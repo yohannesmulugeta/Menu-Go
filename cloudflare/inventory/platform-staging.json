@@ -1,7 +1,7 @@
 {
-  "phase": 5,
+  "phase": 6,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "a0213465-a250-4840-8d6e-052612dac951",
+  "worker_version": "ae586267-7f7f-4ac6-b9c4-33010cae1600",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -39,7 +39,7 @@
       "schema_migrations": 6,
       "media_binding": true,
       "authentication": "username/password",
-      "public_menus": "not enabled"
+      "public_menus": "staging publications"
     }
   },
   "source_reference": {
@@ -74,8 +74,8 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "worker.js": "d7e0a8f8a3c1bd92c6de7a0c6ff56e106bb3c40af4dcc35c84e1e062cbe0514e",
-    "worker.js.map": "7519a34f5c89f3b274387cc0ca7c23243890e56d07a32d575a0f3a9a33159dc6"
+    "worker.js": "bd04d39c7d8f6ed52df9e01c79d4ee75377a85d901d2c68904a0f5c0ad5987d9",
+    "worker.js.map": "dd6904e9062d19aa898b24a371c57676184a9f85dffc426d8acec62db363e5cc"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -488,5 +488,161 @@
       "finished": "2026-11-26T18:48:08.524Z"
     },
     "design_direction": "User accepted the current shared layouts and authorized Phase 5 on 26 November 2026."
+  },
+  "phase_6_validation": {
+    "source_commit": "ad4ae9f1958c42f75b1d4f811a1f870e16ce3426",
+    "verified_at_utc": "2026-11-27T00:59:20.130Z",
+    "deployment_id": "017c72ec-18ce-4e91-a1a7-0eb3fefa5f6c",
+    "deployed_at": "2026-11-27T00:54:45.260902Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. The six existing checksums matched before and after deployment.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
+      "publications/public.mjs": "5b53c04be82e92a0a3923de251dc30064a860acad7611e234295b74f923652d1",
+      "publications/service.mjs": "ddc1a4b2451c706a52ef603ff0625159533fa0a9466833a7d89183d1de4c729d",
+      "publications/snapshot.mjs": "5337ec7632c1c647ca56ba7156c0fe3f463f3b0a2acd42ae9987178b3feff322",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/public-script.mjs": "043e81d4b917edbef7cb6981db4ceb1f6daf6ce398f7a09f4041f84dd8d1e369",
+      "templates/render.mjs": "e73b7b41791834711d9e8384a5ad211060b7a39c90e9a60f0ec49ace5a8315fd",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/guest-reports.mjs": "02eb6132a119dfe95ef78966fb18b7ebc8971d6c96e9251f4781d1849ad5336a",
+      "web/page.mjs": "691bca1f48c4a26051349f59b2926211db3fb738140955e044c602f044d763c2",
+      "web/publication.mjs": "ef4a2561f4767b8c625492431dd6085a71c8bdeb6b29b7cec8359056e4945dcc",
+      "worker.mjs": "607712f1e05491a3bce3e6d2dd36485aa14fc3dbbbcc4c2cf4a63896ed2af62c"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "a0213465-a250-4840-8d6e-052612dac951",
+    "backup": {
+      "bytes": 242105,
+      "sha256": "f8d7bdd047540bd9d3e147f1dd9f724a8995d2e397d04b952f521d4765145907",
+      "storage": "Private operator directory outside Git",
+      "restore": "Isolated SQLite import, integrity and foreign key checks passed"
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45919491809",
+      "result": "success"
+    },
+    "local_browser": {
+      "scope": "Local actual Worker with intercepted browser requests and synthetic D1/R2",
+      "checks": [
+        "Publish via dashboard",
+        "Anonymous menu and published image",
+        "All five public templates at 360/390/768/1440 widths, feedback form expanded",
+        "Feedback form and manager inbox",
+        "Anonymous analytics and manager report",
+        "QR download link and generated SVG",
+        "Desktop share fallback",
+        "Unpublish revokes menu and image"
+      ],
+      "errors": [],
+      "messages": [],
+      "shareFallbackTested": true,
+      "nativeShareDisabledForFallbackTest": true
+    },
+    "remote": {
+      "tag": "p6check-d17c2224108e",
+      "started": "2026-11-27T00:55:05.736Z",
+      "checks": [
+        "Manager published via deployed dashboard; private preview collected no events; session, tenant, CSRF and stale retries denied; published R2 bytes matched private reads",
+        "Anonymous guest menu at four widths, feedback, no-result search, real QR download and manager inbox/analytics passed",
+        "Live platform disable revoked published image and QR access; original policy values restored",
+        "Republishing isolated draft changes and revoked the old public image; unpublishing revoked menu, QR and writes while retaining authorized history; browser console clean"
+      ],
+      "cleanup": {
+        "tenants": [
+          "b0316fd0-8c6f-469f-92a2-94fe19aaa63b",
+          "8edd9a07-9f05-4387-a68c-9bdb48c1baef"
+        ],
+        "users": [
+          "p6check-d17c2224108e-admin",
+          "p6check-d17c2224108e-manager",
+          "p6check-d17c2224108e-foreign"
+        ],
+        "test_restaurants_suspended": true,
+        "accounts_disabled": true,
+        "active_sessions": 0,
+        "retained_referenced_media": 2,
+        "publication_history_retained": true,
+        "existing_restaurants_and_credentials_matched": true,
+        "global_policy_values_restored": true
+      },
+      "qr_target": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-d17c2224108e",
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "finished": "2026-11-27T00:58:14.210Z"
+    },
+    "qr_scan": {
+      "decoded": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-d17c2224108e",
+      "matches_stable_url": true
+    },
+    "initial_attempt": {
+      "tag": "p6check-208bbaeed76b",
+      "started": "2026-11-27T00:51:16.181Z",
+      "checks": [
+        "Manager published via deployed dashboard; private preview collected no events; session, tenant, CSRF and stale retries denied; published R2 bytes matched private reads",
+        "Anonymous guest menu at four widths, feedback, no-result search, real QR download and manager inbox/analytics passed"
+      ],
+      "cleanup": {
+        "tenants": [
+          "66bcf5d7-0ae5-4b12-931c-9453534a9950",
+          "c639ead6-e13d-41c1-a52b-0b5a7b1b627a"
+        ],
+        "users": [
+          "p6check-208bbaeed76b-admin",
+          "p6check-208bbaeed76b-manager",
+          "p6check-208bbaeed76b-foreign"
+        ],
+        "test_restaurants_suspended": true,
+        "accounts_disabled": true,
+        "active_sessions": 0,
+        "retained_referenced_media": 1,
+        "publication_history_retained": true,
+        "existing_restaurants_and_credentials_matched": true,
+        "global_policy_values_restored": true
+      },
+      "qr_target": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-208bbaeed76b",
+      "failure": "The expression evaluated to a falsy value:\n\n  assert(updatedHTML.includes('Synthetic changed draft'))\n",
+      "finished": "2026-11-27T00:53:27.534Z"
+    },
+    "retention": "Synthetic publication history and its referenced images remain retained. Accounts are disabled and restaurants suspended. Policy values were restored while their revisions advanced monotonically.",
+    "remaining": [
+      "Restaurant content editing integration",
+      "Authorized content reconciliation and production route/QR cutover approval",
+      "Historical publication/media retention limits",
+      "Capacity, performance, cost and native mobile share verification"
+    ],
+    "final_cleanup_counts": {
+      "enabled_users": 0,
+      "enabled_credentials": 0,
+      "active_sessions": 0,
+      "active_restaurants": 0,
+      "draft_refs": 0,
+      "retained_media": 3,
+      "retained_publications": 3
+    }
   }
 }
