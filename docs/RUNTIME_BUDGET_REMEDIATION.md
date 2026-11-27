@@ -1,4 +1,4 @@
-# Required runtime-budget decision before launch
+# Runtime-budget remediation on Workers Free
 
 27 November 2026. **Launch blocker: concurrent login reached Cloudflare runtime limits.** The public-menu HTTP profile passed previously; that does not validate the substantially more expensive password-checking workload.
 
@@ -14,22 +14,21 @@
 
 [Cloudflare limits](https://developers.cloudflare.com/workers/platform/limits/) specify a 10 ms per-request CPU allowance for Free and a larger configurable allowance for Paid. The runtime can tolerate occasional overages, which explains why some expensive requests may succeed before limits are enforced. The verified Free plan, large secure-login CPU requirement, low observed memory and `exceededResources` events strongly support a CPU-budget mismatch. This finding does not require assuming that a slow network consumes CPU time.
 
-## Proposed change — not applied
+## Owner decision: remain on Free
 
-1. Obtain the owner's approval to enable **Workers Paid, $5/account/month base plus metered usage**. This is an account-wide subscription, not a charge per restaurant. It shares included usage with the account's other Workers. No financial action is authorized by this report itself.
-2. Verify that the account now shows Paid. Keep password hashing parameters, rate limits, tenant authorization and credential handling intact.
-3. Set an explicit **500 ms CPU ceiling on the staging Worker** and repeat the isolated login/upload profiles. This is a proposed bounded starting budget, not an already verified operational limit. A normal username/password login must work reliably without depending on Free-plan overage tolerance.
+The owner explicitly chose Workers Free. No subscription upgrade or Paid-only CPU override is authorized or applied. The earlier $5/month Paid option is deferred; it is not the next required action.
 
-```json
-"limits": { "cpu_ms": 500 }
-```
+## Free-plan implementation — live validation pending
 
-Apply this to `cloudflare/wrangler.platform-staging.jsonc` only after the Paid plan is confirmed. Verify the exact staging DB/R2 bindings and current version before a staging-only deployment; retain a code/version rollback. No production routing, domain, credentials or content cutover is included. Restoring an old Worker version does not cancel a paid account subscription.
+The staging entrypoint now routes only secure-password mutations and PNG uploads through a private SQLite-backed `MenuPrivateOperations` Durable Object binding. Public menus, QR delivery, session reads, editing and the remaining routes retain their existing handler. Request bodies stream across RPC; the front Worker does not buffer or parse credentials/images. Auth objects are partitioned by a SHA-256 digest of the Cloudflare-provided source address; image objects by restaurant ID digest. No raw address, username, password or session token is stored in object names. This is private request coordination, not a new public authentication API or identity store. D1 remains authoritative for sessions, quotas and credential-version/actor guards across objects.
 
-4. Retest single and three-concurrent logins, generic errors, role/tenant denials, session revocation, rate limits, upload checksums and upload quotas without resetting/bypassing production protections. Use fresh synthetic accounts and guarantee disabled accounts, revoked sessions and removed disposable uploads afterward.
-5. Require no unexpected HTTP failures or `exceededResources` events, then complete agreed network/phone/content checks before release review. Do not mark Stage 1 or production launch approved before this succeeds.
+The object calls the unchanged application router. Password parameters (`scrypt N=16384,r=8,p=5`), generic authentication errors, origin checks, account/IP throttles, tenant permissions, post-hash transaction guards, upload bounds and quotas remain unchanged. The object has no public fetch handler, timer, credential cache or storage writes. Missing bindings and RPC failures fail closed, with no expensive fallback or automatic mutation retry.
 
-The existing scrypt format remains `N=16384, r=8, p=5`. No password work factor was reduced, no authentication system was replaced, and no runtime/billing change was made during this investigation.
+Cloudflare documents [SQLite Durable Objects on Free](https://developers.cloudflare.com/durable-objects/platform/pricing/) and [a default 30-second CPU allowance](https://developers.cloudflare.com/durable-objects/platform/limits/). Free quotas include 100,000 object requests and 13,000 GB-s duration per day, shared across the account. Quota exhaustion rejects operations; this architecture is not unlimited capacity. Neither Paid billing nor an explicit CPU override is part of the change.
+
+Local validation passed in the actual Workers runtime using the Cloudflare Vitest integration: concurrent username/password login, secure cookies over RPC, generic errors, account creation, first-password change, administrator reset, old-session revocation, unchanged scrypt parameters, cross-tenant/role/CSRF denials, real D1/R2 PNG round trips, invalid/oversize uploads, the 20-image quota and login rate limiting. The full existing security/build regression suites also passed. These local tests do not prove deployed Free-plan behavior.
+
+Before accepting the fix: deploy only verified staging bindings after a tested private database restore; repeat the bounded real login/upload profile with fresh synthetic users; collect provider resource outcomes and CPU metrics; clean every test identity/session/image; compare original protected records; and check public delivery. Keep production unchanged and PR #3 draft until phone, content and production release checks pass.
 
 ## Cost implication
 

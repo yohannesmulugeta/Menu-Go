@@ -1,9 +1,13 @@
 {
   "name": "admaki-menu-platform-staging",
-  "main": "platform/worker.mjs",
+  "main": "platform/entry.mjs",
   "compatibility_date": "2026-11-09",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "durable_objects": {
+    "bindings": [{ "name": "PRIVATE_OPERATIONS", "class_name": "MenuPrivateOperations" }]
+  },
+  "migrations": [{ "tag": "private-operations-v1", "new_sqlite_classes": ["MenuPrivateOperations"] }],
   "triggers": { "crons": ["*/15 * * * *"] },
   "vars": {
     "ENVIRONMENT": "admaki-menu-platform-staging"

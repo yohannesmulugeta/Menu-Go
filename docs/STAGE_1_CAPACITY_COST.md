@@ -108,7 +108,7 @@ All fixtures are suspended, their temporary account is disabled and revoked, all
 
 ## Remaining Stage 1 acceptance
 
-1. Resolve the verified Free-plan CPU-budget mismatch. The proposed owner decision is Workers Paid ($5/account/month base plus usage), then a 500 ms staging CPU ceiling and retest. This recurring billing change has not been made.
+1. Resolve the verified Free-plan CPU-budget mismatch. The owner chose to remain on Free. Private SQLite-backed Durable Object routing is implemented and locally tested; deployed login/upload/resource validation remains pending. No subscription upgrade or Paid-only CPU override is authorized.
 2. Rerun login and extended upload/quota tests after the budget is compatible. The latest extended profiles failed; only their smaller successful samples are reported as passing. Operator-network wall timings are not independent browser timings.
 3. Actual provider CPU/account usage is now recorded, and Paid forecasts use measured public/login/upload CPU means. Future traffic, event/manager CPU, storage retention, shared allowance consumption and the real invoice period still limit the forecast.
 4. Agree production traffic/duration expectations and complete café content, real-phone/network, sharing and final release checks. The earlier three-restaurant/30-second profile is not a deployed 1,000-tenant or long-soak certification.
