@@ -1,0 +1,36 @@
+{
+  "started_utc": "2026-11-27T04:20:29.252Z",
+  "origin": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "scope": "Three isolated managers/tenants. Bounded actual login/upload HTTP tests from the operator executor. Wall times include its outbound network/proxy; no independent-network or large-login-capacity claim.",
+  "phases": [
+    {
+      "name": "login-sequential",
+      "started_utc": "2026-11-27T04:20:29.253Z",
+      "finished_utc": "2026-11-27T04:20:47.887Z",
+      "requests": 9,
+      "concurrency": 1,
+      "statuses": {
+        "200": 9
+      },
+      "latency_ms": {
+        "median": 1306.76,
+        "p95": 8193.11,
+        "max": 8193.11
+      }
+    }
+  ],
+  "checks": [
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access"
+  ],
+  "cleanup": [],
+  "passed": false,
+  "failure": {
+    "name": "AssertionError",
+    "message": "Unexpected synthetic login status\n\n503 !== 200\n"
+  },
+  "finished_utc": "2026-11-27T04:21:40.924Z",
+  "accepted_uploads": 0,
+  "deleted_uploads": 0
+}

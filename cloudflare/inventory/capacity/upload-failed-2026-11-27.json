@@ -1,0 +1,55 @@
+{
+  "started_utc": "2026-11-27T04:25:32.845Z",
+  "origin": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "scope": "Three isolated managers/tenants. Bounded actual login/upload HTTP tests from the operator executor. Wall times include its outbound network/proxy; no independent-network or large-login-capacity claim. Upload-only continuation uses operator-issued scoped test sessions; it does not certify login.",
+  "phases": [
+    {
+      "name": "upload-sequential",
+      "started_utc": "2026-11-27T04:25:45.579Z",
+      "finished_utc": "2026-11-27T04:26:06.282Z",
+      "requests": 3,
+      "unexpected_failures": 0,
+      "concurrency": 1,
+      "statuses": {
+        "201": 3
+      },
+      "latency_ms": {
+        "median": 8029.3,
+        "p95": 9777.51,
+        "max": 9777.51
+      }
+    },
+    {
+      "name": "upload-concurrent",
+      "started_utc": "2026-11-27T04:26:06.283Z",
+      "finished_utc": "2026-11-27T04:26:36.118Z",
+      "requests": 9,
+      "unexpected_failures": 0,
+      "concurrency": 3,
+      "statuses": {
+        "201": 9
+      },
+      "latency_ms": {
+        "median": 9542.72,
+        "p95": 10445.91,
+        "max": 10445.91
+      }
+    }
+  ],
+  "checks": [
+    "Authenticated R2 image round trips match expected SHA-256 and length",
+    "Invalid image, cross-origin, oversize and cross-tenant uploads denied",
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access",
+    "Logout revokes synthetic manager access"
+  ],
+  "cleanup": [],
+  "passed": false,
+  "failure": {
+    "name": "AssertionError",
+    "message": "Unexpected synthetic upload status\n\n503 !== 201\n"
+  },
+  "finished_utc": "2026-11-27T04:32:47.514Z",
+  "accepted_uploads": 20,
+  "deleted_uploads": 20
+}

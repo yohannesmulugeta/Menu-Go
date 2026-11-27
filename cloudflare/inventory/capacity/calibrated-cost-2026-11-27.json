@@ -1,0 +1,190 @@
+{
+  "pricing": {
+    "verified_on": "2026-11-27",
+    "currency": "USD",
+    "workers": {
+      "base": 5,
+      "requests_included": 10000000,
+      "requests_per_million": 0.3,
+      "cpu_ms_included": 30000000,
+      "cpu_per_million_ms": 0.02
+    },
+    "d1": {
+      "reads_included": 25000000000,
+      "reads_per_million": 0.001,
+      "writes_included": 50000000,
+      "writes_per_million": 1,
+      "gb_included": 5,
+      "per_gb": 0.75
+    },
+    "r2": {
+      "gb_included": 10,
+      "per_gb": 0.015,
+      "a_included": 1000000,
+      "a_per_million": 4.5,
+      "b_included": 10000000,
+      "b_per_million": 0.36
+    },
+    "sources": [
+      "https://developers.cloudflare.com/workers/platform/pricing/",
+      "https://developers.cloudflare.com/d1/platform/pricing/",
+      "https://developers.cloudflare.com/r2/pricing/"
+    ]
+  },
+  "actual_plan": "Free",
+  "forecast_plan": "Workers Paid (conditional; not enabled)",
+  "input_evidence": "usage-2026-11-27.json",
+  "caveats": "Planning scenarios using measured CPU means for public/login/upload. Event/manager CPU, future traffic, retained media/history and use of shared account allowances remain assumptions. Current Free CPU budget failed concurrent login; these forecasts do not approve a launch.",
+  "scenarios": [
+    {
+      "tenants": 20,
+      "assumptions": {
+        "viewsPerDay": 300,
+        "imagesPerView": 4,
+        "eventsPerView": 1,
+        "cpuMs": 4.850351416515974,
+        "loginCpuMs": 155.521,
+        "uploadCpuMs": 19.090416666666666,
+        "eventCpuMs": 20,
+        "managerCpuMs": 20,
+        "htmlRows": 39,
+        "imageRows": 42,
+        "eventRows": 80,
+        "eventWrites": 4,
+        "mediaGBPerTenant": 0.06,
+        "d1GBPerTenant": 0.00055
+      },
+      "monthly_usage": {
+        "views": 180000,
+        "requests": 1087400,
+        "cpu_ms": 8248308.274080772,
+        "d1_rows_read": 52290200,
+        "d1_rows_written": 776000,
+        "d1_gb": 0.011000000000000001,
+        "r2_gb": 1.2,
+        "r2_class_a": 400,
+        "r2_class_b": 720000
+      },
+      "costs_usd": {
+        "workers_base": 5,
+        "workers_requests": 0,
+        "workers_cpu": 0,
+        "d1_reads": 0,
+        "d1_writes": 0,
+        "d1_storage": 0,
+        "r2_storage": 0,
+        "r2_class_a": 0,
+        "r2_class_b": 0
+      },
+      "total_usd": 5,
+      "free_plan_daily_limits": {
+        "requests_per_day": 36247,
+        "reads_per_day": 1743007,
+        "writes_per_day": 25867,
+        "exceeds_worker_requests": false,
+        "exceeds_d1_reads": false,
+        "exceeds_d1_writes": false
+      }
+    },
+    {
+      "tenants": 100,
+      "assumptions": {
+        "viewsPerDay": 300,
+        "imagesPerView": 4,
+        "eventsPerView": 1,
+        "cpuMs": 4.850351416515974,
+        "loginCpuMs": 155.521,
+        "uploadCpuMs": 19.090416666666666,
+        "eventCpuMs": 20,
+        "managerCpuMs": 20,
+        "htmlRows": 39,
+        "imageRows": 42,
+        "eventRows": 80,
+        "eventWrites": 4,
+        "mediaGBPerTenant": 0.06,
+        "d1GBPerTenant": 0.00055
+      },
+      "monthly_usage": {
+        "views": 900000,
+        "requests": 5437000,
+        "cpu_ms": 41241541.370403856,
+        "d1_rows_read": 261451000,
+        "d1_rows_written": 3880000,
+        "d1_gb": 0.055,
+        "r2_gb": 6,
+        "r2_class_a": 2000,
+        "r2_class_b": 3600000
+      },
+      "costs_usd": {
+        "workers_base": 5,
+        "workers_requests": 0,
+        "workers_cpu": 0.2248,
+        "d1_reads": 0,
+        "d1_writes": 0,
+        "d1_storage": 0,
+        "r2_storage": 0,
+        "r2_class_a": 0,
+        "r2_class_b": 0
+      },
+      "total_usd": 5.22,
+      "free_plan_daily_limits": {
+        "requests_per_day": 181234,
+        "reads_per_day": 8715034,
+        "writes_per_day": 129334,
+        "exceeds_worker_requests": true,
+        "exceeds_d1_reads": true,
+        "exceeds_d1_writes": true
+      }
+    },
+    {
+      "tenants": 1000,
+      "assumptions": {
+        "viewsPerDay": 300,
+        "imagesPerView": 4,
+        "eventsPerView": 1,
+        "cpuMs": 4.850351416515974,
+        "loginCpuMs": 155.521,
+        "uploadCpuMs": 19.090416666666666,
+        "eventCpuMs": 20,
+        "managerCpuMs": 20,
+        "htmlRows": 39,
+        "imageRows": 42,
+        "eventRows": 80,
+        "eventWrites": 4,
+        "mediaGBPerTenant": 0.06,
+        "d1GBPerTenant": 0.00055
+      },
+      "monthly_usage": {
+        "views": 9000000,
+        "requests": 54370000,
+        "cpu_ms": 412415413.7040386,
+        "d1_rows_read": 2614510000,
+        "d1_rows_written": 38800000,
+        "d1_gb": 0.55,
+        "r2_gb": 60,
+        "r2_class_a": 20000,
+        "r2_class_b": 36000000
+      },
+      "costs_usd": {
+        "workers_base": 5,
+        "workers_requests": 13.311,
+        "workers_cpu": 7.6483,
+        "d1_reads": 0,
+        "d1_writes": 0,
+        "d1_storage": 0,
+        "r2_storage": 0.75,
+        "r2_class_a": 0,
+        "r2_class_b": 9.36
+      },
+      "total_usd": 36.07,
+      "free_plan_daily_limits": {
+        "requests_per_day": 1812334,
+        "reads_per_day": 87150334,
+        "writes_per_day": 1293334,
+        "exceeds_worker_requests": true,
+        "exceeds_d1_reads": true,
+        "exceeds_d1_writes": true
+      }
+    }
+  ]
+}

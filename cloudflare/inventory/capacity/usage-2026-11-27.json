@@ -1,0 +1,428 @@
+{
+  "extended_upload_failure_metrics": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "workersInvocationsAdaptive": [
+              {
+                "dimensions": {
+                  "status": "exceededResources"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 14890,
+                  "cpuTimeP95": 14890,
+                  "memoryUsageBytesP99": 7245630
+                },
+                "sum": {
+                  "cpuTimeUs": 14890,
+                  "errors": 1,
+                  "requests": 1
+                }
+              },
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 4796,
+                  "cpuTimeP95": 19047,
+                  "memoryUsageBytesP99": 17537022
+                },
+                "sum": {
+                  "cpuTimeUs": 466396,
+                  "errors": 0,
+                  "requests": 49
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "cleanup_proof": "auth-upload-cleanup-2026-11-27.json",
+  "verified_on": "2026-11-27",
+  "plan": {
+    "plan": "Free",
+    "verification": "Cloudflare account Workers plans page: disabled Current plan button under Free card; Paid offered at $5/month + usage",
+    "url": "https://dash.cloudflare.com/2a0b619cf019c336f7208f21a1fa28cd/workers/plans",
+    "changed": false
+  },
+  "units": {
+    "provider_cpu": "microseconds",
+    "model_cpu": "milliseconds",
+    "source": "Live GraphQL schema descriptions for cpuTimeUs, startupCpuTimeUs and CPU quantiles"
+  },
+  "public_test": {
+    "start_utc": "2026-11-27T04:03:00Z",
+    "end_utc": "2026-11-27T04:07:00Z",
+    "client_requests": 1660,
+    "analytics": {
+      "avg": {
+        "sampleInterval": 1.010353227771011
+      },
+      "quantiles": {
+        "cpuTimeP50": 3517,
+        "cpuTimeP95": 10448,
+        "cpuTimeP99": 19626
+      },
+      "sum": {
+        "cpuTimeUs": 7777236,
+        "errors": 0,
+        "requests": 1659,
+        "startupCpuTimeUs": 269497,
+        "wallTime": 1520087077
+      }
+    },
+    "mean_runtime_cpu_ms": 4.687905967450272,
+    "mean_cpu_plus_reported_startup_ms": 4.850351416515974,
+    "caveat": "Adaptive metrics returned 1,659 estimated invocations versus 1,660 client requests; do not replace the exact client count or treat the sampled estimate as an invoice."
+  },
+  "login_sequential": {
+    "dimensions": {
+      "status": "success"
+    },
+    "quantiles": {
+      "cpuTimeP50": 147058,
+      "cpuTimeP95": 172059,
+      "cpuTimeP99": 172059
+    },
+    "sum": {
+      "cpuTimeUs": 1379864,
+      "errors": 0,
+      "requests": 9,
+      "startupCpuTimeUs": 19825
+    },
+    "mean_cpu_plus_reported_startup_ms": 155.521,
+    "window": {
+      "start": "2026-11-27T04:20:29.253Z",
+      "end": "2026-11-27T04:20:47.887Z"
+    }
+  },
+  "upload_phases": {
+    "concurrentUpload": [
+      {
+        "dimensions": {
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 16091,
+          "cpuTimeP95": 39327,
+          "cpuTimeP99": 39327
+        },
+        "sum": {
+          "cpuTimeUs": 171424,
+          "errors": 0,
+          "requests": 9,
+          "startupCpuTimeUs": 0
+        }
+      }
+    ],
+    "sequentialLogin": [
+      {
+        "dimensions": {
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 147058,
+          "cpuTimeP95": 172059,
+          "cpuTimeP99": 172059
+        },
+        "sum": {
+          "cpuTimeUs": 1379864,
+          "errors": 0,
+          "requests": 9,
+          "startupCpuTimeUs": 19825
+        }
+      }
+    ],
+    "sequentialUpload": [
+      {
+        "dimensions": {
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 15207,
+          "cpuTimeP95": 27534,
+          "cpuTimeP99": 27534
+        },
+        "sum": {
+          "cpuTimeUs": 57661,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 0
+        }
+      }
+    ],
+    "mean_cpu_plus_reported_startup_ms": 19.090416666666666
+  },
+  "login_failure_metrics": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "workersInvocationsAdaptive": [
+              {
+                "dimensions": {
+                  "status": "exceededResources"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 10000,
+                  "cpuTimeP95": 29624,
+                  "cpuTimeP99": 29624
+                },
+                "sum": {
+                  "cpuTimeUs": 49624,
+                  "errors": 3,
+                  "requests": 3,
+                  "startupCpuTimeUs": 0
+                }
+              },
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 142064,
+                  "cpuTimeP95": 173786,
+                  "cpuTimeP99": 173786
+                },
+                "sum": {
+                  "cpuTimeUs": 1987650,
+                  "errors": 0,
+                  "requests": 19,
+                  "startupCpuTimeUs": 19825
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "memory_metrics": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "workersInvocationsAdaptive": [
+              {
+                "dimensions": {
+                  "status": "exceededResources"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 10000,
+                  "cpuTimeP99": 29624,
+                  "memoryUsageBytesP50": 7111309,
+                  "memoryUsageBytesP99": 7119402
+                },
+                "sum": {
+                  "requests": 3
+                }
+              },
+              {
+                "dimensions": {
+                  "status": "success"
+                },
+                "quantiles": {
+                  "cpuTimeP50": 142064,
+                  "cpuTimeP99": 173786,
+                  "memoryUsageBytesP50": 6534014,
+                  "memoryUsageBytesP99": 7136863
+                },
+                "sum": {
+                  "requests": 19
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "calendar_month_observed_usage": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "d1Month": [
+              {
+                "count": 97179,
+                "sum": {
+                  "rowsRead": 1210545,
+                  "rowsWritten": 11001
+                }
+              }
+            ],
+            "workerMonth": [
+              {
+                "avg": {
+                  "sampleInterval": 12.496873697373905
+                },
+                "sum": {
+                  "cpuTimeUs": 104866140,
+                  "errors": 10,
+                  "requests": 29980,
+                  "startupCpuTimeUs": 183019990
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "calendar_month_r2_operations": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "r2Month": [
+              {
+                "dimensions": {
+                  "actionType": "DeleteObject"
+                },
+                "sum": {
+                  "requests": 29
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "HeadObject"
+                },
+                "sum": {
+                  "requests": 31
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "PutBucket"
+                },
+                "sum": {
+                  "requests": 5
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "HeadBucket"
+                },
+                "sum": {
+                  "requests": 45
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "ListBuckets"
+                },
+                "sum": {
+                  "requests": 7
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "PutBucketLifecycleConfiguration"
+                },
+                "sum": {
+                  "requests": 2
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "ListObjects"
+                },
+                "sum": {
+                  "requests": 2
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "PutObject"
+                },
+                "sum": {
+                  "requests": 232
+                }
+              },
+              {
+                "dimensions": {
+                  "actionType": "GetObject"
+                },
+                "sum": {
+                  "requests": 1487
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "load_storage_metrics": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "accountWorkerUsage": [],
+            "d1Size": [
+              {
+                "max": {
+                  "databaseSizeBytes": 1146880
+                }
+              }
+            ],
+            "loadD1": [
+              {
+                "count": 6222,
+                "sum": {
+                  "readQueries": 6222,
+                  "rowsRead": 68466,
+                  "rowsWritten": 0,
+                  "writeQueries": 0
+                }
+              }
+            ],
+            "loadR2": [
+              {
+                "dimensions": {
+                  "actionType": "GetObject"
+                },
+                "sum": {
+                  "requests": 1235,
+                  "responseBytes": 336738272
+                }
+              }
+            ],
+            "r2Size": [
+              {
+                "max": {
+                  "metadataSize": 140,
+                  "objectCount": 5,
+                  "payloadSize": 620
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  },
+  "model_cpu_ms": {
+    "public": 4.850351416515974,
+    "login": 155.521,
+    "upload": 19.090416666666666,
+    "events_assumed": 20,
+    "manager_assumed": 20
+  },
+  "limitation": "GraphQL estimates cover stated UTC windows and calendar month, not the account invoice period. Mean runtime+startup is a conservative modeling input, not proof of billable startup treatment. Public mix differs from forecast; event/manager/storage/traffic remain assumptions. Free plan is currently active; paid-plan forecasts are conditional and do not establish runtime compatibility.",
+  "sources": [
+    "https://developers.cloudflare.com/analytics/graphql-api/tutorials/querying-workers-metrics/",
+    "https://developers.cloudflare.com/workers/platform/limits/",
+    "https://developers.cloudflare.com/workers/platform/pricing/"
+  ]
+}

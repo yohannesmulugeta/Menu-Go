@@ -5,6 +5,8 @@ import {createHash} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 import {applyLocalMigrations} from '../cloudflare/platform/migrations.mjs';
 import {prepareFixtureState,syntheticPNG,publicManifest} from './staging-capacity-fixtures.mjs';
+import {prepareAuthUploadState,drainJobs} from './staging-auth-upload-load.mjs';
+import {verifyPassword} from '../cloudflare/platform/auth/passwords.mjs';
 assert.equal(percentile([1,2,3,4,100],.95),100);assert.equal(percentile([4,1,2,3],.5),2);
 const paths=[{path:'/r/editcheck-123abc',type:'text/html',contains:'fixture'}];
 const fetcher=async()=>new Response('fixture',{headers:{'content-type':'text/html','cache-control':'no-store','cf-ray':'test-ADD'}});
@@ -27,6 +29,12 @@ const low=estimate({tenants:20}),high=estimate({tenants:1000});assert(low.total_
 assert.equal(low.monthly_usage.views,180000);assert.equal(low.monthly_usage.r2_class_b,720000);
 assert.equal(estimate({tenants:1,viewsPerDay:0,cpuMs:0,mediaGBPerTenant:10.01}).costs_usd.r2_storage,.015);
 assert.throws(()=>estimate({tenants:20,cpuMs:NaN}));assert.throws(()=>estimate({tenants:0}));
+const measuredOverride=estimate({tenants:20,cpuMs:5,loginCpuMs:350,uploadCpuMs:40,eventCpuMs:20,managerCpuMs:25});assert(measuredOverride.monthly_usage.cpu_ms>estimate({tenants:20,cpuMs:5}).monthly_usage.cpu_ms);assert.throws(()=>estimate({tenants:20,uploadCpuMs:NaN}));
+const authState=prepareAuthUploadState(),authDB=new DatabaseSync(':memory:');applyLocalMigrations(authDB);for(const q of authState.seedQueries)authDB.prepare(q.sql).run(...q.params);
+assert.equal(authDB.prepare('SELECT count(*) n FROM platform_admins').get().n,0);assert.equal(authDB.prepare('SELECT count(*) n FROM auth_sessions').get().n,0);
+for(const a of authState.accounts){const c=authDB.prepare('SELECT * FROM login_credentials WHERE user_id=?').get(a.id);assert(verifyPassword(a.password,c));assert(!JSON.stringify(authState.seedQueries).includes(a.password));assert.equal(authDB.prepare('SELECT count(*) n FROM restaurant_members WHERE user_id=? AND restaurant_id=?').get(a.id,a.restaurantId).n,1);}
+assert.deepEqual(authDB.prepare('PRAGMA foreign_key_check').all(),[]);authDB.close();
+let activeJobs=0,neverStarted=true;const drain=await drainJobs([async()=>{throw Error('Synthetic expected failure');},...Array.from({length:2},()=>async()=>{activeJobs++;await new Promise(r=>setTimeout(r,20));activeJobs--;return 'completed';}),async()=>{neverStarted=false;}],3);assert.equal(drain.failures.length,1);assert.equal(drain.results.length,2);assert.equal(activeJobs,0);assert(neverStarted);
 const state=prepareFixtureState(),fixtureDB=new DatabaseSync(':memory:');applyLocalMigrations(fixtureDB);
 fixtureDB.exec('BEGIN');for(const q of state.seedQueries)fixtureDB.prepare(q.sql).run(...q.params);fixtureDB.exec('COMMIT');
 assert.equal(fixtureDB.prepare("SELECT count(*) n FROM menu_items").get().n,300);assert.equal(fixtureDB.prepare('SELECT count(*) n FROM menu_item_variants').get().n,60);assert.equal(fixtureDB.prepare('SELECT count(*) n FROM menu_item_translations').get().n,300);assert.deepEqual(fixtureDB.prepare('PRAGMA foreign_key_check').all(),[]);fixtureDB.close();

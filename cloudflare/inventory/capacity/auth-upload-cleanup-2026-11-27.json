@@ -1,0 +1,18 @@
+{
+  "changed": [],
+  "worker_unchanged": true,
+  "cleanup": {
+    "disabled_users": 3,
+    "disabled_credentials": 3,
+    "active_sessions": 0,
+    "suspended_fixtures": 3,
+    "live_assets": 0,
+    "deleted_asset_records": 21
+  },
+  "pending_upload_cleanup": {
+    "deleted_through_media_api": true,
+    "status": 200
+  },
+  "credential_files_cleared": true,
+  "scope": "Only three new synthetic users and their three draft restaurants were modified; all original records in the 15 protected tables matched."
+}

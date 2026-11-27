@@ -1092,5 +1092,22 @@
       "Native mobile share verification",
       "Approved restaurant content and production release/cutover approval"
     ]
+  },
+  "runtime_budget_validation": {
+    "date": "2026-11-27",
+    "status": "blocked",
+    "verified_plan": "Workers Free",
+    "documented_cpu_limit_ms": 10,
+    "mean_public_cpu_plus_startup_ms": 4.850351416515974,
+    "mean_sequential_login_cpu_plus_startup_ms": 155.521,
+    "mean_upload_cpu_plus_startup_ms": 19.090416666666666,
+    "concurrent_login_result": "HTTP 503; resource-limit events",
+    "extended_upload_result": "HTTP 503 before quota test completed",
+    "billing_changed": false,
+    "runtime_settings_changed": false,
+    "password_work_factor_changed": false,
+    "proposed_staging_cpu_ms_after_paid_approval": 500,
+    "readiness_report": "docs/STAGING_READINESS.md",
+    "cleanup_proof": "cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json"
   }
 }

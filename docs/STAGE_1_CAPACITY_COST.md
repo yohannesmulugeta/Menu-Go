@@ -2,7 +2,7 @@
 
 Date: 27 November 2026. Source before measurement: `18caacfec0c113c3ba92b1e9ab1c6b718ce169a7`.
 
-**Result: the bounded public-menu HTTP load profile now passes; complete Stage 1 acceptance remains open.** Independent staging tests completed 1,660 correct requests against three 100-item menus with real R2 payloads, including 10/25/50 requests per second and a 30-second sample at 25 requests per second. Ramp/sustained p95 was 1.08–1.13 seconds with no errors or dropped arrivals. Local 100/1,000-tenant reads and independent health controls also passed. Deployed CPU/account usage, login/upload load, longer-duration expectations and Ethiopia mobile/browser performance remain separate checks. See [the representative menu report](REPRESENTATIVE_MENU_CAPACITY.md).
+**Result: public delivery passed, but the account runtime budget blocks launch.** Nine sequential logins succeeded; the concurrent-login profile and later extended uploads encountered HTTP 503 with Cloudflare resource-limit events. The dashboard confirmed Workers Free (10 ms/request). Measured mean CPU was about 155.52 ms for the sequential login window and 19.09 ms for upload samples, versus 4.85 ms for the earlier public profile. No billing/runtime setting or password work factor was changed. See [current readiness](STAGING_READINESS.md) and [the proposed runtime-budget fix](RUNTIME_BUDGET_REMEDIATION.md).
 
 Production code, routes, domains, accounts and content were not changed. PR #3 remains draft. The staging Worker version remains `03da5e9d-be53-4770-9aff-7d31566dcc8d`; no deployment or migration was needed.
 
@@ -108,11 +108,11 @@ All fixtures are suspended, their temporary account is disabled and revoked, all
 
 ## Remaining Stage 1 acceptance
 
-1. Agree the production traffic profile, duration and response/error budgets. The tested profile passed; extend the duration or workload where the actual operating requirements warrant it. A 30-second sample is not a long soak, and three deployed fixtures do not validate 1,000 deployed tenants.
-2. Capture deployed Worker CPU and account usage, including D1/R2 activity and shared allowances, before accepting the monthly cost budget. Client response times cannot replace CPU measurements.
-3. Separately benchmark login and upload workloads, including CPU and rate limits. The successful 18-image fixture setup was functional verification, not an upload-capacity certification.
-4. Keep Addis Ababa mobile/browser timings and native phone sharing as explicit device/geographic checks. Approved restaurant content and production cutover remain later work.
+1. Resolve the verified Free-plan CPU-budget mismatch. The proposed owner decision is Workers Paid ($5/account/month base plus usage), then a 500 ms staging CPU ceiling and retest. This recurring billing change has not been made.
+2. Rerun login and extended upload/quota tests after the budget is compatible. The latest extended profiles failed; only their smaller successful samples are reported as passing. Operator-network wall timings are not independent browser timings.
+3. Actual provider CPU/account usage is now recorded, and Paid forecasts use measured public/login/upload CPU means. Future traffic, event/manager CPU, storage retention, shared allowance consumption and the real invoice period still limit the forecast.
+4. Agree production traffic/duration expectations and complete café content, real-phone/network, sharing and final release checks. The earlier three-restaurant/30-second profile is not a deployed 1,000-tenant or long-soak certification.
 
-Public-delivery checks passed for this bounded profile; overall Stage 1 and production release approval remain open.
+Current launch status is blocked. All new test accounts/sessions/media were cleaned up, original protected records matched, and production remains unchanged. See [current readiness](STAGING_READINESS.md).
 
 Machine-readable evidence: [capacity measurements](../cloudflare/inventory/capacity/2026-11-27.json), [cost scenarios](../cloudflare/inventory/capacity/cost-2026-11-27.json).

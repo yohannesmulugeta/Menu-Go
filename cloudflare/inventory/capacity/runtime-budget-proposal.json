@@ -1,0 +1,15 @@
+{
+  "status": "Proposed only; owner approval required for recurring paid subscription",
+  "verified_current_plan": "Workers Free",
+  "proposed_plan": "Workers Paid",
+  "base_price_usd_per_month": 5,
+  "additional_charges": "Metered usage under Cloudflare pricing; included usage is shared across the account",
+  "scope": "Account-wide plan change, followed by a staging-only CPU-budget change and retest",
+  "staging_worker": "admaki-menu-platform-staging",
+  "expected_worker_version_before_change": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+  "configuration_file": "cloudflare/wrangler.platform-staging.jsonc",
+  "proposed_configuration_patch": {"limits": {"cpu_ms": 500}},
+  "preserve": ["password hashing parameters", "rate limits", "tenant authorization", "production routes and domains", "production credentials/content", "issued QR destinations"],
+  "required_validation": ["verified Paid account state", "exact staging bindings", "no unexpected concurrent login failures", "no runtime resource-exhaustion events", "upload/quota/checksum checks", "test-account/session/media cleanup", "existing data preservation"],
+  "applied": false
+}
