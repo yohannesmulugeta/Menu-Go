@@ -1,7 +1,7 @@
 {
   "phase": 6,
   "worker": "admaki-menu-platform-staging",
-  "worker_version": "0d590b59-f666-404e-be4f-b80eb6faef13",
+  "worker_version": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
   "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
   "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
   "r2_bucket": "admaki-menu-media-platform-staging",
@@ -74,8 +74,8 @@
     "production_workers_unchanged": true
   },
   "worker_modules": {
-    "worker.js": "948c7b7046547fb49b3c595f028f6c9c766f75073a7f51eeef8e755003e94414",
-    "worker.js.map": "cfb0b48848df24c2904fb0a261d5b0bc601b3ac0e96d577da479f27376162977"
+    "worker.js": "464a9121aac019595d4cc9034a1f45f623851fd4680b05d4f4c2d566ac2fd60a",
+    "worker.js.map": "08adc3f16d5aa901839272f7bb88cdaacb314b6819f48bca9dd88e5430e5d47f"
   },
   "feature_validation": {
     "registry_count": 30,
@@ -804,6 +804,291 @@
     "performance_scope": "Five sequential public response-header timings include network overhead. They are a baseline and do not certify capacity or cost.",
     "remaining": [
       "Public delivery latency, capacity and cost checks",
+      "Native mobile share verification",
+      "Approved restaurant content and production release/cutover approval"
+    ]
+  },
+  "performance_validation": {
+    "source_commit": "f0a2baaaa11359e3c51af7061552b8bbf7a09585",
+    "verified_at_utc": "2026-11-27T02:18:48.856Z",
+    "deployment_id": "e47e1ed2-8176-40bc-94a5-be3dc7f93600",
+    "deployed_at": "2026-11-27T02:18:29.092939Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. All six existing migration names and checksums matched before and after deployment.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "57af1d929b44f9890018d1a54ff912fb3871b2f246b3dae8087a52c010a3544c",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "8bc15683a034f9aa334cbb111618a17651c089767c3935afcb5deed014f0f67e",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "64d09b131807b82e1e20449b262970abf5f4a72a9106500c072f1ae2eed91bb3",
+      "menu/access.mjs": "0dc6f398dbbcbf8b58e82090cf882b1ac80cfce300ce93b002eec06f1cd24035",
+      "menu/mutations.mjs": "14f95084ad8097863cf3a3e638ae9f3ae4d97f9c643bf0c5557e8a37c2bf0086",
+      "menu/service.mjs": "fd31ad5692d3a08e81f5924547ea4043ccbbb9d89ab774d219d64bcdccf57e27",
+      "menu/validation.mjs": "346e2a76015cfed4c04cbb95469c92d659e114e0b55b06a3f90dece952421f38",
+      "publications/context.mjs": "6f22db8e87b4bec9ec119ac5b2497611dfa9426a08591d0deffcb0d85c974765",
+      "publications/public.mjs": "5b53c04be82e92a0a3923de251dc30064a860acad7611e234295b74f923652d1",
+      "publications/service.mjs": "1016c343f99c1a93d05884ff8ad2b2c7d956f782d82f5aaf4b0fef0c6c064250",
+      "publications/snapshot.mjs": "5337ec7632c1c647ca56ba7156c0fe3f463f3b0a2acd42ae9987178b3feff322",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/public-script.mjs": "043e81d4b917edbef7cb6981db4ceb1f6daf6ce398f7a09f4041f84dd8d1e369",
+      "templates/render.mjs": "e73b7b41791834711d9e8384a5ad211060b7a39c90e9a60f0ec49ace5a8315fd",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/guest-reports.mjs": "02eb6132a119dfe95ef78966fb18b7ebc8971d6c96e9251f4781d1849ad5336a",
+      "web/menu-extras.mjs": "595647caccb62cd04c429b3b53dd3d459684e12ee3cd31699850c43528fc3fc0",
+      "web/menu.mjs": "3bf99fbb3ef5ea3577cb74da3718dc81946fb0262426c9abb4c9ad98ed7ec5e8",
+      "web/page.mjs": "c88938e1d9d23530e32c8c8061295a52e2761365b4de1818e3304a33809c47bd",
+      "web/publication.mjs": "ef4a2561f4767b8c625492431dd6085a71c8bdeb6b29b7cec8359056e4945dcc",
+      "worker.mjs": "9b6bc33cb14c049cd9b353018e305922db74e15209c18780b4cb2e27c9d6ff0e"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "0d590b59-f666-404e-be4f-b80eb6faef13",
+    "backup": {
+      "bytes": 352263,
+      "sha256": "81dc886a381209c4fd5a3f0442369c99e145262633baa634537b2ffc70ee11fe",
+      "storage": "Private operator directory outside Git",
+      "restore": "Isolated SQLite integrity/foreign-key checks passed. All content, identities, credentials, memberships, policies, publication heads/history and media metadata compared with the final staging state."
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45927342143",
+      "result": "success"
+    },
+    "query_counts_including_environment": {
+      "html": {
+        "before": 5,
+        "after": 3
+      },
+      "qr": {
+        "before": 5,
+        "after": 3
+      },
+      "published_image": {
+        "before": 6,
+        "after": 4
+      },
+      "guest_feedback": {
+        "before": 6,
+        "after": 4
+      },
+      "guest_analytics": {
+        "before": 6,
+        "after": 4
+      }
+    },
+    "benchmark": {
+      "before": {
+        "label": "before",
+        "started": "2026-11-27T02:08:21.132Z",
+        "worker_version": "0d590b59-f666-404e-be4f-b80eb6faef13",
+        "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+        "publication_revision": 2,
+        "slug": "editcheck-9a84875f062a",
+        "samples": [
+          {
+            "headers_ms": 1522,
+            "total_ms": 1526,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1542,
+            "total_ms": 1546,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1528,
+            "total_ms": 1536,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1533,
+            "total_ms": 1535,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1635,
+            "total_ms": 1635,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 2774,
+            "total_ms": 2779,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 2437,
+            "total_ms": 2439,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 3824,
+            "total_ms": 3852,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 3582,
+            "total_ms": 3607,
+            "bytes": 12832,
+            "colo": "ADD"
+          }
+        ],
+        "median_headers_ms": 1635,
+        "restored_suspended_state": true,
+        "finished": "2026-11-27T02:08:48.212Z"
+      },
+      "after": {
+        "label": "after",
+        "started": "2026-11-27T02:18:52.192Z",
+        "worker_version": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+        "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+        "publication_revision": 2,
+        "slug": "editcheck-9a84875f062a",
+        "samples": [
+          {
+            "headers_ms": 954,
+            "total_ms": 955,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 961,
+            "total_ms": 962,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 953,
+            "total_ms": 954,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 936,
+            "total_ms": 940,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 941,
+            "total_ms": 943,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 954,
+            "total_ms": 961,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 968,
+            "total_ms": 968,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 942,
+            "total_ms": 947,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 943,
+            "total_ms": 948,
+            "bytes": 12832,
+            "colo": "ADD"
+          }
+        ],
+        "median_headers_ms": 953,
+        "restored_suspended_state": true,
+        "finished": "2026-11-27T02:19:03.706Z"
+      },
+      "median_reduction_percent": 41.7,
+      "scope": "Same synthetic publication, one warm-up and nine sequential GETs per version, full bodies consumed. Header timings include network overhead. Small single-location sample, not capacity or cost certification."
+    },
+    "local_browser": {
+      "scope": "Local actual Worker with intercepted browser requests and synthetic D1/R2",
+      "checks": [
+        "Publish via dashboard",
+        "Anonymous menu and published image",
+        "All five public templates at 360/390/768/1440 widths, feedback form expanded",
+        "Feedback form and manager inbox",
+        "Anonymous analytics and manager report",
+        "QR download link and generated SVG",
+        "Desktop share fallback",
+        "Unpublish revokes menu and image"
+      ],
+      "errors": [],
+      "messages": [],
+      "shareFallbackTested": true,
+      "nativeShareDisabledForFallbackTest": true
+    },
+    "editor_regression_browser": {
+      "scope": "Local real Worker with synthetic D1/R2 and browser request interception",
+      "checks": [
+        "Settings save while image controls are delayed",
+        "Category and item creation",
+        "Exact variant cents",
+        "Translation form",
+        "JPEG conversion and owned item photo attachment",
+        "Opening hours",
+        "Draft/public isolation",
+        "Unsaved item fields retained when opening extras",
+        "360/390/768/1440 widths"
+      ],
+      "errors": [],
+      "messages": []
+    },
+    "remote": {
+      "started": "2026-11-27T02:19:13.545Z",
+      "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+      "publication_revision": 2,
+      "checks": [
+        "Published translation, exact item/variant prices, hours, GET/HEAD, no-store/CSP, current R2 checksum and revoked prior image",
+        "Guest feedback accepted, cross-origin feedback rejected, snapshot-disabled analytics rejected",
+        "Deployed anonymous menu loaded real images at 360/390/768/1440 widths without overflow or console errors",
+        "Suspension immediately revoked menu, QR, image and guest feedback"
+      ],
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "restored_suspended_state": true,
+      "protected_data_matches_backup": true,
+      "synthetic_feedback_retained": true,
+      "finished": "2026-11-27T02:19:39.130Z"
+    },
+    "qr_scan": {
+      "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/editcheck-9a84875f062a",
+      "scanner": "zxingcpp",
+      "format": "QR Code"
+    },
+    "remaining": [
+      "Capacity and cost checks",
       "Native mobile share verification",
       "Approved restaurant content and production release/cutover approval"
     ]

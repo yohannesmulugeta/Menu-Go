@@ -29,3 +29,22 @@ The staging procedure verifies the actual environment marker, D1/R2 bindings, si
 The before/after probe uses the same retained synthetic publication, one warm-up and nine sequential anonymous HTML requests. It consumes each response, checks `no-store` and the expected saved price, and restores the synthetic restaurant's original suspended state in `finally`. It does not execute guest analytics. Timings include network overhead and are a small single-location sample, not a load or cost certification. Deployment results are recorded after verification.
 
 Production remains untouched and PR #3 remains draft. Native mobile sharing, capacity/cost measurement and authorized restaurant content/cutover remain release work.
+
+## Verified staging release
+
+Worker `03da5e9d-be53-4770-9aff-7d31566dcc8d` serves 100% of staging traffic. The uploaded bundle matches the dry-run build. The actual environment marker, D1/R2 bindings, six migration checksums, scheduled cleanup and health were verified. Code rollback targets `0d590b59-f666-404e-be4f-b80eb6faef13`; retain the additive schema, credentials, publication history and referenced media. The private D1 export passed a test restore. No migration was applied.
+
+All local checks listed above passed, including both browser suites. [GitHub CI passed on the runtime commit](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45927342143).
+
+| Nine-request sample | Before | After |
+|---|---:|---:|
+| Median response headers, including network | 1635 ms | 953 ms |
+| Smallest–largest response-header timing | 1522–3824 ms | 936–968 ms |
+
+The observed median decreased by 41.7%. Both samples used the same retained synthetic publication and the ADD point of presence. Response sizes stayed unchanged. These sequential samples do not establish performance under concurrent traffic.
+
+Deployed checks verified translated item text, exact saved item/variant prices, hours, GET/HEAD behavior, no-store/CSP headers and current R2 image bytes against the stored checksum. The prior image URL remained revoked. Feedback was accepted, cross-origin feedback was rejected, and analytics disabled in the publication stayed denied. The deployed anonymous menu loaded images at all four widths without overflow or browser console errors. The downloaded QR decoded to the exact stable staging menu URL.
+
+The synthetic restaurant was restored to its original suspended state after every probe. Suspension immediately revoked menu, QR, image and feedback access. Content, identities, credentials, memberships, policies, publication heads/history and media metadata matched the pre-rollout backup. One synthetic feedback record from this verification remains retained; no user data or media was deleted.
+
+[The staging inventory](../cloudflare/inventory/platform-staging.json) records complete timings, checksums and deployment evidence. Production remains untouched and PR #3 remains draft. Next release work is concurrent capacity/cost measurement, native device sharing, and authorized content reconciliation and production cutover.
