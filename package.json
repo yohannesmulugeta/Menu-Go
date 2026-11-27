@@ -20,7 +20,10 @@
     "check:menu-media": "node scripts/check-menu-media.mjs",
     "check:menu-onboarding": "node scripts/check-menu-onboarding.mjs",
     "check:menu-publications": "node scripts/check-menu-publications.mjs",
-    "check:menu-editor": "node scripts/check-menu-editor.mjs"
+    "check:menu-editor": "node scripts/check-menu-editor.mjs",
+    "check:menu-capacity": "node scripts/check-menu-capacity.mjs",
+    "measure:menu-scale": "node scripts/menu-capacity.mjs local",
+    "estimate:menu-cost": "node scripts/menu-cost.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",

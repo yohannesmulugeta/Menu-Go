@@ -22,6 +22,7 @@ jobs:
       - run: npm run check:menu-platform
       - run: npm run check:menu-editor
       - run: npm run check:menu-publications
+      - run: npm run check:menu-capacity
       - run: npm run check:menu-onboarding
       - run: npm run check:menu-auth
       - run: npm run check:menu-features
