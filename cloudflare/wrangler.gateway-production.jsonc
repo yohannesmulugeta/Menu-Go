@@ -1,0 +1,82 @@
+{
+  "name": "admaki-menu-gateway-production",
+  "main": "gateway/entry.mjs",
+  "compatibility_date": "2026-11-09",
+  "workers_dev": false,
+  "services": [
+    {
+      "binding": "PLATFORM",
+      "service": "admaki-menu-platform-production"
+    },
+    {
+      "binding": "LEGACY_ROUTER",
+      "service": "admaki-menu-router"
+    },
+    {
+      "binding": "LEGACY_CORE",
+      "service": "admaki-menu"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "app.admakidigital.com/",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/manager*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/api/restaurants/a4f0f62b-4e64-4b4b-b3d9-22e4d869e974/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/r/occasion*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/occasion-assets/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/preview/occasion*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/index.html",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/api/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/r/sheba-coffee*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/sheba-assets/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "app.admakidigital.com/occasion-assets/*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/r/occasion*",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    },
+    {
+      "pattern": "menu.admakidigital.com/media/895adc6a-cc13-5695-ad79-26d60c57c6d0/occasion-logo-v1.png",
+      "zone_id": "347e9b14716203696007f6a6cd91f4c1"
+    }
+  ]
+}

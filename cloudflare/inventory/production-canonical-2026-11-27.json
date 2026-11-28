@@ -1,0 +1,50 @@
+{
+  "verified_utc": "2026-11-27T15:23:43.737Z",
+  "results": [
+    {
+      "slug": "abol-coffee",
+      "html": 200,
+      "items": 89
+    },
+    {
+      "slug": "mokodo-pizza",
+      "html": 200,
+      "items": 103
+    },
+    {
+      "slug": "occasion",
+      "html": 200,
+      "items": 116
+    },
+    {
+      "slug": "sheba-coffee",
+      "html": 200,
+      "items": 40
+    },
+    {
+      "username": "admin",
+      "canonical_login": 200,
+      "first_change_required": true
+    },
+    {
+      "username": "abol",
+      "canonical_login": 200,
+      "first_change_required": true
+    },
+    {
+      "username": "mokodo",
+      "canonical_login": 200,
+      "first_change_required": true
+    },
+    {
+      "username": "occasion",
+      "canonical_login": 200,
+      "first_change_required": true
+    },
+    {
+      "username": "sheba",
+      "canonical_login": 200,
+      "first_change_required": true
+    }
+  ]
+}

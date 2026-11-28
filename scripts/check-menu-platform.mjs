@@ -1,0 +1,52 @@
+import assert from "node:assert/strict";
+import { DatabaseSync } from "node:sqlite";
+import { createHash } from "node:crypto";
+import { applyLocalMigrations,migrationFiles } from "../cloudflare/platform/migrations.mjs";
+import worker from "../cloudflare/platform/worker.mjs";
+const db=new DatabaseSync(":memory:");
+const migrationCount=migrationFiles().length;
+assert.deepEqual(applyLocalMigrations(db),{applied:migrationCount,total:migrationCount});
+assert.deepEqual(applyLocalMigrations(db),{applied:0,total:migrationCount});
+const files=migrationFiles();assert.throws(()=>applyLocalMigrations(db,[{...files[0],sha256:"modified"}]),/checksum/);
+db.prepare("INSERT INTO restaurants(id,name,slug,status) VALUES('tenant-b','Second example','tenant-b','draft')").run();
+db.prepare("INSERT INTO menu_items(id,restaurant_id,name,price) VALUES('item-a','staging-demo','Example',100)").run();
+assert.throws(()=>db.prepare("INSERT INTO menu_item_variants(id,restaurant_id,menu_item_id,label,price_minor) VALUES('bad','tenant-b','item-a','Large',10000)").run(),/FOREIGN KEY/);
+assert.throws(()=>db.prepare("INSERT INTO restaurant_configs(restaurant_id,template_id,template_version,features_json) VALUES('tenant-b','classic',1,'[]')").run(),/CHECK/);
+assert.throws(()=>db.prepare("INSERT INTO restaurant_publication_heads(restaurant_id,revision) VALUES('tenant-b',1)").run(),/FOREIGN KEY/);
+db.prepare("INSERT INTO users(id,email) VALUES('test-owner','owner@example.invalid')").run();
+db.prepare("INSERT INTO login_credentials(user_id,username,hash_format,password_hash,parameters_json) VALUES('test-owner','Example','fixture','test-only','{}')").run();
+assert.throws(()=>db.prepare("INSERT INTO login_credentials(user_id,username,hash_format,password_hash,parameters_json) VALUES('missing','example','fixture','test-only','{}')").run(),/UNIQUE/);
+db.prepare("INSERT INTO platform_audit_logs(actor_user_id,action,target_type,target_id,request_id) VALUES('test-owner','fixture','user','test-owner','test-request')").run();
+assert.equal(db.prepare("SELECT count(*) n FROM platform_audit_logs").get().n,1);
+assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(),[]);
+const empty=new DatabaseSync(":memory:");const badSQL="CREATE TABLE should_rollback(id TEXT); INSERT INTO nonexistent VALUES(1);";
+const bad={name:"0000_failure.sql",sql:badSQL,sha256:createHash("sha256").update(badSQL).digest("hex")};
+assert.throws(()=>applyLocalMigrations(empty,[bad]),/nonexistent/);
+assert.equal(empty.prepare("SELECT count(*) n FROM sqlite_master WHERE name='should_rollback'").get().n,0);
+assert.equal(empty.prepare("SELECT count(*) n FROM schema_migrations").get().n,0);
+const untracked=new DatabaseSync(":memory:");untracked.exec("CREATE TABLE production_like(id TEXT)");
+assert.throws(()=>applyLocalMigrations(untracked),/untracked/);
+const dump=[];
+for(const table of db.prepare("SELECT name,sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all()){
+  dump.push(table.sql+";");
+  const cols=db.prepare('PRAGMA table_info("'+table.name+'")').all().map(c=>c.name);
+  for(const row of db.prepare('SELECT * FROM "'+table.name+'"').all()){
+    const literal=v=>v===null?"NULL":typeof v==="number"?String(v):"'"+String(v).replaceAll("'","''")+"'";
+    dump.push('INSERT INTO "'+table.name+'"('+cols.map(c=>'"'+c+'"').join(",")+') VALUES('+cols.map(c=>literal(row[c])).join(",")+');');
+  }
+}
+for(const index of db.prepare("SELECT sql FROM sqlite_master WHERE type='index' AND sql IS NOT NULL ORDER BY name").all())dump.push(index.sql+";");
+const restored=new DatabaseSync(":memory:");restored.exec("PRAGMA foreign_keys=OFF;"+dump.join("\n"));restored.exec("PRAGMA foreign_keys=ON");
+assert.deepEqual(restored.prepare("PRAGMA foreign_key_check").all(),[]);
+assert.equal(restored.prepare("SELECT count(*) n FROM menu_items").get().n,1);
+assert.equal(restored.prepare("SELECT count(*) n FROM schema_migrations").get().n,migrationCount);
+const env={ENVIRONMENT:"admaki-menu-platform-staging",MEDIA:{},DB:{prepare(sql){return {async first(){return db.prepare(sql).get();}};}}};
+const req=(p="/api/health",method="GET")=>new Request("https://staging.invalid"+p,{method});
+assert.equal((await worker.fetch(req(),{})).status,503);
+assert.equal((await worker.fetch(req("/api/auth/login"),env)).status,405);
+assert.equal((await worker.fetch(req("/api/health","POST"),env)).status,405);
+const health=await worker.fetch(req(),env);assert.equal(health.status,200);
+assert.deepEqual(await health.json(),{ok:true,environment:"staging",schema_migrations:migrationCount,media_binding:true,authentication:"username/password",public_menus:"staging publications"});
+assert.equal((await worker.fetch(req("/api/health","HEAD"),env)).body,null);
+assert.equal((await worker.fetch(req(),{...env,DB:{prepare(){return {async first(){return {name:"production"};}};}}})).status,503);
+console.log("Shared schema/worker checks passed: replay, checksums, rollback, tenant FKs, JSON shape, username uniqueness, platform audit, isolated dump/restore and fail-closed staging health.");

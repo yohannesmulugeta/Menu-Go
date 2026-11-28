@@ -1,0 +1,33 @@
+{
+  "verified_utc": "2026-11-27T15:14:32.476Z",
+  "results": [
+    {
+      "slug": "abol-coffee",
+      "items": 89,
+      "categories": 13,
+      "names_prices_match": true,
+      "html": 200
+    },
+    {
+      "slug": "mokodo-pizza",
+      "items": 103,
+      "categories": 12,
+      "names_prices_match": true,
+      "html": 200
+    },
+    {
+      "slug": "occasion",
+      "items": 116,
+      "categories": 15,
+      "names_prices_match": true,
+      "html": 200
+    },
+    {
+      "slug": "sheba-coffee",
+      "items": 40,
+      "categories": 7,
+      "names_prices_match": true,
+      "html": 200
+    }
+  ]
+}

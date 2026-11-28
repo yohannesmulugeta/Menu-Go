@@ -1,0 +1,71 @@
+{
+  "status": "not_deployed",
+  "source_base": "66a0d4ffc8e596ac731e55e2023bf2dc1faf2fa0",
+  "worker": "admaki-menu-platform-staging",
+  "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+  "r2_bucket": "admaki-menu-media-platform-staging",
+  "previous_recorded_worker_version": "69bf68bb-d542-421f-b817-1d7d9c7ca405",
+  "pending_migration": {
+    "name": "0006_templates_media.sql",
+    "sha256": "f4a1ac6fc7fce211f0a9551e11659fc23ba99ac3cecd4c17c309e6c5c56f9a83"
+  },
+  "worker_modules": {
+    "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+    "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+    "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+    "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+    "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+    "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+    "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+    "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+    "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+    "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
+    "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+    "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+    "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
+    "migrations.mjs": "1afcd1f356765888ffd59f18ec2dcf36c3a16752efa5f542936871abce8b3b6d",
+    "templates/render.mjs": "40a267300605de64e93cedf41c2acbb6d42c4487bea85af2e09d3c53e2f6bf83",
+    "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+    "web/page.mjs": "8bf1bf2d3a6635e3a6f3463c1ae8a8214771e1869fae6378a1a61291ae1a96fe",
+    "worker.mjs": "9247d9ee8d55c1382d2f23a25f6a8938afb51335ac3b77b2f8f8ae0c95028ea4"
+  },
+  "browser_validation": {
+    "environment": "localhost synthetic fixtures",
+    "templates": [
+      "classic@2",
+      "abol@1",
+      "mokodo@1",
+      "sheba@1",
+      "occasion@1"
+    ],
+    "widths": [
+      360,
+      390,
+      768,
+      1440
+    ],
+    "cases": 20,
+    "horizontal_overflow": false,
+    "cover_focal": "25% 35%",
+    "minimum_active_control_height": 44,
+    "disclosure_last": true,
+    "upload_and_attachment": "passed locally",
+    "deployed_r2_round_trip": "not run"
+  },
+  "deployment_blocker": "Cloudflare outbound network access from the executor fails with EACCES. No deployed version is claimed.",
+  "ci_validation": {
+    "commit": "6c30e98b0854f20088c550ac175f81738532169a",
+    "run_id": 45584211438,
+    "result": "success",
+    "includes": [
+      "exact dependency installation",
+      "baseline integrity and router tests",
+      "baseline packaging",
+      "recovered frontend build/parity",
+      "schema and media suites",
+      "authentication",
+      "typed features",
+      "root lint/build/production checks"
+    ]
+  }
+}

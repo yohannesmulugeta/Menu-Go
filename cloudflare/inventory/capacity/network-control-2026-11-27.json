@@ -1,0 +1,89 @@
+{
+  "source_commit": "c958e038d98da8013f588ee18e6e9e48bd11b4a2",
+  "run_id": "45936406697",
+  "runner_os": "Linux",
+  "runner_arch": "X64",
+  "scope": "GitHub-hosted independent-client health-only control; two 10-second windows at 10 requests/second. Does not test complete menus, CPU, uploads or Ethiopia mobile networks.",
+  "runs": [
+    {
+      "index": 1,
+      "started_utc": "2026-11-27T03:50:42.071Z",
+      "finished_utc": "2026-11-27T03:50:52.415Z",
+      "rate": 10,
+      "seconds": 10,
+      "scheduled": 100,
+      "started": 100,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 9.67,
+      "elapsed_ms": 10343,
+      "latency_ms": {
+        "median": 472.68,
+        "p95": 538.16,
+        "max": 689.54
+      },
+      "colos": [
+        "ORD"
+      ],
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    },
+    {
+      "index": 2,
+      "started_utc": "2026-11-27T03:50:52.500Z",
+      "finished_utc": "2026-11-27T03:51:02.861Z",
+      "rate": 10,
+      "seconds": 10,
+      "scheduled": 100,
+      "started": 100,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 9.65,
+      "elapsed_ms": 10360,
+      "latency_ms": {
+        "median": 466.28,
+        "p95": 515.28,
+        "max": 578.11
+      },
+      "colos": [
+        "ORD"
+      ],
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    }
+  ],
+  "control_database_calls_per_get": 2,
+  "staging": {
+    "worker": "admaki-menu-platform-staging",
+    "worker_version": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+    "deployment_id": "e47e1ed2-8176-40bc-94a5-be3dc7f93600",
+    "checked_before_utc": "2026-11-27T03:49:32.265Z",
+    "checked_after_utc": "2026-11-27T03:51:57.785Z",
+    "version_unchanged": true
+  },
+  "previous_executor_control": {
+    "requests": 100,
+    "errors": 0,
+    "p95_ms": 7535.66,
+    "edge": "MXP",
+    "source": "cloudflare/inventory/capacity/2026-11-27.json"
+  },
+  "workflow_run_url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45936406697",
+  "artifact": {
+    "id": 15170617961,
+    "name": "staging-network-probe",
+    "digest": "sha256:e74991eede69a300813815a88bf4ea7a44516ee4478c8ffb46f17d8b3db4e0cd",
+    "expires_at": "2026-12-27T03:51:03Z"
+  },
+  "interpretation": "The earlier slow health result did not reproduce from this independent client against the same staging deployment. Client/network/edge path differences likely contributed, but the exact cause is not isolated. This does not validate complete-menu capacity, geographic performance, CPU billing, login or upload workloads."
+}

@@ -1,0 +1,27 @@
+# Private RPC response lifecycle
+
+27 November 2026. Staging-only correction; remain on the existing Free plan.
+
+## Reproduced behavior
+
+Six wrong-origin login requests each returned the expected HTTP 403 and a complete 90-byte JSON body. The front Worker recorded six successful invocations and zero errors. The private Durable Object recorded six `clientDisconnected` RPC outcomes for the same window, despite each HTTP body being read to completion. These requests fail before credential lookup or throttling; no customer account or rate-limit state was changed. The baseline version was `e252deb5-21e2-4357-bdc9-7b8b9648ea27`.
+
+## Correction verified in bounded staging checks
+
+The caller now fully consumes the small private mutation response, capped at 128 KiB, disposes the RPC response scope in a `finally` block, and returns an independent Response preserving bytes, status and headers, including session cookies. Oversized or broken streams are canceled/disposed and fail with the existing generic 503. No mutation is retried.
+
+Request bodies still stream to the private object. Secure hashing parameters, account/IP throttling, roles, tenant boundaries, image validation and quotas are unchanged. Public menu/image delivery bypasses this helper and remains streamed. The response cap applies only to controlled private JSON mutation responses, not uploaded image bytes or public downloads.
+
+After response disposal, the successful-login provider samples changed to `success`. Early-origin denials still produced disconnect outcomes because their transferred request body had intentionally not been read. The private dispatcher now explicitly cancels an unused body in `finally`, without draining rejected uploads. If a client already canceled, cleanup preserves the original denial. Requests already consumed by JSON/image validation keep their existing handling.
+
+[Cloudflare's RPC lifecycle documentation](https://developers.cloudflare.com/workers/runtime-apis/rpc/lifecycle/) describes object disposal and caller execution-context cancellation. [Its cancellation guidance](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/http/#handle-canceled-requests) requires checking full response bodies and both sides' outcomes. The code's unclosed response scope is a testable explanation, not proof that every historic disconnect was harmless.
+
+Local checks cover response completion before disposal, exact bytes/cookies/headers, empty responses, oversize cancellation, broken-stream disposal and redacted failures. The existing actual Workers-runtime suite passed concurrent secure login, password creation/change/reset/revocation, denial cases, R2 upload/read and quota behavior. The deployed response-only version `c19e3acb-dbde-405f-9578-34396ea806c7` passed the full bounded HTTP profile: nine sequential and nine three-concurrent logins; three sequential and nine three-concurrent uploads; exact R2 reads, generic auth errors, role/tenant/origin/bounds checks, the 20-uploads-per-15-minute quota and logout. All 28 uploads were deleted. Its provider outcomes changed to 60 private RPC successes and three cancellations associated with early upload denials.
+
+The final version `64b83127-f8aa-4ee0-9f81-0c83aed31cae` includes explicit unused-request cancellation. Its final smoke passed three concurrent logins, two concurrent uploads/checksum reads, six wrong-origin login denials, three early upload denials and a quota denial. Every response body was consumed. Provider data recorded six RPC successes (three logins, two uploads and the quota denial after image parsing) and nine clientDisconnected outcomes matching the nine intentional unread-body rejections. The front Worker recorded no runtime/resource failures. The cancellations are retained as cancellations, not relabeled as successes; the tested rejection path explains them without asserting that every future or historic disconnect is harmless.
+
+One initial final-smoke attempt reused the already-exhausted quota fixture and correctly received 409. It was retained as a failed test attempt. The passing rerun used the other two managers for accepted uploads and separately checked that deleting images did not reset the original manager's 15-minute quota. No throttle or quota was reset.
+
+All 32 uploads across these tests are deleted; all three users/credentials are disabled, every session (including older concurrent-login sessions) is revoked, private credentials are cleared and all three fixtures are suspended. Original records across 15 protected tables match the pre-test fingerprints. [Full profile](../cloudflare/inventory/capacity/rpc-response-profile-2026-11-27.json), [final smoke](../cloudflare/inventory/capacity/rpc-final-smoke-2026-11-27.json), [provider comparison and cleanup](../cloudflare/inventory/capacity/rpc-lifecycle-2026-11-27.json), [retained quota-fixture attempt](../cloudflare/inventory/capacity/rpc-quota-fixture-attempt-2026-11-27.json).
+
+[Full GitHub CI passed on final runtime source 8d120796](https://github.com/yohannesmulugeta/Menu-Go/actions/runs/46000944222). Production remains unchanged and PR #3 stays draft. Phone/geographic checks, approved café content, production import/recovery and release review remain. Bounded results do not certify unlimited capacity or zero provider cancellations.

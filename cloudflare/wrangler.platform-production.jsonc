@@ -1,0 +1,13 @@
+{
+ "name":"admaki-menu-platform-production",
+ "main":"platform/entry.mjs",
+ "compatibility_date":"2026-11-09",
+ "compatibility_flags":["nodejs_compat"],
+ "workers_dev":true,
+ "durable_objects":{"bindings":[{"name":"PRIVATE_OPERATIONS","class_name":"MenuPrivateOperations"}]},
+ "migrations":[{"tag":"private-operations-v1","new_sqlite_classes":["MenuPrivateOperations"]}],
+ "triggers":{"crons":["*/15 * * * *"]},
+ "vars":{"ENVIRONMENT":"admaki-menu-platform-production"},
+ "d1_databases":[{"binding":"DB","database_name":"admaki-menu-platform-production","database_id":"7da5fc86-a792-4410-9773-6dfa72e1b8e3"}],
+ "r2_buckets":[{"binding":"MEDIA","bucket_name":"admaki-menu-media-platform-production"}]
+}

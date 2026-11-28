@@ -1,0 +1,1163 @@
+{
+  "phase": 6,
+  "worker": "admaki-menu-platform-staging",
+  "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+  "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "database_id": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+  "r2_bucket": "admaki-menu-media-platform-staging",
+  "migrations": [
+    {
+      "name": "0001_recovered_baseline.sql",
+      "sha256": "dc37bbfcf3693114645d90fc78feaa71dde88f58b93135a032baad163663832a"
+    },
+    {
+      "name": "0002_shared_platform.sql",
+      "sha256": "922b4eb76da09ce25663e127be6af165fbb7d2ea33ddf9f586fc049be75a650d"
+    },
+    {
+      "name": "0003_staging_fixtures.sql",
+      "sha256": "89ad4cc9b065083ddb0c33e7d7333f3738ff240b2baa386e0dd585c9ef82eaab"
+    },
+    {
+      "name": "0004_shared_auth.sql",
+      "sha256": "8e22058794839354c17fe7c67b37d3fda06fa8f6fb964edb7d042a8bf276b9c5"
+    },
+    {
+      "name": "0005_feature_catalogue.sql",
+      "sha256": "152119e0b634c2e0e525e5504c6a9105a501a9d01679c1a62e31f5bdf6618e6a"
+    },
+    {
+      "name": "0006_templates_media.sql",
+      "sha256": "f4a1ac6fc7fce211f0a9551e11659fc23ba99ac3cecd4c17c309e6c5c56f9a83"
+    }
+  ],
+  "health": {
+    "status": 200,
+    "health": {
+      "ok": true,
+      "environment": "staging",
+      "schema_migrations": 6,
+      "media_binding": true,
+      "authentication": "username/password",
+      "public_menus": "staging publications"
+    }
+  },
+  "source_reference": {
+    "branch": "feat/cloudflare-full-migration",
+    "commit": "5f802d2528fea63c840f1ff80ee128512b12bae0",
+    "patch": "Restore public link routing, restaurant selector, dashboard loading errors and review-link help text",
+    "normalized_js_sha256": "b9e7bb56660c9647d5358028636d8faac4067aae145ddcc6919623e03a091533",
+    "css_sha256": "7291a026ec7f87807c6b22c6b7cf29b67d248da29ddd66bfd8d044465369aa56"
+  },
+  "auth_validation": {
+    "hash": "scrypt-v1",
+    "scrypt": {
+      "N": 16384,
+      "r": 8,
+      "p": 5
+    },
+    "runtime_benchmark_request_ms": [
+      357,
+      194,
+      188
+    ],
+    "local_security_checks": "passed",
+    "deployed_browser_checks": [
+      "owner first-login change",
+      "manager create/change/login",
+      "role and tenant denials",
+      "reset and old-session revocation",
+      "390px layout without overflow",
+      "legacy PBKDF2 import and scrypt upgrade with same user ID",
+      "existing other-tenant denial"
+    ],
+    "production_workers_unchanged": true
+  },
+  "worker_modules": {
+    "entry.js": "2674a8f8b21188a88d261486d377a83d9f93cb4099a57e6cef92525525e47cfe"
+  },
+  "feature_validation": {
+    "registry_count": 30,
+    "config_schema": 2,
+    "default_template": {
+      "id": "classic",
+      "version": 2
+    },
+    "preset": {
+      "id": "cafe",
+      "version": 2
+    },
+    "local_schema_auth_feature_checks": "passed",
+    "deployed_browser_checks": [
+      "mobile draft feature/contact/theme/VAT settings",
+      "hours off by default",
+      "Wi-Fi password omitted from projection",
+      "stale-save rejection",
+      "platform manager lock and forged-write denial",
+      "other-existing-tenant denial",
+      "permitted manager save",
+      "390px layout",
+      "feedback/events enable and platform emergency disable",
+      "retained inbox and aggregate history"
+    ],
+    "test_cleanup": "Restored draft settings and policies; disabled synthetic accounts; removed disposable publication tenant",
+    "existing_owner_credential_unchanged": true,
+    "production_workers_unchanged": true
+  },
+  "phase_4_validation": {
+    "verified_at_utc": "2026-11-26T18:31:06.981Z",
+    "source_commit": "c8ad3997af8aee2523afff57382edbacd9e0c40a",
+    "deployment_id": "b8fd5ddb-8f07-47ec-8c10-2f012152d36e",
+    "deployed_at": "2026-11-25T11:16:37.766691Z",
+    "traffic_percent": 100,
+    "deployment_action": "Reconciled the existing staging release. Migration 0006 and the active Worker were already present.",
+    "environment_marker": "admaki-menu-platform-staging",
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_objects": [
+      "media_cleanup_candidates",
+      "media_draft_asset",
+      "media_draft_refs",
+      "media_item_owners",
+      "media_publication_asset",
+      "media_publication_refs"
+    ],
+    "module_manifest": "SHA-256 of the 17 modules downloaded from the active staging script, each compared with the reconciled Git source. migrations.mjs is an operator-side helper.",
+    "rollback": {
+      "verified_active_before_validation": "551d7209-007e-4c13-ae0b-946f4aa47e24",
+      "previous_renderer_version": "f25a9024-9605-4ff9-bdac-0d6e32bf5eb8",
+      "before_first_phase_4_deployment": "69bf68bb-d542-421f-b817-1d7d9c7ca405",
+      "scope": "Worker code only. Preserve D1, migrations, credentials, sessions and all retained media."
+    },
+    "backup": {
+      "scope": "Staging D1, exported before disposable verification and after the existing 0006 migration",
+      "bytes": 144229,
+      "sha256": "14a39b7758c2ee7fb402368c60e24a9fce49f7ccc3d82ceaf4637d730cccdff7",
+      "storage": "Private operator directory outside Git",
+      "restore": "In-memory SQLite import, integrity_check, foreign_key_check and six migration checksums verified."
+    },
+    "ci": {
+      "runtime_commit": "c8ad3997af8aee2523afff57382edbacd9e0c40a",
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45874650289",
+      "result": "success"
+    },
+    "browser": {
+      "run": "p4check-970cc0d0bac9",
+      "finished_utc": "2026-11-26T18:27:25.343Z",
+      "browser": "Chrome 158",
+      "screens": [
+        {
+          "template": "classic",
+          "width": 360
+        },
+        {
+          "template": "classic",
+          "width": 390
+        },
+        {
+          "template": "classic",
+          "width": 768
+        },
+        {
+          "template": "classic",
+          "width": 1440
+        },
+        {
+          "template": "abol",
+          "width": 360
+        },
+        {
+          "template": "abol",
+          "width": 390
+        },
+        {
+          "template": "abol",
+          "width": 768
+        },
+        {
+          "template": "abol",
+          "width": 1440
+        },
+        {
+          "template": "mokodo",
+          "width": 360
+        },
+        {
+          "template": "mokodo",
+          "width": 390
+        },
+        {
+          "template": "mokodo",
+          "width": 768
+        },
+        {
+          "template": "mokodo",
+          "width": 1440
+        },
+        {
+          "template": "sheba",
+          "width": 360
+        },
+        {
+          "template": "sheba",
+          "width": 390
+        },
+        {
+          "template": "sheba",
+          "width": 768
+        },
+        {
+          "template": "sheba",
+          "width": 1440
+        },
+        {
+          "template": "occasion",
+          "width": 360
+        },
+        {
+          "template": "occasion",
+          "width": 390
+        },
+        {
+          "template": "occasion",
+          "width": 768
+        },
+        {
+          "template": "occasion",
+          "width": 1440
+        }
+      ],
+      "formats": [
+        {
+          "ext": "jpeg",
+          "slot": "cover",
+          "round_trip": "PNG 54x32, checksum matched D1"
+        },
+        {
+          "ext": "png",
+          "slot": "logo",
+          "round_trip": "PNG 54x32, checksum matched D1"
+        },
+        {
+          "ext": "webp",
+          "slot": "item",
+          "round_trip": "PNG 54x32, checksum matched D1"
+        },
+        {
+          "ext": "avif",
+          "slot": "cover",
+          "round_trip": "PNG 54x32, checksum matched D1"
+        }
+      ],
+      "checks": [
+        "Two disposable managers signed in; anonymous and both cross-tenant preview denials passed",
+        "Picker converted JPEG/PNG/WebP/AVIF; authenticated R2 GET and HEAD, replacement, referenced deletion and private access passed",
+        "Five saved templates at four viewport widths; no horizontal overflow, images loaded, focal point, price, disclosure and empty search passed",
+        "Failed cover is hidden and has-cover class removed"
+      ],
+      "page_errors_through_layout_matrix": [],
+      "console_capture": "Final console buffer unavailable after cleanup connection interruption"
+    },
+    "retention": {
+      "run": "p4check-c4e31dfb82de",
+      "finished_utc": "2026-11-26T18:31:17.586Z",
+      "checks": [
+        "Two disposable managers signed in; anonymous and both cross-tenant preview denials passed",
+        "Synthetic historical snapshot alone retained its detached R2 image",
+        "Explicit publication reference independently prevented deletion; stale and foreign attachments denied",
+        "Scheduled staging cron removed the aged disposable orphan, audited cleanup, and retained the referenced R2 object"
+      ]
+    },
+    "cleanup": {
+      "verified_counts": {
+        "active_identities": 0,
+        "enabled_credentials": 0,
+        "active_sessions": 0,
+        "unsuspended_restaurants": 0,
+        "live_assets": 0,
+        "draft_refs": 0,
+        "publication_refs": 0,
+        "test_publications": 0
+      },
+      "runs": [
+        {
+          "id": "p4check-1c1f488d9276",
+          "outcome": "interrupted",
+          "failure": "fetch failed",
+          "cleanup": [
+            "Restored disposable config; all disposable assets deleted through Worker and returned 404.",
+            {
+              "refs": 0,
+              "assets": 0,
+              "sessions": 0
+            },
+            "Disposable managers disabled, sessions revoked, draft restaurants suspended; audit rows and tombstones retained"
+          ]
+        },
+        {
+          "id": "p4check-77c8f18b0be8",
+          "outcome": "interrupted",
+          "failure": "fetch failed",
+          "cleanup": [
+            {
+              "refs": 0,
+              "assets": 0,
+              "sessions": 0
+            },
+            "Disposable managers disabled, sessions revoked, draft restaurants suspended; audit rows and tombstones retained"
+          ]
+        },
+        {
+          "id": "p4check-970cc0d0bac9",
+          "outcome": "passed",
+          "cleanup": [
+            "Connection interruption during account disablement. Operator completed cleanup and verified disposable configuration against its original preset, disabled credentials, revoked sessions and zero refs/assets.",
+            {
+              "refs": 0,
+              "assets": 0,
+              "sessions": 0
+            }
+          ]
+        },
+        {
+          "id": "p4check-c4e31dfb82de",
+          "outcome": "passed",
+          "cleanup": [
+            "Restored disposable config; all disposable assets deleted through Worker and returned 404.",
+            {
+              "refs": 0,
+              "assets": 0,
+              "sessions": 0
+            },
+            "Disposable managers disabled, sessions revoked, draft restaurants suspended; audit rows and tombstones retained"
+          ]
+        }
+      ],
+      "scope": "Disposable tenants only. Audit history and deleted asset metadata retained."
+    },
+    "remaining": [
+      "Final browser console buffer was unavailable after the operator connection interruption during cleanup.",
+      "Approved restaurant content reconciliation and visual comparison",
+      "Performance traces and capacity/cost validation",
+      "Direct multi-format server upload handling and public publication flows are outside this release."
+    ]
+  },
+  "phase_5_validation": {
+    "source_commit": "5b63fd540da6b2bf77ac4ee79666eb8608922b42",
+    "verified_at_utc": "2026-11-26T18:50:03.633Z",
+    "deployment_id": "0a90c1a7-5b3a-4835-80bf-24df61c3daa6",
+    "deployed_at": "2026-11-26T18:49:20.705998Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. Six existing checksums verified before and after.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/render.mjs": "c6f1df4af33eecfc82010416ecc897b5f13eb40df8d4bde1ab7a8dfae8985f8e",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/page.mjs": "08bd3ad25ada340b9b16b7bcf66ce19f81aafac221d47fb5a55837f015c93846",
+      "worker.mjs": "68609f4303f0bdbf4ee8e63acd58620d0d1c5eb4e0e108007a6e2cb2ce0e6486"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "551d7209-007e-4c13-ae0b-946f4aa47e24",
+    "backup": {
+      "bytes": 220974,
+      "sha256": "8b363123630e18215cf3042c709f758fca4408fab410cb7b31918fa9ae573efe",
+      "restore": "Verified isolated SQLite import, integrity and foreign keys",
+      "storage": "Private operator directory outside Git"
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45878926330",
+      "result": "success"
+    },
+    "local_browser": {
+      "scope": "Local real Worker with in-memory synthetic D1, browser request routing",
+      "checks": [
+        "Directory beyond 100",
+        "Draft onboarding and settings",
+        "Paged manager selections preserved including new tenant",
+        "Temporary credential issued once",
+        "Four viewport widths"
+      ],
+      "errors": [],
+      "messages": [],
+      "request_count": 20
+    },
+    "remote": {
+      "tag": "p5check-53a60385f6c8",
+      "started": "2026-11-26T18:49:35.946Z",
+      "checks": [
+        "Deployed browser created draft with preset, template and audit; duplicates, foreign access and CSRF denied",
+        "Deployed settings, preselected manager creation, temporary-password change and four viewport widths passed with clean browser console"
+      ],
+      "cleanup": {
+        "tenants": [
+          "p5check-53a60385f6c8-tenant",
+          "2b041b99-4575-4c8a-9e5d-119d3912a8b1"
+        ],
+        "users": [
+          "p5check-53a60385f6c8-admin",
+          "p5check-53a60385f6c8-foreign",
+          "d5f6a68e-59f4-483f-9c59-9aeb9f52f803"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "finished": "2026-11-26T18:50:38.629Z"
+    },
+    "initial_fixture_retry": {
+      "tag": "p5check-2bf44d989827",
+      "started": "2026-11-26T18:46:02.507Z",
+      "checks": [],
+      "cleanup": {
+        "tenants": [],
+        "users": [
+          "p5check-2bf44d989827-admin",
+          "p5check-2bf44d989827-foreign"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "failure": "POST /api/auth/login HTTP 401\n\n401 !== 200\n",
+      "finished": "2026-11-26T18:46:18.991Z"
+    },
+    "favicon_check_retry": {
+      "tag": "p5check-7a9d6c58661f",
+      "started": "2026-11-26T18:47:05.224Z",
+      "checks": [
+        "Deployed browser created draft with preset, template and audit; duplicates, foreign access and CSRF denied"
+      ],
+      "cleanup": {
+        "tenants": [
+          "p5check-7a9d6c58661f-tenant",
+          "c3c28418-f16f-4366-ba21-ac1543a2b336"
+        ],
+        "users": [
+          "p5check-7a9d6c58661f-admin",
+          "p5check-7a9d6c58661f-foreign",
+          "12b3cf99-2261-4e05-8a28-c616c6ba2630"
+        ],
+        "all_disabled": true,
+        "sessions_revoked": true,
+        "test_restaurants_suspended": true,
+        "live_test_media": 0,
+        "existing_restaurants_and_credentials_matched": true,
+        "audit_history_retained": true
+      },
+      "failure": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Failed to load resource: the server responded with a status of 404 ()'\n+ ]\n- []\n",
+      "finished": "2026-11-26T18:48:08.524Z"
+    },
+    "design_direction": "User accepted the current shared layouts and authorized Phase 5 on 26 November 2026."
+  },
+  "phase_6_validation": {
+    "source_commit": "ad4ae9f1958c42f75b1d4f811a1f870e16ce3426",
+    "verified_at_utc": "2026-11-27T00:59:20.130Z",
+    "deployment_id": "017c72ec-18ce-4e91-a1a7-0eb3fefa5f6c",
+    "deployed_at": "2026-11-27T00:54:45.260902Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. The six existing checksums matched before and after deployment.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "cd53c234188bec3af02a419acd05fdeb282fb611e9a2e48b78ea9682c5806482",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "9fb2ec3dd00033d42057f800c94bc3a4c63e24521d999a6ca2f607e1d119c1fc",
+      "publications/public.mjs": "5b53c04be82e92a0a3923de251dc30064a860acad7611e234295b74f923652d1",
+      "publications/service.mjs": "ddc1a4b2451c706a52ef603ff0625159533fa0a9466833a7d89183d1de4c729d",
+      "publications/snapshot.mjs": "5337ec7632c1c647ca56ba7156c0fe3f463f3b0a2acd42ae9987178b3feff322",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/public-script.mjs": "043e81d4b917edbef7cb6981db4ceb1f6daf6ce398f7a09f4041f84dd8d1e369",
+      "templates/render.mjs": "e73b7b41791834711d9e8384a5ad211060b7a39c90e9a60f0ec49ace5a8315fd",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/guest-reports.mjs": "02eb6132a119dfe95ef78966fb18b7ebc8971d6c96e9251f4781d1849ad5336a",
+      "web/page.mjs": "691bca1f48c4a26051349f59b2926211db3fb738140955e044c602f044d763c2",
+      "web/publication.mjs": "ef4a2561f4767b8c625492431dd6085a71c8bdeb6b29b7cec8359056e4945dcc",
+      "worker.mjs": "607712f1e05491a3bce3e6d2dd36485aa14fc3dbbbcc4c2cf4a63896ed2af62c"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "a0213465-a250-4840-8d6e-052612dac951",
+    "backup": {
+      "bytes": 242105,
+      "sha256": "f8d7bdd047540bd9d3e147f1dd9f724a8995d2e397d04b952f521d4765145907",
+      "storage": "Private operator directory outside Git",
+      "restore": "Isolated SQLite import, integrity and foreign key checks passed"
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45919491809",
+      "result": "success"
+    },
+    "local_browser": {
+      "scope": "Local actual Worker with intercepted browser requests and synthetic D1/R2",
+      "checks": [
+        "Publish via dashboard",
+        "Anonymous menu and published image",
+        "All five public templates at 360/390/768/1440 widths, feedback form expanded",
+        "Feedback form and manager inbox",
+        "Anonymous analytics and manager report",
+        "QR download link and generated SVG",
+        "Desktop share fallback",
+        "Unpublish revokes menu and image"
+      ],
+      "errors": [],
+      "messages": [],
+      "shareFallbackTested": true,
+      "nativeShareDisabledForFallbackTest": true
+    },
+    "remote": {
+      "tag": "p6check-d17c2224108e",
+      "started": "2026-11-27T00:55:05.736Z",
+      "checks": [
+        "Manager published via deployed dashboard; private preview collected no events; session, tenant, CSRF and stale retries denied; published R2 bytes matched private reads",
+        "Anonymous guest menu at four widths, feedback, no-result search, real QR download and manager inbox/analytics passed",
+        "Live platform disable revoked published image and QR access; original policy values restored",
+        "Republishing isolated draft changes and revoked the old public image; unpublishing revoked menu, QR and writes while retaining authorized history; browser console clean"
+      ],
+      "cleanup": {
+        "tenants": [
+          "b0316fd0-8c6f-469f-92a2-94fe19aaa63b",
+          "8edd9a07-9f05-4387-a68c-9bdb48c1baef"
+        ],
+        "users": [
+          "p6check-d17c2224108e-admin",
+          "p6check-d17c2224108e-manager",
+          "p6check-d17c2224108e-foreign"
+        ],
+        "test_restaurants_suspended": true,
+        "accounts_disabled": true,
+        "active_sessions": 0,
+        "retained_referenced_media": 2,
+        "publication_history_retained": true,
+        "existing_restaurants_and_credentials_matched": true,
+        "global_policy_values_restored": true
+      },
+      "qr_target": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-d17c2224108e",
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "finished": "2026-11-27T00:58:14.210Z"
+    },
+    "qr_scan": {
+      "decoded": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-d17c2224108e",
+      "matches_stable_url": true
+    },
+    "initial_attempt": {
+      "tag": "p6check-208bbaeed76b",
+      "started": "2026-11-27T00:51:16.181Z",
+      "checks": [
+        "Manager published via deployed dashboard; private preview collected no events; session, tenant, CSRF and stale retries denied; published R2 bytes matched private reads",
+        "Anonymous guest menu at four widths, feedback, no-result search, real QR download and manager inbox/analytics passed"
+      ],
+      "cleanup": {
+        "tenants": [
+          "66bcf5d7-0ae5-4b12-931c-9453534a9950",
+          "c639ead6-e13d-41c1-a52b-0b5a7b1b627a"
+        ],
+        "users": [
+          "p6check-208bbaeed76b-admin",
+          "p6check-208bbaeed76b-manager",
+          "p6check-208bbaeed76b-foreign"
+        ],
+        "test_restaurants_suspended": true,
+        "accounts_disabled": true,
+        "active_sessions": 0,
+        "retained_referenced_media": 1,
+        "publication_history_retained": true,
+        "existing_restaurants_and_credentials_matched": true,
+        "global_policy_values_restored": true
+      },
+      "qr_target": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/p6check-208bbaeed76b",
+      "failure": "The expression evaluated to a falsy value:\n\n  assert(updatedHTML.includes('Synthetic changed draft'))\n",
+      "finished": "2026-11-27T00:53:27.534Z"
+    },
+    "retention": "Synthetic publication history and its referenced images remain retained. Accounts are disabled and restaurants suspended. Policy values were restored while their revisions advanced monotonically.",
+    "remaining": [
+      "Restaurant content editing integration",
+      "Authorized content reconciliation and production route/QR cutover approval",
+      "Historical publication/media retention limits",
+      "Capacity, performance, cost and native mobile share verification"
+    ],
+    "final_cleanup_counts": {
+      "enabled_users": 0,
+      "enabled_credentials": 0,
+      "active_sessions": 0,
+      "active_restaurants": 0,
+      "draft_refs": 0,
+      "retained_media": 3,
+      "retained_publications": 3
+    }
+  },
+  "menu_editor_validation": {
+    "source_commit": "884dec333ad6adcfbc0a2d8420cf70358b4ec408",
+    "verified_at_utc": "2026-11-27T01:49:24.886Z",
+    "deployment_id": "407568df-22c0-46f6-aa8e-a29a4bf0a9a8",
+    "deployed_at": "2026-11-27T01:42:37.383933Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. The six existing migration names and checksums were verified before and after deployment.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "9f8f7dd8cfcf7d282c4dbb2863de6f975736cd32c8ef1d212658909d760cc589",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "dfa0b6ab98ab77b874c2f354057780cd9c0e83c4b6cf7ae4def57d7b3537143c",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "64d09b131807b82e1e20449b262970abf5f4a72a9106500c072f1ae2eed91bb3",
+      "menu/access.mjs": "0dc6f398dbbcbf8b58e82090cf882b1ac80cfce300ce93b002eec06f1cd24035",
+      "menu/mutations.mjs": "14f95084ad8097863cf3a3e638ae9f3ae4d97f9c643bf0c5557e8a37c2bf0086",
+      "menu/service.mjs": "fd31ad5692d3a08e81f5924547ea4043ccbbb9d89ab774d219d64bcdccf57e27",
+      "menu/validation.mjs": "346e2a76015cfed4c04cbb95469c92d659e114e0b55b06a3f90dece952421f38",
+      "publications/public.mjs": "5b53c04be82e92a0a3923de251dc30064a860acad7611e234295b74f923652d1",
+      "publications/service.mjs": "ddc1a4b2451c706a52ef603ff0625159533fa0a9466833a7d89183d1de4c729d",
+      "publications/snapshot.mjs": "5337ec7632c1c647ca56ba7156c0fe3f463f3b0a2acd42ae9987178b3feff322",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/public-script.mjs": "043e81d4b917edbef7cb6981db4ceb1f6daf6ce398f7a09f4041f84dd8d1e369",
+      "templates/render.mjs": "e73b7b41791834711d9e8384a5ad211060b7a39c90e9a60f0ec49ace5a8315fd",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/guest-reports.mjs": "02eb6132a119dfe95ef78966fb18b7ebc8971d6c96e9251f4781d1849ad5336a",
+      "web/menu-extras.mjs": "595647caccb62cd04c429b3b53dd3d459684e12ee3cd31699850c43528fc3fc0",
+      "web/menu.mjs": "3bf99fbb3ef5ea3577cb74da3718dc81946fb0262426c9abb4c9ad98ed7ec5e8",
+      "web/page.mjs": "c88938e1d9d23530e32c8c8061295a52e2761365b4de1818e3304a33809c47bd",
+      "web/publication.mjs": "ef4a2561f4767b8c625492431dd6085a71c8bdeb6b29b7cec8359056e4945dcc",
+      "worker.mjs": "9b6bc33cb14c049cd9b353018e305922db74e15209c18780b4cb2e27c9d6ff0e"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "ae586267-7f7f-4ac6-b9c4-33010cae1600",
+    "backup": {
+      "bytes": 303765,
+      "sha256": "d9ebcefcd14a7062a4998307bb4ef1db10f4eafdc749602c6859a75fc1d9c465",
+      "storage": "Private operator directory outside Git",
+      "restore": "Verified isolated SQLite restore, integrity and foreign keys; original content, credentials, users, roles and memberships compared with the final staging state."
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45923678788",
+      "result": "success"
+    },
+    "local_browser": {
+      "scope": "Local real Worker with synthetic D1/R2 and browser request interception",
+      "checks": [
+        "Settings save while image controls are delayed",
+        "Category and item creation",
+        "Exact variant cents",
+        "Translation form",
+        "JPEG conversion and owned item photo attachment",
+        "Opening hours",
+        "Draft/public isolation",
+        "Unsaved item fields retained when opening extras",
+        "360/390/768/1440 widths"
+      ],
+      "errors": [],
+      "messages": []
+    },
+    "remote": {
+      "tag": "editcheck-9a84875f062a",
+      "started": "2026-11-27T01:41:56.603Z",
+      "checks": [
+        "Deployed manager created category/item, converted JPEG to an owned R2 photo, saved exact variant cents, translation and hours, and enabled them in settings; draft stayed private",
+        "Published translation, hours, variant price and R2 bytes matched; draft price/photo/category changes preserved the earlier publication; stale and cross-tenant edits denied; four viewport widths passed",
+        "Republishing delivered the new price and photo, the old public photo URL was revoked, unpublishing revoked the menu, and the deployed browser console was clean"
+      ],
+      "cleanup": {
+        "tenants": [
+          "531c55ce-858a-4974-9cf6-0072ab7909f4",
+          "c9469e27-2530-46f9-8fb9-02d707ff6353",
+          "99d27200-33f4-4079-bed9-3648c8ba97b9",
+          "1bfa214d-0e68-41de-babe-dea7a1504ca7"
+        ],
+        "users": [
+          "editcheck-8f77f99f4034-admin",
+          "editcheck-8f77f99f4034-manager",
+          "editcheck-8f77f99f4034-foreign",
+          "editcheck-9a84875f062a-admin",
+          "editcheck-9a84875f062a-manager",
+          "editcheck-9a84875f062a-foreign"
+        ],
+        "counts": {
+          "enabled_users": 0,
+          "enabled_credentials": 0,
+          "active_sessions": 0,
+          "active_test_restaurants": 0,
+          "draft_refs": 0,
+          "retained_media": 2,
+          "retained_publications": 2
+        },
+        "existing_content_and_credentials_matched": true,
+        "original_users_roles_and_memberships_matched": true,
+        "synthetic_content_and_publication_history_retained": true
+      },
+      "public_get_headers_network_ms": [
+        2061,
+        2537,
+        2580,
+        2555,
+        2846
+      ],
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "cleanup_audit_recovery": "The original audit process received Cloudflare HTTP 403 after cleanup. A fresh authenticated process rechecked disabled accounts and suspended restaurants, then compared all existing content, credentials and role/membership records with the private pre-rollout backup.",
+      "finished": "2026-11-27T01:51:03.085Z"
+    },
+    "initial_attempt": {
+      "tag": "editcheck-8f77f99f4034",
+      "started": "2026-11-27T01:26:19.031Z",
+      "checks": [],
+      "cleanup": {
+        "tenants": [
+          "531c55ce-858a-4974-9cf6-0072ab7909f4",
+          "c9469e27-2530-46f9-8fb9-02d707ff6353"
+        ],
+        "users": [
+          "editcheck-8f77f99f4034-admin",
+          "editcheck-8f77f99f4034-manager",
+          "editcheck-8f77f99f4034-foreign"
+        ],
+        "counts": {
+          "enabled_users": 0,
+          "enabled_credentials": 0,
+          "active_sessions": 0,
+          "active_test_restaurants": 0,
+          "draft_refs": 0,
+          "retained_media": 0,
+          "retained_publications": 0
+        },
+        "existing_content_and_credentials_matched": true,
+        "synthetic_content_and_publication_history_retained": true
+      },
+      "failure": "locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Draft settings saved.') to be visible\u001b[22m\n",
+      "finished": "2026-11-27T01:30:51.004Z"
+    },
+    "performance_scope": "Five sequential public response-header timings include network overhead. They are a baseline and do not certify capacity or cost.",
+    "remaining": [
+      "Public delivery latency, capacity and cost checks",
+      "Native mobile share verification",
+      "Approved restaurant content and production release/cutover approval"
+    ]
+  },
+  "performance_validation": {
+    "source_commit": "f0a2baaaa11359e3c51af7061552b8bbf7a09585",
+    "verified_at_utc": "2026-11-27T02:18:48.856Z",
+    "deployment_id": "e47e1ed2-8176-40bc-94a5-be3dc7f93600",
+    "deployed_at": "2026-11-27T02:18:29.092939Z",
+    "traffic_percent": 100,
+    "bindings": {
+      "DB": "0cd21d93-da77-4b6b-b4dd-e16b741348c5",
+      "ENVIRONMENT": "admaki-menu-platform-staging",
+      "MEDIA": "admaki-menu-media-platform-staging"
+    },
+    "cron": [
+      "*/15 * * * *"
+    ],
+    "migration_action": "No migration. All six existing migration names and checksums matched before and after deployment.",
+    "source_modules": {
+      "auth/http.mjs": "3d8d4d5e312ec8a8167f224f493c9fcbbe8b697136ca199c6a698010f2003506",
+      "auth/legacy.mjs": "953426f28859c07562253fb969bbd44b84750bf27c6f4490c5614403ff312efb",
+      "auth/operator.mjs": "435e94238e29b282f97cd7e0971d9e1aa5edd1da68fd9e622a1344fb1e5dc3d1",
+      "auth/passwords.mjs": "4d8f4d610ccd2cc1345beb96e96dbdd9c68035453dd6c87bb85f2a2a130c2d33",
+      "auth/service.mjs": "9156ca77dc334cb8f5854f0203a20d368a80b543db57b9e1772efe34e8a009c7",
+      "config/access.mjs": "31055e4959dce827b0c66fe1b7187b2cad97abea47c31101b099b35661eb7162",
+      "config/capabilities.mjs": "57af1d929b44f9890018d1a54ff912fb3871b2f246b3dae8087a52c010a3544c",
+      "config/registry.mjs": "af1779683cac4b93e610517778e60cc5ea1b3e63e8a87cba105a146fb2d0826b",
+      "config/resolution.mjs": "a0ea8893b5f05796bb107849037e07c50ab9e8600f36c878065f2e716fd31ce3",
+      "config/service.mjs": "8bc15683a034f9aa334cbb111618a17651c089767c3935afcb5deed014f0f67e",
+      "config/validation.mjs": "31f87a14db580712ebe98b92505fffc5a169adc18ce6a1b8b9d3a62338969e36",
+      "media/png.mjs": "05d8361dda397cefd578b9a99d11199ef816b747a638369753adc4d5dc8a3a57",
+      "media/service.mjs": "64d09b131807b82e1e20449b262970abf5f4a72a9106500c072f1ae2eed91bb3",
+      "menu/access.mjs": "0dc6f398dbbcbf8b58e82090cf882b1ac80cfce300ce93b002eec06f1cd24035",
+      "menu/mutations.mjs": "14f95084ad8097863cf3a3e638ae9f3ae4d97f9c643bf0c5557e8a37c2bf0086",
+      "menu/service.mjs": "fd31ad5692d3a08e81f5924547ea4043ccbbb9d89ab774d219d64bcdccf57e27",
+      "menu/validation.mjs": "346e2a76015cfed4c04cbb95469c92d659e114e0b55b06a3f90dece952421f38",
+      "publications/context.mjs": "6f22db8e87b4bec9ec119ac5b2497611dfa9426a08591d0deffcb0d85c974765",
+      "publications/public.mjs": "5b53c04be82e92a0a3923de251dc30064a860acad7611e234295b74f923652d1",
+      "publications/service.mjs": "1016c343f99c1a93d05884ff8ad2b2c7d956f782d82f5aaf4b0fef0c6c064250",
+      "publications/snapshot.mjs": "5337ec7632c1c647ca56ba7156c0fe3f463f3b0a2acd42ae9987178b3feff322",
+      "restaurants/service.mjs": "11932f293cd2f53a99c2a3853baa4898786a8d4c2d158d440612d8da04ac4e74",
+      "templates/public-script.mjs": "043e81d4b917edbef7cb6981db4ceb1f6daf6ce398f7a09f4041f84dd8d1e369",
+      "templates/render.mjs": "e73b7b41791834711d9e8384a5ad211060b7a39c90e9a60f0ec49ace5a8315fd",
+      "templates/service.mjs": "8246912259d40fba95792ac4a14e794226dbdcacbe99253269ab8d75249df59f",
+      "web/directory.mjs": "dceb607c5f10041ea2adcc0f3ba45514e861bbcb079fb0714c133211cf1e82db",
+      "web/favicon.mjs": "ce71c28c3bd64774238ec0b71c08e637d8bba60f955fb93e9e222cf0f4226951",
+      "web/guest-reports.mjs": "02eb6132a119dfe95ef78966fb18b7ebc8971d6c96e9251f4781d1849ad5336a",
+      "web/menu-extras.mjs": "595647caccb62cd04c429b3b53dd3d459684e12ee3cd31699850c43528fc3fc0",
+      "web/menu.mjs": "3bf99fbb3ef5ea3577cb74da3718dc81946fb0262426c9abb4c9ad98ed7ec5e8",
+      "web/page.mjs": "c88938e1d9d23530e32c8c8061295a52e2761365b4de1818e3304a33809c47bd",
+      "web/publication.mjs": "ef4a2561f4767b8c625492431dd6085a71c8bdeb6b29b7cec8359056e4945dcc",
+      "worker.mjs": "9b6bc33cb14c049cd9b353018e305922db74e15209c18780b4cb2e27c9d6ff0e"
+    },
+    "bundle_matches_dry_run": true,
+    "rollback_version": "0d590b59-f666-404e-be4f-b80eb6faef13",
+    "backup": {
+      "bytes": 352263,
+      "sha256": "81dc886a381209c4fd5a3f0442369c99e145262633baa634537b2ffc70ee11fe",
+      "storage": "Private operator directory outside Git",
+      "restore": "Isolated SQLite integrity/foreign-key checks passed. All content, identities, credentials, memberships, policies, publication heads/history and media metadata compared with the final staging state."
+    },
+    "ci": {
+      "url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45927342143",
+      "result": "success"
+    },
+    "query_counts_including_environment": {
+      "html": {
+        "before": 5,
+        "after": 3
+      },
+      "qr": {
+        "before": 5,
+        "after": 3
+      },
+      "published_image": {
+        "before": 6,
+        "after": 4
+      },
+      "guest_feedback": {
+        "before": 6,
+        "after": 4
+      },
+      "guest_analytics": {
+        "before": 6,
+        "after": 4
+      }
+    },
+    "benchmark": {
+      "before": {
+        "label": "before",
+        "started": "2026-11-27T02:08:21.132Z",
+        "worker_version": "0d590b59-f666-404e-be4f-b80eb6faef13",
+        "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+        "publication_revision": 2,
+        "slug": "editcheck-9a84875f062a",
+        "samples": [
+          {
+            "headers_ms": 1522,
+            "total_ms": 1526,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1542,
+            "total_ms": 1546,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1528,
+            "total_ms": 1536,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1533,
+            "total_ms": 1535,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 1635,
+            "total_ms": 1635,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 2774,
+            "total_ms": 2779,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 2437,
+            "total_ms": 2439,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 3824,
+            "total_ms": 3852,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 3582,
+            "total_ms": 3607,
+            "bytes": 12832,
+            "colo": "ADD"
+          }
+        ],
+        "median_headers_ms": 1635,
+        "restored_suspended_state": true,
+        "finished": "2026-11-27T02:08:48.212Z"
+      },
+      "after": {
+        "label": "after",
+        "started": "2026-11-27T02:18:52.192Z",
+        "worker_version": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+        "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+        "publication_revision": 2,
+        "slug": "editcheck-9a84875f062a",
+        "samples": [
+          {
+            "headers_ms": 954,
+            "total_ms": 955,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 961,
+            "total_ms": 962,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 953,
+            "total_ms": 954,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 936,
+            "total_ms": 940,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 941,
+            "total_ms": 943,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 954,
+            "total_ms": 961,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 968,
+            "total_ms": 968,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 942,
+            "total_ms": 947,
+            "bytes": 12832,
+            "colo": "ADD"
+          },
+          {
+            "headers_ms": 943,
+            "total_ms": 948,
+            "bytes": 12832,
+            "colo": "ADD"
+          }
+        ],
+        "median_headers_ms": 953,
+        "restored_suspended_state": true,
+        "finished": "2026-11-27T02:19:03.706Z"
+      },
+      "median_reduction_percent": 41.7,
+      "scope": "Same synthetic publication, one warm-up and nine sequential GETs per version, full bodies consumed. Header timings include network overhead. Small single-location sample, not capacity or cost certification."
+    },
+    "local_browser": {
+      "scope": "Local actual Worker with intercepted browser requests and synthetic D1/R2",
+      "checks": [
+        "Publish via dashboard",
+        "Anonymous menu and published image",
+        "All five public templates at 360/390/768/1440 widths, feedback form expanded",
+        "Feedback form and manager inbox",
+        "Anonymous analytics and manager report",
+        "QR download link and generated SVG",
+        "Desktop share fallback",
+        "Unpublish revokes menu and image"
+      ],
+      "errors": [],
+      "messages": [],
+      "shareFallbackTested": true,
+      "nativeShareDisabledForFallbackTest": true
+    },
+    "editor_regression_browser": {
+      "scope": "Local real Worker with synthetic D1/R2 and browser request interception",
+      "checks": [
+        "Settings save while image controls are delayed",
+        "Category and item creation",
+        "Exact variant cents",
+        "Translation form",
+        "JPEG conversion and owned item photo attachment",
+        "Opening hours",
+        "Draft/public isolation",
+        "Unsaved item fields retained when opening extras",
+        "360/390/768/1440 widths"
+      ],
+      "errors": [],
+      "messages": []
+    },
+    "remote": {
+      "started": "2026-11-27T02:19:13.545Z",
+      "restaurant_id": "99d27200-33f4-4079-bed9-3648c8ba97b9",
+      "publication_revision": 2,
+      "checks": [
+        "Published translation, exact item/variant prices, hours, GET/HEAD, no-store/CSP, current R2 checksum and revoked prior image",
+        "Guest feedback accepted, cross-origin feedback rejected, snapshot-disabled analytics rejected",
+        "Deployed anonymous menu loaded real images at 360/390/768/1440 widths without overflow or console errors",
+        "Suspension immediately revoked menu, QR, image and guest feedback"
+      ],
+      "console": {
+        "errors": [],
+        "messages": []
+      },
+      "restored_suspended_state": true,
+      "protected_data_matches_backup": true,
+      "synthetic_feedback_retained": true,
+      "finished": "2026-11-27T02:19:39.130Z"
+    },
+    "qr_scan": {
+      "url": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev/r/editcheck-9a84875f062a",
+      "scanner": "zxingcpp",
+      "format": "QR Code"
+    },
+    "remaining": [
+      "Capacity and cost checks",
+      "Native mobile share verification",
+      "Approved restaurant content and production release/cutover approval"
+    ]
+  },
+  "runtime_budget_validation": {
+    "date": "2026-11-27",
+    "status": "blocked",
+    "verified_plan": "Workers Free",
+    "documented_cpu_limit_ms": 10,
+    "mean_public_cpu_plus_startup_ms": 4.850351416515974,
+    "mean_sequential_login_cpu_plus_startup_ms": 155.521,
+    "mean_upload_cpu_plus_startup_ms": 19.090416666666666,
+    "concurrent_login_result": "HTTP 503; resource-limit events",
+    "extended_upload_result": "HTTP 503 before quota test completed",
+    "billing_changed": false,
+    "runtime_settings_changed": false,
+    "password_work_factor_changed": false,
+    "proposed_staging_cpu_ms_after_paid_approval": null,
+    "readiness_report": "docs/STAGING_READINESS.md",
+    "cleanup_proof": "cloudflare/inventory/capacity/auth-upload-cleanup-2026-11-27.json",
+    "free_plan_implementation": {
+      "status": "Bounded HTTP validation passed; response lifecycle corrected; intentional denial cancellations reproduced and classified",
+      "source_commit": "ae5d55f807b098d00032049ff5b1a4ed788f0ba4",
+      "deployment_id": "ee7980c9-93c5-41d7-aeb1-818c8f84774c",
+      "worker_version": "79390ac3-596e-499f-9161-0484f77805cc",
+      "namespace_id": "8d0a87d9c4be43ac86747eaa5d63bd65",
+      "sqlite_backed": true,
+      "migration_tag": "private-operations-v1",
+      "bundle_matches_dry_run": true,
+      "billing_changed": false,
+      "explicit_cpu_override_applied": false,
+      "d1_migrations_applied": 0,
+      "recovery_note": "Class lifecycle boundary blocks direct rollback to pre-class versions. Retain the class/namespace and forward deploy corrections; see docs/RUNTIME_BUDGET_REMEDIATION.md.",
+      "validation_evidence": "cloudflare/inventory/capacity/free-runtime-validation-2026-11-27.json",
+      "http_evidence": "cloudflare/inventory/capacity/free-runtime-http-2026-11-27.json",
+      "cleanup_verified": true,
+      "production_workers_unchanged": true
+    }
+  },
+  "routing_validation": {
+    "source_commit": "7e90f749c891c38fa7bd052a5132db835d40c4e2",
+    "worker_version": "e252deb5-21e2-4357-bdc9-7b8b9648ea27",
+    "deployment_id": "70997e52-7f74-4a3f-9600-dc57804c3701",
+    "worker_sha256": "4187b1e0d0ffa5a9c3c70d3cbf0662d7240a3ac3ac826f844fb76bad3a4fc01d",
+    "bundle_matches_dry_run": true,
+    "environment": "staging",
+    "private_namespace_unchanged": true,
+    "migration_tag": "private-operations-v1",
+    "d1_migrations_applied": 0,
+    "production_workers_unchanged": true,
+    "paid_billing_changed": false,
+    "evidence": "cloudflare/inventory/capacity/legacy-routing-2026-11-27.json",
+    "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45996453322",
+    "recovery_version": "79390ac3-596e-499f-9161-0484f77805cc"
+  },
+  "rpc_lifecycle_validation": {
+    "source_commit": "8d1207965b29c3c7a27ad9dec1e23b7ef9958209",
+    "worker_version": "64b83127-f8aa-4ee0-9f81-0c83aed31cae",
+    "deployment_id": "290646ad-cf78-421d-83f0-284d5c3ec018",
+    "bundle_matches_dry_run": true,
+    "namespace_unchanged": true,
+    "d1_migrations_applied": 0,
+    "paid_billing_changed": false,
+    "original_protected_tables_unchanged": 15,
+    "deleted_test_uploads": 32,
+    "test_credentials_disabled_and_cleared": true,
+    "unrevoked_test_sessions": 0,
+    "evidence": "cloudflare/inventory/capacity/rpc-lifecycle-2026-11-27.json",
+    "final_smoke": "cloudflare/inventory/capacity/rpc-final-smoke-2026-11-27.json",
+    "ci": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/46000944222",
+    "production_workers_unchanged": true
+  }
+}

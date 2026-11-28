@@ -1,0 +1,80 @@
+[
+  {
+    "id": "0d120e78b05443fc8062ad406d3e9f95",
+    "pattern": "menu.admakidigital.com/r/sheba-coffee*",
+    "script": "admaki-menu",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "5799ebd5ba41417d8ae4f6cdaf709b3e",
+    "pattern": "menu.admakidigital.com/sheba-assets/*",
+    "script": "admaki-menu",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "d6a39597166f471ca13b08a5f92057b5",
+    "pattern": "app.admakidigital.com/preview/occasion*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "9f3fd2694286483086c6e5d376d50b1a",
+    "pattern": "app.admakidigital.com/occasion-assets/*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "4531e018fd30421991547c28ce60f1be",
+    "pattern": "app.admakidigital.com/r/occasion*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "169ffedbd97b4b649cac4b41b2892d23",
+    "pattern": "app.admakidigital.com/",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "37b7c8830550406ab0dcce20e8f5ec34",
+    "pattern": "app.admakidigital.com/index.html",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "504979899ea444a7931c818fd508ffb2",
+    "pattern": "menu.admakidigital.com/r/occasion*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "d4c47b8a1ae348d0a6e232626a1fd9c3",
+    "pattern": "menu.admakidigital.com/occasion-assets/*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "b613a3cb56db4ee1b987ab30549034e2",
+    "pattern": "menu.admakidigital.com/media/895adc6a-cc13-5695-ad79-26d60c57c6d0/occasion-logo-v1.png",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "0591965ad73841079d51c1b788d4ea96",
+    "pattern": "menu.admakidigital.com/api/restaurants/a4f0f62b-4e64-4b4b-b3d9-22e4d869e974/*",
+    "script": "admaki-menu",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "9eff037cf55b49298c42d6556e06f6b9",
+    "pattern": "app.admakidigital.com/api/*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  },
+  {
+    "id": "ad8b9feb7c2c4c47900416879715f0ec",
+    "pattern": "app.admakidigital.com/manager*",
+    "script": "admaki-menu-router",
+    "request_limit_fail_open": false
+  }
+]

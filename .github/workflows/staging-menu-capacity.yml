@@ -1,0 +1,53 @@
+name: Staging representative menu capacity
+on:
+  push:
+    branches: [feature/menu-platform-foundation]
+    paths:
+      - .github/workflows/staging-menu-capacity.yml
+permissions:
+  contents: read
+concurrency:
+  group: menu-staging-representative-capacity
+  cancel-in-progress: false
+jobs:
+  public-menu-load:
+    if: github.repository == 'yohannesmulugeta/Menu-Go' && github.ref == 'refs/heads/feature/menu-platform-foundation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - name: Preflight, bounded ramp and short sustained sample
+        shell: bash
+        run: |
+          mkdir -p probe-results
+          node scripts/menu-capacity.mjs representative probe-results/representative.json cloudflare/inventory/capacity/representative-paths.json
+      - name: Record measurements even if a budget fails
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,writeFileSync,appendFileSync,mkdirSync} from 'node:fs';
+          let data;
+          try {data=JSON.parse(readFileSync('probe-results/representative.json','utf8'));}
+          catch(error) {data={error:error.message,results:[]};}
+          const payload={source_commit:process.env.GITHUB_SHA,run_id:process.env.GITHUB_RUN_ID,runner_os:process.env.RUNNER_OS,runner_arch:process.env.RUNNER_ARCH,...data,results:data.results.map(({samples,...r})=>{void samples;return r;})};
+          mkdirSync('probe-results',{recursive:true});
+          writeFileSync('probe-results/summary.json',JSON.stringify(payload,null,2)+'\n');
+          console.log('REPRESENTATIVE_MENU_RESULTS '+JSON.stringify(payload));
+          const lines=['## Representative staging menu HTTP load','','| Phase | Rate | Correct / started | p95 ms | Dropped | Gate |','| --- | --- | --- | --- | --- | --- |',...payload.results.map(r=>'| '+r.phase+' | '+r.rate+' | '+(r.started-r.errors)+' / '+r.started+' | '+(r.latency_ms?.p95??'Unavailable')+' | '+r.dropped+' | '+(r.gate?.passed?'Passed':'Failed')+' |'),'','Three synthetic 100-item menus; R2 payload checksums and English/Amharic HTML verified. HTTP traffic only: not browser page loads, actual CPU billing or login/upload load. An operator must suspend the disposable fixtures and revoke their temporary account after this run.'];
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,lines.join('\n')+'\n');
+          NODE
+      - name: Preserve raw samples
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-representative-menu-capacity
+          path: probe-results/
+          if-no-files-found: error
+          retention-days: 30

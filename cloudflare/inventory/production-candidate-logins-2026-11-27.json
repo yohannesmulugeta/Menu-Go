@@ -1,0 +1,40 @@
+{
+  "verified_utc": "2026-11-27T15:14:49.096Z",
+  "results": [
+    {
+      "username": "admin",
+      "role": "super_admin",
+      "must_change_password": true,
+      "login": 200,
+      "logout": 200
+    },
+    {
+      "username": "abol",
+      "role": "manager",
+      "must_change_password": true,
+      "login": 200,
+      "logout": 200
+    },
+    {
+      "username": "mokodo",
+      "role": "manager",
+      "must_change_password": true,
+      "login": 200,
+      "logout": 200
+    },
+    {
+      "username": "occasion",
+      "role": "manager",
+      "must_change_password": true,
+      "login": 200,
+      "logout": 200
+    },
+    {
+      "username": "sheba",
+      "role": "manager",
+      "must_change_password": true,
+      "login": 200,
+      "logout": 200
+    }
+  ]
+}

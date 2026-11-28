@@ -1,0 +1,950 @@
+{
+  "source_commit": "c6d24e56a5b48341c43ca6167feafdb302cfe890",
+  "run_id": "45937691892",
+  "runner_os": "Linux",
+  "runner_arch": "X64",
+  "started_utc": "2026-11-27T04:04:38.994Z",
+  "finished_utc": "2026-11-27T04:05:54.680Z",
+  "mode": "remote-representative",
+  "origin": "https://admaki-menu-platform-staging.yohannesmulugeta084.workers.dev",
+  "scope": "Independent GitHub-hosted paced HTTP load against three disposable 100-item menus. All requested public HTML, PNG and QR bodies consumed; English/Amharic content, exact variant prices, MIME/cache headers, image byte counts and SHA-256 checked. Not visitor counts, browser timings, CPU billing, login/upload load, long-duration soak or Ethiopia mobile-network certification.",
+  "fixture_manifest": [
+    {
+      "id": "1c280bab-506a-4d8e-8bf7-7d7af049bcb9",
+      "slug": "editcheck-36e9d3546004-0",
+      "template": "classic",
+      "items": 100,
+      "categories": 10,
+      "variants": 20,
+      "translations": 100,
+      "publication_revision": 1,
+      "images": [
+        {
+          "id": "3a898adc-026b-450a-8b1e-5e750fb6ca7a",
+          "kind": "cover",
+          "width": 640,
+          "height": 320,
+          "size_bytes": 628752,
+          "sha256": "ab59d35e295dbde32a644b269763e28662a845e05760250a4edccc6690b166e8",
+          "path": "/public-media/editcheck-36e9d3546004-0/3a898adc-026b-450a-8b1e-5e750fb6ca7a"
+        },
+        {
+          "id": "282621e4-6060-4a1a-b098-b8bd1f9f1b39",
+          "kind": "logo",
+          "width": 128,
+          "height": 128,
+          "size_bytes": 52861,
+          "sha256": "3b260ac6bc343826595c46d895aa322ebc9c1b38e064af7614de783f2d2ea2f3",
+          "path": "/public-media/editcheck-36e9d3546004-0/282621e4-6060-4a1a-b098-b8bd1f9f1b39"
+        },
+        {
+          "id": "560a31c9-9e80-4380-9255-1486280dea74",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243541,
+          "sha256": "32b276752bdec35e61305e0805b3d43c7075609251f3e053edaf82036ba74b5e",
+          "path": "/public-media/editcheck-36e9d3546004-0/560a31c9-9e80-4380-9255-1486280dea74"
+        },
+        {
+          "id": "3649d06b-2ffc-4cd0-8532-ee5152b909b3",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243620,
+          "sha256": "172aae8450f9206910d206046cf2cfd19d6cfcdffa1c194a628af18016514b93",
+          "path": "/public-media/editcheck-36e9d3546004-0/3649d06b-2ffc-4cd0-8532-ee5152b909b3"
+        },
+        {
+          "id": "069b4e39-d34d-4947-8089-9caeb0d44e1b",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243574,
+          "sha256": "2defd7cab9c16f845a25e6e22f75f7a13493f632af533a544fdc7133add0d043",
+          "path": "/public-media/editcheck-36e9d3546004-0/069b4e39-d34d-4947-8089-9caeb0d44e1b"
+        },
+        {
+          "id": "ae03da27-2403-4b3f-925c-f12d09b0030b",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243501,
+          "sha256": "ee83cf9224f3dec4b074141fde2c192709e79472b1a9ddea27142d336e9f4914",
+          "path": "/public-media/editcheck-36e9d3546004-0/ae03da27-2403-4b3f-925c-f12d09b0030b"
+        }
+      ]
+    },
+    {
+      "id": "94aff4b2-3ada-4171-81ad-6713b4990dcc",
+      "slug": "editcheck-36e9d3546004-1",
+      "template": "mokodo",
+      "items": 100,
+      "categories": 10,
+      "variants": 20,
+      "translations": 100,
+      "publication_revision": 1,
+      "images": [
+        {
+          "id": "03e2802a-1a35-4461-9554-12fbea331645",
+          "kind": "cover",
+          "width": 640,
+          "height": 320,
+          "size_bytes": 628724,
+          "sha256": "2a0539ba5875a8b893af3ec331079edc57e7ef4acf001053917b75c35d6edd93",
+          "path": "/public-media/editcheck-36e9d3546004-1/03e2802a-1a35-4461-9554-12fbea331645"
+        },
+        {
+          "id": "92afacd1-df85-4f67-8407-a22bf84c5013",
+          "kind": "logo",
+          "width": 128,
+          "height": 128,
+          "size_bytes": 52841,
+          "sha256": "55e2e919312aa49861b3fe4fc9878c95b05ae659d15037f7dc836ed3719353f3",
+          "path": "/public-media/editcheck-36e9d3546004-1/92afacd1-df85-4f67-8407-a22bf84c5013"
+        },
+        {
+          "id": "02bacc0c-9512-4a1d-953b-c2bf1f5655c0",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243544,
+          "sha256": "7b8d87117b0a8138ad09ce6cef46d8b45f2630acc4ec19b5bd38d61f909a4fc8",
+          "path": "/public-media/editcheck-36e9d3546004-1/02bacc0c-9512-4a1d-953b-c2bf1f5655c0"
+        },
+        {
+          "id": "43cb69f8-d867-4059-ad97-10e97fa346c8",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243563,
+          "sha256": "f30c20ccd610974491791fa9b62efc431443561e63842cbcf16a413beac3ed3d",
+          "path": "/public-media/editcheck-36e9d3546004-1/43cb69f8-d867-4059-ad97-10e97fa346c8"
+        },
+        {
+          "id": "b89d8c49-9fca-40ae-8f35-5a7105d5f722",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243539,
+          "sha256": "c3df09e6fffd5b4f3bf768bc31f11ecc7da2a21541b8ff38792ce828e6a84335",
+          "path": "/public-media/editcheck-36e9d3546004-1/b89d8c49-9fca-40ae-8f35-5a7105d5f722"
+        },
+        {
+          "id": "acc9ea6c-135c-4f78-87c4-fdb0518ebfef",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243583,
+          "sha256": "11b2ae44cf4d7e6a5d965b8d93a5e55c19de5a6411ec32aea387fef034ad20c5",
+          "path": "/public-media/editcheck-36e9d3546004-1/acc9ea6c-135c-4f78-87c4-fdb0518ebfef"
+        }
+      ]
+    },
+    {
+      "id": "ea89f964-b197-4f79-a143-54c8e4a2a974",
+      "slug": "editcheck-36e9d3546004-2",
+      "template": "occasion",
+      "items": 100,
+      "categories": 10,
+      "variants": 20,
+      "translations": 100,
+      "publication_revision": 1,
+      "images": [
+        {
+          "id": "54a33539-0a8b-4a81-83ee-56710df369fb",
+          "kind": "cover",
+          "width": 640,
+          "height": 320,
+          "size_bytes": 628679,
+          "sha256": "2fe57e29eb3bbb1e875712102b3f0ccd5113e19114af4739e1fe5bc5102cff84",
+          "path": "/public-media/editcheck-36e9d3546004-2/54a33539-0a8b-4a81-83ee-56710df369fb"
+        },
+        {
+          "id": "3110170f-c40f-4473-9aa5-0b32d6bc0d7d",
+          "kind": "logo",
+          "width": 128,
+          "height": 128,
+          "size_bytes": 52836,
+          "sha256": "c258ab3fb52d08ca0f599114cb1c4dfa3f33ab118482775ab307d2f509327975",
+          "path": "/public-media/editcheck-36e9d3546004-2/3110170f-c40f-4473-9aa5-0b32d6bc0d7d"
+        },
+        {
+          "id": "64c21112-72a8-4e69-a9dc-9e2243c704c8",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243570,
+          "sha256": "e7f82ea622754a3c60990fd5ad5f35948d876d2f2ab195fb1c9f37404e05a13b",
+          "path": "/public-media/editcheck-36e9d3546004-2/64c21112-72a8-4e69-a9dc-9e2243c704c8"
+        },
+        {
+          "id": "ca5e7696-9b50-4450-9f0c-962b1b11d599",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243528,
+          "sha256": "84d2210154207acf4b811e415858191566192fb817242a7fa4800ce2a3b00682",
+          "path": "/public-media/editcheck-36e9d3546004-2/ca5e7696-9b50-4450-9f0c-962b1b11d599"
+        },
+        {
+          "id": "b138af48-2fbe-4548-b0de-f0ef730a6850",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243571,
+          "sha256": "f7198664997f8e3079ee662b3c5b76bad77922ab82d2b58f8435082e43029351",
+          "path": "/public-media/editcheck-36e9d3546004-2/b138af48-2fbe-4548-b0de-f0ef730a6850"
+        },
+        {
+          "id": "8483ebd1-8802-4f5b-9af7-e3861b7c2838",
+          "kind": "item",
+          "width": 320,
+          "height": 240,
+          "size_bytes": 243509,
+          "sha256": "4659f81adbbe02fd92c5009578b3e1aef3f65c2f402d563341105b2a6c6922a7",
+          "path": "/public-media/editcheck-36e9d3546004-2/8483ebd1-8802-4f5b-9af7-e3861b7c2838"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "phase": "preflight",
+      "rate": 10,
+      "seconds": 6,
+      "scheduled": 60,
+      "started": 60,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 8.8,
+      "elapsed_ms": 6815,
+      "latency_ms": {
+        "median": 1190.28,
+        "p95": 1638.23,
+        "max": 1672.2
+      },
+      "colos": [
+        "SJC"
+      ],
+      "by_kind": {
+        "classic-html-en": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 106712,
+          "p95_ms": 842
+        },
+        "classic-html-am": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 98312,
+          "p95_ms": 739.3
+        },
+        "classic-image": {
+          "started": 15,
+          "errors": 0,
+          "bytes": 4233073,
+          "p95_ms": 1586.28
+        },
+        "classic-qr": {
+          "started": 1,
+          "errors": 0,
+          "bytes": 6173,
+          "p95_ms": 642.86
+        },
+        "mokodo-html-en": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 106710,
+          "p95_ms": 646.35
+        },
+        "mokodo-html-am": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 98310,
+          "p95_ms": 661.83
+        },
+        "mokodo-image": {
+          "started": 15,
+          "errors": 0,
+          "bytes": 4232976,
+          "p95_ms": 1672.2
+        },
+        "mokodo-qr": {
+          "started": 1,
+          "errors": 0,
+          "bytes": 6177,
+          "p95_ms": 722.69
+        },
+        "occasion-html-en": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 106726,
+          "p95_ms": 683.01
+        },
+        "occasion-html-am": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 98326,
+          "p95_ms": 645.42
+        },
+        "occasion-image": {
+          "started": 15,
+          "errors": 0,
+          "bytes": 4232728,
+          "p95_ms": 1666.04
+        },
+        "occasion-qr": {
+          "started": 1,
+          "errors": 0,
+          "bytes": 6247,
+          "p95_ms": 689.43
+        }
+      },
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    },
+    {
+      "phase": "ramp-10",
+      "rate": 10,
+      "seconds": 10,
+      "scheduled": 100,
+      "started": 100,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 9.22,
+      "elapsed_ms": 10847,
+      "latency_ms": {
+        "median": 1004.35,
+        "p95": 1078.26,
+        "max": 1272.34
+      },
+      "colos": [
+        "SJC"
+      ],
+      "by_kind": {
+        "classic-html-en": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 213424,
+          "p95_ms": 695.42
+        },
+        "classic-html-am": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 196624,
+          "p95_ms": 678.84
+        },
+        "classic-image": {
+          "started": 30,
+          "errors": 0,
+          "bytes": 8466146,
+          "p95_ms": 1188.26
+        },
+        "classic-qr": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 12346,
+          "p95_ms": 624.2
+        },
+        "mokodo-html-en": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 213420,
+          "p95_ms": 676
+        },
+        "mokodo-html-am": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 196620,
+          "p95_ms": 668.67
+        },
+        "mokodo-image": {
+          "started": 30,
+          "errors": 0,
+          "bytes": 8465952,
+          "p95_ms": 1092.35
+        },
+        "mokodo-qr": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 12354,
+          "p95_ms": 734.13
+        },
+        "occasion-html-en": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 106726,
+          "p95_ms": 705.49
+        },
+        "occasion-html-am": {
+          "started": 2,
+          "errors": 0,
+          "bytes": 98326,
+          "p95_ms": 639.69
+        },
+        "occasion-image": {
+          "started": 15,
+          "errors": 0,
+          "bytes": 4232728,
+          "p95_ms": 1272.34
+        },
+        "occasion-qr": {
+          "started": 1,
+          "errors": 0,
+          "bytes": 6247,
+          "p95_ms": 631.91
+        }
+      },
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    },
+    {
+      "phase": "ramp-25",
+      "rate": 25,
+      "seconds": 10,
+      "scheduled": 250,
+      "started": 250,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 22.56,
+      "elapsed_ms": 11083,
+      "latency_ms": {
+        "median": 1010.56,
+        "p95": 1129.61,
+        "max": 1340.88
+      },
+      "colos": [
+        "SJC"
+      ],
+      "by_kind": {
+        "classic-html-en": {
+          "started": 10,
+          "errors": 0,
+          "bytes": 533560,
+          "p95_ms": 683.13
+        },
+        "classic-html-am": {
+          "started": 10,
+          "errors": 0,
+          "bytes": 491560,
+          "p95_ms": 667.5
+        },
+        "classic-image": {
+          "started": 66,
+          "errors": 0,
+          "bytes": 18973280,
+          "p95_ms": 1151.98
+        },
+        "classic-qr": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 24692,
+          "p95_ms": 660.69
+        },
+        "mokodo-html-en": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 426840,
+          "p95_ms": 686.78
+        },
+        "mokodo-html-am": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 393240,
+          "p95_ms": 785.82
+        },
+        "mokodo-image": {
+          "started": 60,
+          "errors": 0,
+          "bytes": 16931904,
+          "p95_ms": 1107.19
+        },
+        "mokodo-qr": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 24708,
+          "p95_ms": 697.25
+        },
+        "occasion-html-en": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 426904,
+          "p95_ms": 702.44
+        },
+        "occasion-html-am": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 393304,
+          "p95_ms": 653.64
+        },
+        "occasion-image": {
+          "started": 60,
+          "errors": 0,
+          "bytes": 16930912,
+          "p95_ms": 1131.57
+        },
+        "occasion-qr": {
+          "started": 4,
+          "errors": 0,
+          "bytes": 24988,
+          "p95_ms": 923.89
+        }
+      },
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    },
+    {
+      "phase": "ramp-50",
+      "rate": 50,
+      "seconds": 10,
+      "scheduled": 500,
+      "started": 500,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 45.61,
+      "elapsed_ms": 10963,
+      "latency_ms": {
+        "median": 1010.48,
+        "p95": 1101.04,
+        "max": 1242.39
+      },
+      "colos": [
+        "SJC"
+      ],
+      "by_kind": {
+        "classic-html-en": {
+          "started": 18,
+          "errors": 0,
+          "bytes": 960408,
+          "p95_ms": 880.67
+        },
+        "classic-html-am": {
+          "started": 18,
+          "errors": 0,
+          "bytes": 884808,
+          "p95_ms": 675.63
+        },
+        "mokodo-html-en": {
+          "started": 16,
+          "errors": 0,
+          "bytes": 853680,
+          "p95_ms": 693.23
+        },
+        "classic-qr": {
+          "started": 9,
+          "errors": 0,
+          "bytes": 55557,
+          "p95_ms": 804.22
+        },
+        "classic-image": {
+          "started": 135,
+          "errors": 0,
+          "bytes": 38097657,
+          "p95_ms": 1151.42
+        },
+        "mokodo-html-am": {
+          "started": 16,
+          "errors": 0,
+          "bytes": 786480,
+          "p95_ms": 733.48
+        },
+        "mokodo-qr": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 49416,
+          "p95_ms": 874.63
+        },
+        "occasion-html-en": {
+          "started": 16,
+          "errors": 0,
+          "bytes": 853808,
+          "p95_ms": 717.54
+        },
+        "occasion-html-am": {
+          "started": 16,
+          "errors": 0,
+          "bytes": 786608,
+          "p95_ms": 740.01
+        },
+        "mokodo-image": {
+          "started": 120,
+          "errors": 0,
+          "bytes": 33863808,
+          "p95_ms": 1094.43
+        },
+        "occasion-qr": {
+          "started": 8,
+          "errors": 0,
+          "bytes": 49976,
+          "p95_ms": 705.15
+        },
+        "occasion-image": {
+          "started": 120,
+          "errors": 0,
+          "bytes": 33861824,
+          "p95_ms": 1102.47
+        }
+      },
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    },
+    {
+      "phase": "sustained-25",
+      "rate": 25,
+      "seconds": 30,
+      "scheduled": 750,
+      "started": 750,
+      "dropped": 0,
+      "errors": 0,
+      "error_rate": 0,
+      "achieved_rps": 24.22,
+      "elapsed_ms": 30965,
+      "latency_ms": {
+        "median": 1000.27,
+        "p95": 1077.97,
+        "max": 1286.37
+      },
+      "colos": [
+        "SJC"
+      ],
+      "by_kind": {
+        "classic-html-en": {
+          "started": 26,
+          "errors": 0,
+          "bytes": 1387256,
+          "p95_ms": 658.79
+        },
+        "classic-html-am": {
+          "started": 26,
+          "errors": 0,
+          "bytes": 1278056,
+          "p95_ms": 671.77
+        },
+        "classic-image": {
+          "started": 195,
+          "errors": 0,
+          "bytes": 55029949,
+          "p95_ms": 1081.85
+        },
+        "classic-qr": {
+          "started": 13,
+          "errors": 0,
+          "bytes": 80249,
+          "p95_ms": 652.12
+        },
+        "mokodo-html-en": {
+          "started": 26,
+          "errors": 0,
+          "bytes": 1387230,
+          "p95_ms": 656.55
+        },
+        "mokodo-html-am": {
+          "started": 26,
+          "errors": 0,
+          "bytes": 1278030,
+          "p95_ms": 685.37
+        },
+        "mokodo-image": {
+          "started": 186,
+          "errors": 0,
+          "bytes": 52836633,
+          "p95_ms": 1129.33
+        },
+        "mokodo-qr": {
+          "started": 12,
+          "errors": 0,
+          "bytes": 74124,
+          "p95_ms": 666.02
+        },
+        "occasion-html-am": {
+          "started": 24,
+          "errors": 0,
+          "bytes": 1179912,
+          "p95_ms": 664.44
+        },
+        "occasion-html-en": {
+          "started": 24,
+          "errors": 0,
+          "bytes": 1280712,
+          "p95_ms": 663.26
+        },
+        "occasion-image": {
+          "started": 180,
+          "errors": 0,
+          "bytes": 50792736,
+          "p95_ms": 1083.4
+        },
+        "occasion-qr": {
+          "started": 12,
+          "errors": 0,
+          "bytes": 74964,
+          "p95_ms": 687.13
+        }
+      },
+      "gate": {
+        "p95_budget_ms": 3000,
+        "max_error_rate": 0.01,
+        "passed": true
+      },
+      "failures": []
+    }
+  ],
+  "summary": {
+    "requests": 1660,
+    "errors": 0,
+    "dropped": 0,
+    "all_gates_passed": true,
+    "response_bytes": 368913156
+  },
+  "worker": {
+    "versions_before": [
+      {
+        "version_id": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+        "percentage": 100
+      }
+    ],
+    "versions_after": [
+      {
+        "version_id": "03da5e9d-be53-4770-9aff-7d31566dcc8d",
+        "percentage": 100
+      }
+    ],
+    "unchanged": true
+  },
+  "existing_data_verification": {
+    "protected_tables": 15,
+    "changed_tables": [],
+    "scope": "New disposable fixture rows excluded; all pre-existing rows in these 15 tables hashed in rowid order before and after.",
+    "tables": [
+      {
+        "name": "restaurants",
+        "before_rows": 23,
+        "after_rows": 23,
+        "matched": true
+      },
+      {
+        "name": "categories",
+        "before_rows": 3,
+        "after_rows": 3,
+        "matched": true
+      },
+      {
+        "name": "menu_items",
+        "before_rows": 10,
+        "after_rows": 10,
+        "matched": true
+      },
+      {
+        "name": "restaurant_configs",
+        "before_rows": 21,
+        "after_rows": 21,
+        "matched": true
+      },
+      {
+        "name": "restaurant_publications",
+        "before_rows": 5,
+        "after_rows": 5,
+        "matched": true
+      },
+      {
+        "name": "restaurant_publication_heads",
+        "before_rows": 3,
+        "after_rows": 3,
+        "matched": true
+      },
+      {
+        "name": "media_assets",
+        "before_rows": 34,
+        "after_rows": 34,
+        "matched": true
+      },
+      {
+        "name": "media_publication_refs",
+        "before_rows": 5,
+        "after_rows": 5,
+        "matched": true
+      },
+      {
+        "name": "users",
+        "before_rows": 36,
+        "after_rows": 36,
+        "matched": true
+      },
+      {
+        "name": "login_credentials",
+        "before_rows": 36,
+        "after_rows": 36,
+        "matched": true
+      },
+      {
+        "name": "restaurant_members",
+        "before_rows": 25,
+        "after_rows": 25,
+        "matched": true
+      },
+      {
+        "name": "platform_admins",
+        "before_rows": 9,
+        "after_rows": 9,
+        "matched": true
+      },
+      {
+        "name": "feature_policies",
+        "before_rows": 30,
+        "after_rows": 30,
+        "matched": true
+      },
+      {
+        "name": "platform_policy_state",
+        "before_rows": 1,
+        "after_rows": 1,
+        "matched": true
+      },
+      {
+        "name": "schema_migrations",
+        "before_rows": 6,
+        "after_rows": 6,
+        "matched": true
+      }
+    ]
+  },
+  "cleanup": {
+    "suspended_fixtures": 3,
+    "disabled_users": 1,
+    "disabled_credentials": 1,
+    "active_sessions": 0,
+    "retained_assets": 18,
+    "retained_image_bytes": 4967336,
+    "retained_publications": 3,
+    "public_requests": 24,
+    "public_404": 24,
+    "revoked_manager_status": 401,
+    "checks": [
+      {
+        "path": "/r/editcheck-36e9d3546004-0",
+        "status": 404
+      },
+      {
+        "path": "/r/editcheck-36e9d3546004-0/qr.svg",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/3a898adc-026b-450a-8b1e-5e750fb6ca7a",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/282621e4-6060-4a1a-b098-b8bd1f9f1b39",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/560a31c9-9e80-4380-9255-1486280dea74",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/3649d06b-2ffc-4cd0-8532-ee5152b909b3",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/069b4e39-d34d-4947-8089-9caeb0d44e1b",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-0/ae03da27-2403-4b3f-925c-f12d09b0030b",
+        "status": 404
+      },
+      {
+        "path": "/r/editcheck-36e9d3546004-1",
+        "status": 404
+      },
+      {
+        "path": "/r/editcheck-36e9d3546004-1/qr.svg",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/03e2802a-1a35-4461-9554-12fbea331645",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/92afacd1-df85-4f67-8407-a22bf84c5013",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/02bacc0c-9512-4a1d-953b-c2bf1f5655c0",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/43cb69f8-d867-4059-ad97-10e97fa346c8",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/b89d8c49-9fca-40ae-8f35-5a7105d5f722",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-1/acc9ea6c-135c-4f78-87c4-fdb0518ebfef",
+        "status": 404
+      },
+      {
+        "path": "/r/editcheck-36e9d3546004-2",
+        "status": 404
+      },
+      {
+        "path": "/r/editcheck-36e9d3546004-2/qr.svg",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/54a33539-0a8b-4a81-83ee-56710df369fb",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/3110170f-c40f-4473-9aa5-0b32d6bc0d7d",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/64c21112-72a8-4e69-a9dc-9e2243c704c8",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/ca5e7696-9b50-4450-9f0c-962b1b11d599",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/b138af48-2fbe-4548-b0de-f0ef730a6850",
+        "status": 404
+      },
+      {
+        "path": "/public-media/editcheck-36e9d3546004-2/8483ebd1-8802-4f5b-9af7-e3861b7c2838",
+        "status": 404
+      }
+    ]
+  },
+  "artifact": {
+    "id": 15171022841,
+    "name": "staging-representative-menu-capacity",
+    "digest": "sha256:880583e23b311ed4edc83aad7a944dcb93c6fabd741803d0d967a75804798faf",
+    "expires_at": "2026-12-27T04:05:54Z"
+  },
+  "run_url": "https://github.com/yohannesmulugeta/Menu-Go/actions/runs/45937691892",
+  "verified_at_utc": "2026-11-27T04:08:01.305Z"
+}

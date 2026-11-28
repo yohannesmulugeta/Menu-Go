@@ -1,0 +1,52 @@
+name: Verify released menu delivery
+on:
+  push:
+    branches: [feature/menu-platform-foundation]
+    paths: [.github/workflows/release-readonly-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Read public menus and downloadable QR files
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {createHash} from 'node:crypto';
+          const origin='https://menu.admakidigital.com';
+          const get=(url,method='GET')=>fetch(url,{method,redirect:'error',signal:AbortSignal.timeout(20000),headers:{'Cache-Control':'no-cache','Accept-Language':'en'}});
+          const healthResponse=await get('https://app.admakidigital.com/api/health');
+          assert.equal(healthResponse.status,200);
+          const health=await healthResponse.json();
+          assert.equal(health.ok,true);assert.equal(health.environment,'production');assert.equal(health.media_binding,true);
+          const results=[];
+          for(const [slug,expected] of [['abol-coffee',89],['mokodo-pizza',103],['occasion',116],['sheba-coffee',40]]){
+            const page=await get(origin+'/r/'+slug);
+            assert.equal(page.status,200,slug+' menu');
+            assert.match(page.headers.get('content-type'),/text\/html/);
+            const html=await page.text(),count=Number(html.match(/\b(\d+) items\b/)?.[1]);
+            assert.equal(count,expected,slug+' item count');
+            const qr=await get(origin+'/r/'+slug+'/qr.svg');
+            assert.equal(qr.status,200,slug+' QR download');
+            assert.match(qr.headers.get('content-type'),/image\/svg\+xml/);
+            assert.ok(qr.headers.get('content-disposition')?.includes('menu-'+slug+'.svg'));
+            assert.match(qr.headers.get('cache-control'),/no-store/);
+            const bytes=Buffer.from(await qr.arrayBuffer()),svg=bytes.toString('utf8');
+            assert.match(svg,/<svg\b/);assert.match(svg,/<path\b/);assert.match(svg,/width="320"/);assert.match(svg,/height="320"/);
+            assert.match(svg,/<title>Menu for /);
+            const head=await get(origin+'/r/'+slug+'/qr.svg','HEAD');
+            assert.equal(head.status,200);assert.equal(await head.text(),'');
+            results.push({slug,items:count,menu_status:page.status,qr_status:qr.status,qr_head_status:head.status,qr_bytes:bytes.length,qr_sha256:createHash('sha256').update(bytes).digest('hex')});
+          }
+          const login=await get('https://app.admakidigital.com/login');assert.equal(login.status,200);
+          const shell=await login.text();assert.ok(shell.includes('id="dashboard-sidebar"'));
+          assert.doesNotMatch(shell.match(/<header>[\s\S]*?<\/header>/)[0],/Staging/);
+          assert.match(login.headers.get('cache-control'),/no-store/);
+          console.log(JSON.stringify({health,login_shell_status:login.status,results},null,2));
+          NODE
